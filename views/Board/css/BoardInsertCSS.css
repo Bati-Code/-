@@ -1,0 +1,15 @@
+.ck-editor__editable_inline{
+    min-height: 500px;
+}
+
+.ant-table-cell{
+    word-break: break-all;
+}
+
+#title{
+    width: 100%;
+}
+
+#title_input{
+    width: 100%;
+}

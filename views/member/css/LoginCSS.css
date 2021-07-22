@@ -1,0 +1,113 @@
+body{
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+}
+
+.root{
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.login_wrap{
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    margin: 0 auto;
+    align-items: center;
+}
+
+.login_wrap .loginHeader{
+    width: 100%;
+    height: fit-content;
+    padding: 71px 0 35px;
+    text-align: center;
+    font-size: 35px;
+    color:#459eda;
+ }
+
+ .header .logo{
+    width: 165px;
+    height: 75px;
+ }
+
+.container{
+     text-align: center;
+     width: 100%;
+     height: 100%;
+ }
+
+
+ .content{
+     display: flex;
+ }
+
+ .content nav{
+     background-color: white;
+     flex-basis: 5%;
+     flex-shrink: 0;
+ }
+
+ .content main{
+     width: 100%;
+     align-items: center;
+ }
+
+ main .loginArea_ID, .loginArea_PW{
+     background-color: white;
+     border: solid 1px #dadada;
+     margin-bottom: 6px;
+ }
+ main .loginArea_PW{
+     margin-bottom: 15px;
+ }
+
+main .inputArea_ID, .inputArea_PW{
+    padding: 8px 35px 9px 11px;
+}
+
+
+main .loginButton{
+    display: block;
+    width: 100%;
+    height: 56px;
+    line-height: 55px;
+    margin: 12px 0 14px;
+    border-radius: 0;
+    border: solid 1px rgba(0,0,0,.1);
+    box-shadow: 0 2px 6px 0 rgb(61 80 81 / 8%);
+    background-color: #459eda;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -.5px;
+    cursor: pointer;
+    text-align: center;
+    -webkit-appearance: none;
+}
+
+#inputBox_ID, #inputBox_PW{
+    border: none;
+    font-size: 20px;
+    line-height: 35px;
+    width:80%;
+    cursor: pointer;
+}
+
+ .content aside{
+     background-color: white;
+     flex-basis: 5%;
+     flex-shrink: 0;
+ }
+
+ .footer{
+     padding: 30px 0 30px;
+ }
+
+ 

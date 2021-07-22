@@ -1,0 +1,128 @@
+body{
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+}
+
+.root{
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.board_view_wrap{
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    margin: 0 auto;
+    align-items: center;
+}
+
+.board_view_wrap .board_view_Header{
+    width: 100%;
+    height: fit-content;
+    padding: 12px;
+    text-align: center;
+    font-size: 23px;
+    color:white;
+    background-color: #2685D0;
+    font-weight: bold;
+    letter-spacing: -1px;
+ }
+
+ .header .logo{
+    width: 165px;
+    height: 75px;
+ }
+
+.board_view_container{
+     width: 100%;
+     height: 100%;
+ }
+
+
+ .board_content{
+     display: flex;
+ }
+
+ .board_content nav{
+     background-color: white;
+     flex-basis: 0%;
+     flex-shrink: 0;
+ }
+
+ .board_content main{
+     width: 100%;
+     align-items: center;
+ }
+
+main #board_info_wrap{
+     text-align: center;
+     width:100%;
+     margin-top: 5px;
+ }
+
+ main #board_info{
+    display: flex;    
+    flex-direction: row;
+    width:100%;
+    font-size: 12px;
+    padding: 4px 0 2px 14px;
+    list-style: none;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+ }
+
+ main #board_info #board_info_data{
+    float: left;
+    margin: 0 5px 0 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+ }
+
+ main #board_info_wrap #board_info_title{
+     font-size: 16px;
+     text-align: left;
+     padding-left: 14px;
+     font-weight: 500;
+ }
+ 
+ main #board_content{
+    clear: both;
+    border-top:  solid 1px #DBDBDB;
+    border-bottom:  solid 1px #DBDBDB;
+    min-height: 500px;
+    padding: 10px;
+    word-break: break-all;
+    word-wrap: break-word;
+
+ }
+
+
+ .board_content aside{
+     background-color: white;
+     flex-basis: 0%;
+     flex-shrink: 0;
+ }
+
+ .BoardView_footer{
+     padding: 30px 0 30px;
+     display: flex;
+     flex-direction: row;
+     justify-content: space-evenly;
+     width: 100%;
+ }
+
+.ant-btn-primary{
+    background-color: #2685D0;
+    border-radius: 0;
+    border-color: #2685D0;
+}
+ 

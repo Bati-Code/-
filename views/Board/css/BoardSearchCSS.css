@@ -1,0 +1,58 @@
+.board_search_wrap{
+    display: flex;
+    flex-direction: row;
+    padding: 5px;
+    
+}
+
+.board_temp_wrap{
+    margin-bottom: 10px;
+    min-height: 60px;
+    text-align: left;
+    border-bottom: 1px solid #DBDBDB;
+}
+
+.board_temp_wrap .board_title{
+    font-weight: 620;
+    font-size: 19px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 5px;
+    line-height: 1.5;
+    overflow: hidden;
+}
+
+.board_temp_wrap .board_info{
+    overflow: hidden;
+    font-size: 12px;
+    padding: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.board_info{
+    list-style: none;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.board_info li{
+    float: left;
+    margin-right: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+ul .post_author{
+    width: 15%;
+    text-align: center;
+}
+
+a{
+    text-decoration: none;
+    color:white;
+
+}
