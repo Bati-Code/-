@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom';
 import { Modal, Button } from 'antd'
-import { LikeOutlined, TableOutlined } from '@ant-design/icons';
+import { LikeOutlined, TableOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import './css/Board_View_CSS.css'
 import { useSelector } from 'react-redux';
 
@@ -12,8 +12,6 @@ const BoardView = (res) => {
     const [get_user_check, set_user_check] = useState(false);
     const [visible, setVisible] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
-
-    const location = useLocation();
     const history = useHistory();
     const board_id = res.match.params.id;
 
@@ -94,7 +92,7 @@ const BoardView = (res) => {
                             <div id="board_info_wrap">
                                 <div>
                                     <div id="board_info_title">
-                                        {get_board_data.post_title}
+                                      [{get_board_data.post_item_name}]{get_board_data.post_title}
                                     </div>
                                 </div>
                                 <ul id="board_info">
@@ -136,14 +134,22 @@ const BoardView = (res) => {
                             추천
                         </Button>
                     </div>
+                    {get_user_check ?
+                        <div>
+                            <Button type="primary" icon={<EditOutlined />} onClick={updateBoard}>
+                                수정
+                            </Button>
+                        </div>
+                        : ''}
+                    {get_user_check ?
+                        <div>
+                            <Button type="danger" icon={<DeleteOutlined />} onClick={showModal}>
+                                삭제
+                            </Button>
+                        </div>
+                        : ''}
                 </div>
                 <div>
-                    <span>
-                        {get_user_check ? <button onClick={updateBoard}>수정</button> : ''}
-                    </span>
-                    <span>
-                        {get_user_check ? <button onClick={showModal}>삭제</button> : ''}
-                    </span>
                     <Modal
                         title="게시글 삭제"
                         visible={visible}

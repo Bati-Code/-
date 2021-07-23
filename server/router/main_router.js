@@ -7,6 +7,7 @@ module.exports = (app) => {
 
     let session;
 
+    //로그인
     app.post('/login', (req, res) => {
         const get_data1 = req.body;
 
@@ -16,6 +17,7 @@ module.exports = (app) => {
         res.send(session.userID);
     })
 
+    //로그아웃
     app.get('/logout', (req, res) => {
 
         if (session.userID) {
@@ -35,6 +37,7 @@ module.exports = (app) => {
         }
     })
 
+    //세션체크
     app.get('/session_check/:user_ID', (req, res) => {
 
         const get_user_ID = req.params.user_ID;
@@ -55,7 +58,7 @@ module.exports = (app) => {
         }
     })
 
-
+    //게시글 저장
     app.post('/board/insert', async (req, res) => {
         const get_data = req.body;
 
@@ -67,6 +70,8 @@ module.exports = (app) => {
         new_Board.post_recommend = 0;
         new_Board.post_content = req.body.board_Data;
         new_Board.post_yn = 'y';
+        new_Board.post_item_code = req.body.board_item.code;
+        new_Board.post_item_name = req.body.board_item.name;
 
         await new_Board.save((err) => {
             if (err) {
@@ -81,23 +86,11 @@ module.exports = (app) => {
         })
     })
 
-    // //초기페이지
-    // app.get('/board/list', async (req, res) => {
-
-    //     const query = Board.find({ post_yn: 'y' });
-
-    //     const options = {
-    //         sort: { _id: -1 },
-    //         lean: true,
-    //         limit: 10,
-    //         page: 1
-    //     };
-
-    //     await Board.paginate(query, options)
-    //         .then((result) => {
-    //             res.json(result);
-    //         })
-    // })
+    //임시
+    app.post('/board/insert/temp', async (req, res) => {
+        console.log(req.body);
+        res.json({board_insert_result: 1});
+    }) 
 
     //페이지이동 
     app.get('/board/list/:page', async (req, res) => {
@@ -130,7 +123,7 @@ module.exports = (app) => {
     app.get('/board/search/:menuItem/:value/:page', async (req, res) => {
         let page = parseInt(req.params.page);
         const menuItem = req.params.menuItem;
-        const value = req.params.value;
+        let value = req.params.value;
         let searchType;
 
         if (!page)
@@ -142,6 +135,12 @@ module.exports = (app) => {
             searchType = "post_author";
         else if (menuItem === "내용")
             searchType = "post_content";
+        else if (menuItem === "종목명"){
+            searchType = "post_item_name";
+            value = toString(value).toUpperCase();
+        }
+        else if (menuItem === "종목코드")
+            searchType = "post_item_code";
 
         console.log(menuItem, value, searchType);
 
@@ -161,22 +160,13 @@ module.exports = (app) => {
                 res.json(result);
             })
 
-        // await Board.find({ [searchType]: { $regex: '.*' + value + '.*' } }, (err, boards) => {
-        //     if (err) {
-        //         console.log(err, "Search Error");
-        //         return;
-        //     }
-        //     else {
-        //         res.json(boards);
-        //     }
-        // })
-
     })
 
+    //상세페이지
     app.get('/board/view/:board_id', async (req, res) => {
 
         let board_count;
-
+        console.log("view_id", req.params.board_id);
         await Board.findOne({ _id: req.params.board_id }, (err, boards) => {
             if (err) {
                 console.log(err);
@@ -201,6 +191,7 @@ module.exports = (app) => {
 
     })
 
+    //추천수 
     app.get('/board/view/recommend/:board_id', async (req, res) => {
 
         let board_recommend_count;
@@ -229,6 +220,7 @@ module.exports = (app) => {
 
     })
 
+    //게시글 수정
     app.post('/board/update', async (req, res) => {
 
         console.log(req.body);
@@ -251,6 +243,7 @@ module.exports = (app) => {
         )
     })
 
+    //게시글 삭제
     app.delete('/board/:board_id', async (req, res) => {
         await Board.updateOne({ _id: req.params.board_id }, { post_yn: 'n' }, (err) => {
             if (err) {

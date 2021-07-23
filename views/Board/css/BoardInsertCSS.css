@@ -12,4 +12,23 @@
 
 #title_input{
     width: 100%;
+    border: 1px solid #C4C4C4;
+    padding: 8px 35px 9px 11px;
+}
+
+.board_insert_finance_list{
+    font-size: 12px;
+}
+
+.board_insert_wrap{
+    margin: 15px;
+}
+
+.board_insert_wrap .board_insert_button_wrap{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-top: 10px;
+
+
 }

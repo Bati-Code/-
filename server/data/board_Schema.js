@@ -8,7 +8,9 @@ const boardSchema = new mongoose.Schema({
   post_count: Number,
   post_recommend: Number,
   post_yn: String,
-  post_content: String
+  post_content: String,
+  post_item_name: String,
+  post_item_code: String
   
 });
 

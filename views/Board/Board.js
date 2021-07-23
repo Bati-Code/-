@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { Input, Pagination, Dropdown, Button, Menu } from 'antd';
 import { DownOutlined, FilterTwoTone } from '@ant-design/icons';
-import { Table } from 'ant-table-extensions';
+import { Button, Dropdown, Input, Menu, Pagination } from 'antd';
+import "antd/dist/antd.css";
 import axios from 'axios';
-import { useHistory, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import QueryString from 'query-string'
+import { useHistory } from 'react-router-dom';
 import { Page_Search, Page_Store } from '../../redux/action/page_action';
+import "./css/BoardSearchCSS.css";
 
-import "antd/dist/antd.css"
-import "./css/BoardSearchCSS.css"
 
 const { Search } = Input;
 
-const Board = (props) => {
+const Board = () => {
 
     const [get_BoardList, set_BoardList] = useState([]);
     const [get_Board_Total, set_Board_Total] = useState(0);
     const [get_Menu_Text, set_Menu_Text] = useState('제목');
-    const [get_Page, set_Page] = useState(1);
 
     const history = useHistory();
     const dispatch = useDispatch();
@@ -38,7 +35,7 @@ const Board = (props) => {
 
                     const boardList = response.data.docs;
                     set_Board_Total(response.data.totalDocs);
-                    
+
                     boardList.map((list, index) => {
                         list.index = index + 1;
                         list.key = index + 1;
@@ -94,43 +91,6 @@ const Board = (props) => {
 
     }
 
-    const columns = [
-        {
-            title: '제목',
-            dataIndex: 'post_title',
-            key: 'post_title',
-        },
-        {
-            title: '작성자',
-            dataIndex: 'post_author',
-            key: 'post_author',
-        },
-        {
-            title: '작성일',
-            dataIndex: 'post_date',
-            key: 'post_date',
-        },
-        {
-            title: '조회수',
-            dataIndex: 'post_count',
-            key: 'post_count',
-        },
-        {
-            title: '추천수',
-            dataIndex: 'post_recommend',
-            key: 'post_recommend',
-        },
-    ];
-
-    const onRow = (record, rowIndex) => {
-        return {
-            onClick: (event) => {
-                console.log(record);
-                history.push("/board/view/" + record._id + "?page=" + get_Page);
-
-            }
-        }
-    }
 
     const Menu_Handler = (e) => {
         console.log(e);
@@ -148,10 +108,16 @@ const Board = (props) => {
             <Menu.Item key="내용" icon={<FilterTwoTone />}>
                 내용
             </Menu.Item>
+            <Menu.Item key="종목명" icon={<FilterTwoTone />}>
+                종목명
+            </Menu.Item>
+            <Menu.Item key="종목코드" icon={<FilterTwoTone />}>
+                종목코드
+            </Menu.Item>
         </Menu>
     );
 
-    const PageNation_Handler_temp = (page_value) => {
+    const PageNation_Handler = (page_value) => {
         dispatch(Page_Store(page_value));
 
         if (search) {
@@ -185,12 +151,7 @@ const Board = (props) => {
         }
     }
 
-    const PageNation_Handler = (page, pagesize) => {
-        set_Page(page);
-        console.log(page, pagesize);
-    }
-
-    console.log(...get_BoardList);
+    console.log(get_BoardList);
     console.log(search, menu_select, search_value);
 
     return (
@@ -214,7 +175,7 @@ const Board = (props) => {
                                     history.push("/board/view/" + list._id);
                                 }}>
                                 <div className="board_title">
-                                    {list.post_title}
+                                    [{list.post_item_name}]{list.post_title}
                                 </div>
                                 <ul className="board_info">
                                     <li className="post_author">{list.post_author}</li> <li> | </li>
@@ -228,23 +189,7 @@ const Board = (props) => {
                 }
             </div>
             <div>
-                <Pagination current={page} onChange={PageNation_Handler_temp} total={get_Board_Total} />
-            </div>
-            <div className="board_search_wrap">
-                <Dropdown overlay={menu}>
-                    <Button>
-                        {get_Menu_Text} <DownOutlined />
-                    </Button>
-                </Dropdown>
-                <Search placeholder="검색할 내용을 입력하세요."
-                    onSearch={onSearch} enterButton />
-            </div>
-            <div className="main">
-                <Table onRow={onRow} dataSource={get_BoardList} columns={columns}
-                    pagination={{
-                        pageSize: 10, position: ['bottomCenter'], onChange: PageNation_Handler,
-                        current: get_Page
-                    }} />
+                <Pagination current={page} onChange={PageNation_Handler} total={get_Board_Total} />
             </div>
         </>
     )

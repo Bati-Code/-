@@ -68,8 +68,12 @@ body{
      flex-shrink: 0;
  }
 
- .footer{
-     padding: 30px 0 30px;
+ .Board_footer{
+    padding: 30px 0 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
  }
 
  

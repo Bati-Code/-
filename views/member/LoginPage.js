@@ -5,7 +5,7 @@ import "./css/LoginCSS.css";
 
 //admin3 1q2w3e4r$R$
 
-const LoginPage = (props) => {
+const LoginPage = () => {
 
     const history = useHistory();
 
@@ -29,7 +29,7 @@ const LoginPage = (props) => {
                 }
                 if (request.data.code === 200) {
                     console.log("login");
-                    props.set_session_Props(true);
+                    // props.set_session_Props(true);
                     axios.post('http://localhost:5000/login', 
                     {
                         userID: request.data.result.data.userId
