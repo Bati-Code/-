@@ -4,12 +4,14 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import { useAlert } from 'react-alert'
 
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import './css/BoardInsertCSS.css';
+import { useSelector } from 'react-redux';
+
 
 const BoardInsert = () => {
 
@@ -17,24 +19,29 @@ const BoardInsert = () => {
     const [get_BoardTitle, set_BoardTitle] = useState('');
     const [get_finance_List, set_finance_List] = useState([{}]);
     const [get_finance_List_Value, set_finance_List_Value] = useState('');
+
     const history = useHistory();
+    const alert = useAlert();
 
-    useEffect(() => {
-        axios.get('http://hitalk-investment.hitalkplus.com:4050/StockCode?ETF=1')
-            .then((response) => {
+    const { fin_list } = useSelector(state => state.financeList);
 
-                response.data.datalist.map((list, index) => {
-                    delete list.reason;
-                    delete list.dtfchk;
-                    delete list.reason_no;
-                    delete list.type;
-                    delete list.etfchk;
-                    delete list.use_yn;
-                })
+    // useEffect(() => {
+    //     axios.get('http://hitalk-investment.hitalkplus.com:4050/StockCode?ETF=1')
+    //         .then((response) => {
 
-                set_finance_List(response.data.datalist);
-            })
-    }, [])
+    //             response.data.datalist.map((list, index) => {
+    //                 delete list.reason;
+    //                 delete list.dtfchk;
+    //                 delete list.reason_no;
+    //                 delete list.type;
+    //                 delete list.etfchk;
+    //                 delete list.use_yn;
+    //             })
+
+    //             console.log(response.data.datalist);
+    //             set_finance_List(response.data.datalist);
+    //         })
+    // }, [])
 
     const BoardTitle_Handler = (e) => {
         set_BoardTitle(e.target.value);
@@ -43,24 +50,31 @@ const BoardInsert = () => {
 
     const BoardInsert_Handler = () => {
 
-        axios.post('http://localhost:5000/board/insert',
-            {
-                board_title: get_BoardTitle,
-                board_Data: get_BoardData,
-                board_item: get_finance_List_Value
-            }
-        )
-            .then((request) => {
-                if (request.data.board_insert === 0) {
-                    console.log("업로드 실패");
-                }
-                else if (request.data.board_insert === 1) {
-                    console.log("업로드 성공");
-                    history.push('/main');
-                }
+        if (get_BoardData && get_BoardTitle && get_finance_List_Value) {
 
-            })
+            axios.post('http://localhost:5000/board/insert/' + sessionStorage.getItem('user_Token'),
+                {
+                    board_title: get_BoardTitle,
+                    board_Data: get_BoardData,
+                    board_item: get_finance_List_Value
+                }
+            )
+                .then((request) => {
+                    if (request.data.board_insert === 0) {
+                        console.log("업로드 실패");
+                    }
+                    else if (request.data.board_insert === 1) {
+                        console.log("업로드 성공");
+                        history.push('/main');
+                    }
+
+                })
+        }
+        else {
+            alert.show("정보를 모두 입력하시기 바랍니다.");
+        }
     }
+
 
     const AutoComplete_Change_Handler = (event, newValue) => {
         set_finance_List_Value(newValue);
@@ -74,7 +88,7 @@ const BoardInsert = () => {
                     <Autocomplete
                         id="highlights-demo"
                         style={{ width: '100%' }}
-                        options={get_finance_List}
+                        options={fin_list} 
                         onChange={AutoComplete_Change_Handler}
                         getOptionLabel={(option) => option.name + "  |  " + option.code}
                         renderInput={(params) => (
@@ -111,7 +125,7 @@ const BoardInsert = () => {
                         </Button>
                     </div>
                     <div>
-                        <Button type="danger" icon={<CloseOutlined />}>
+                        <Button type="danger" onClick={() => { history.push('/main') }} icon={<CloseOutlined />}>
                             취소
                         </Button>
                     </div>

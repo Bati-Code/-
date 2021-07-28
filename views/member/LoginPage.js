@@ -21,23 +21,24 @@ const LoginPage = () => {
                 }
 
             })
-            .then((request) => {
-                if (request.data.code === 999) {
+            .then((response) => {
+                if (response.data.code === 999) {
                     alert("로그인 실패");
                     console.log(document.getElementById('inputBox_ID'));
                     window.location.reload();
                 }
-                if (request.data.code === 200) {
+                if (response.data.code === 200) {
                     console.log("login");
-                    // props.set_session_Props(true);
+                    console.log(response.data.result.data);
                     axios.post('http://localhost:5000/login', 
                     {
-                        userID: request.data.result.data.userId
+                        userToken: response.data.result.data.authToken,
+                        userName : response.data.result.data.me.username
                     })
-                    .then((request) => {
-                        console.log("login_Post", request.data);
+                    .then((response) => {
+                        console.log("login_Post", response.data);
                         let user_Storage = window.sessionStorage;
-                        user_Storage.setItem('user_ID', request.data.userID);
+                        user_Storage.setItem('user_Token', response.data);
                         history.push('/main');
                     })
 

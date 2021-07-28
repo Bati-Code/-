@@ -1,15 +1,21 @@
-import { FormOutlined,UserOutlined } from '@ant-design/icons';
+import { FormOutlined, UserOutlined } from '@ant-design/icons';
 import axios from 'axios'
 import { Button } from 'antd';
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import { useDispatch } from 'react-redux';
+
+
+import { Finance_List_Store } from '../../redux/action/finance_list_action';
 import Board from './Board'
 import './css/BoardCSS.css'
 
 const MainPage = () => {
-    const history = useHistory();
     const [get_Session_Result, set_Session_Result] = useState(0);
     const [get_Login_Text, set_Login_Text] = useState('로그인');
+
+    const history = useHistory();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         // const meta = document.createElement('meta');
@@ -18,17 +24,33 @@ const MainPage = () => {
         // document.getElementsByTagName('head')[0].appendChild(meta);
 
         console.log("MainPage");
-        axios.get('http://localhost:5000/session_check/' + sessionStorage.getItem('user_ID'))
+        axios.get('http://localhost:5000/session_check/' + sessionStorage.getItem('user_Token'))
             .then((request) => {
                 const result_code = request.data.session_check_result;
-                console.log(result_code);
-                
+                console.log("MainPage session result", request.data);
+
                 set_Session_Result(result_code);
                 if (result_code === 1)
                     set_Login_Text('로그아웃');
                 else
                     set_Login_Text('로그인');
 
+            })
+
+        axios.get('http://hitalk-investment.hitalkplus.com:4050/StockCode?ETF=1')
+            .then((response) => {
+
+                response.data.datalist.map((list, index) => {
+                    delete list.reason;
+                    delete list.dtfchk;
+                    delete list.reason_no;
+                    delete list.type;
+                    delete list.etfchk;
+                    delete list.use_yn;
+                })
+
+                console.log(response.data.datalist);
+                dispatch(Finance_List_Store(response.data.datalist));
             })
 
     }, [])
@@ -48,7 +70,7 @@ const MainPage = () => {
     const login_Handler = () => {
 
         if (get_Session_Result === 1) {
-            axios.get('http://localhost:5000/logout')
+            axios.get('http://localhost:5000/logout/' + sessionStorage.getItem('user_Token'))
                 .then((response) => {
                     console.log(response.data);
                     if (response.data.logout_result_code === 1) {
@@ -76,7 +98,7 @@ const MainPage = () => {
                         <nav>
                         </nav>
                         <main>
-                            <Board pageLocation_Props={location.search}></Board>
+                            <Board></Board>
                         </main>
                         <aside>
                         </aside>

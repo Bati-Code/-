@@ -6,11 +6,13 @@ import { Redirect, Route } from 'react-router-dom';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
 
-    const [get_session, set_session] = useState(false);
+    const [get_session, set_session] = useState('default');
     console.log("PrivateRouter");
 
+
+
     useEffect(() => {
-        const loginSession = sessionStorage.getItem('user_ID');
+        const loginSession = sessionStorage.getItem('user_Token');
 
         axios.get('http://localhost:5000/session_check/' + loginSession)
             .then((response) => {
@@ -20,11 +22,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
                 else if (response.data.session_check_result === 1)
                     set_session(true);
             })
-
     }, [])
-
-
-
 
 
     console.log("APP", get_session);
@@ -32,8 +30,9 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 
     return (
         <Route {...rest} render={(props) => (
-            get_session  ? <Component {...props} />
-                : <>{alert("로그인이 필요한 페이지입니다.")}{<Redirect to="/login" />}</>
+            get_session === 'default' ? null  
+                : (get_session ? <Component {...props} />
+                    : <>{alert("로그인이 필요한 페이지입니다.")}{<Redirect to="/login" />}</>)
         )}
         />
     )

@@ -13,37 +13,16 @@ import test_AutoComplete from "./views/test/test_AutoComplete";
 
 
 const Board = () => {
-	// const [get_session, set_session] = useState(false);
-
-	// useEffect(async () => {
-	// 	const loginSession = sessionStorage.getItem('user_ID');
-
-	// 	const { data } = await axios.get('http://localhost:5000/session_check/' + loginSession)
-
-	// 	if (data.session_check_result === 0)
-	// 		set_session(false);
-	// 	else if (data.session_check_result === 1)
-	// 		set_session(true);
-	// }, [])
-
-	// console.log("APP", get_session);
 
 	return (
 		<BrowserRouter>
 			<Switch>
-				<Route path="/test" component={test_AutoComplete}></Route>
-				{/* <Route path="/login" render={() => <LoginPage set_session_Props={set_session} />} ></Route> */}
-				<Route path="/login" render={() => <LoginPage />} ></Route>
-				{/* <PrivateRoute path="/main" component={MainPage} logined={get_session}></PrivateRoute> */}
-				{/* <PrivateRoute path="/board/insert" component={BoardInsert} logined={get_session}></PrivateRoute> */}
+				<Route path="/login" render={() =>  <LoginPage />} ></Route>
+
+				<Route path="/main" component={MainPage}></Route>
 				<Route path="/board/insert" component={BoardInsert}></Route>
-				{/* <PrivateRoute path="/board/view/:id" component={BoardViewPage} logined={get_session}></PrivateRoute>
-				<PrivateRoute path="/board/update/:id" component={BoardUpdate} logined={get_session}></PrivateRoute> */}
-
-
-				<PrivateRoute path="/main" component={MainPage}></PrivateRoute>
-				<PrivateRoute path="/board/view/:id" component={BoardViewPage} ></PrivateRoute>
-				<PrivateRoute path="/board/update/:id" component={BoardUpdate} ></PrivateRoute>
+				<Route path="/board/view/:id" component={BoardViewPage} ></Route>
+				<Route path="/board/update/:id" component={BoardUpdate} ></Route>
 			</Switch>
 		</BrowserRouter>
 

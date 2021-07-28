@@ -66,6 +66,7 @@ const Board = () => {
     const onSearch = (value) => {
 
         if (value) {
+            console.log("search Value", value);
             axios.get('http://localhost:5000/board/search/' + get_Menu_Text + '/' + value + '/1')
                 .then((response) => {
 
@@ -174,8 +175,8 @@ const Board = () => {
                                     console.log(list._id);
                                     history.push("/board/view/" + list._id);
                                 }}>
-                                <div className="board_title">
-                                    [{list.post_item_name}]{list.post_title}
+                                <div className="board_title"> 
+                                    [{list.post_fin_list.name}]{list.post_title}
                                 </div>
                                 <ul className="board_info">
                                     <li className="post_author">{list.post_author}</li> <li> | </li>
