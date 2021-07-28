@@ -8,10 +8,18 @@ import { useSelector } from 'react-redux';
 
 const BoardView = (res) => {
     const [get_board_data, set_board_data] = useState({});
+    const [get_Comment_List, set_Comment_List] = useState([]);
     const [get_board_recommend, set_board_recommend] = useState('');
     const [get_user_check, set_user_check] = useState(false);
     const [get_fin_List_name, set_fin_List_name] = useState('');
+
+
     const [get_comment_content, set_comment_content] = useState('');
+    const [get_recomment_content, set_recomment_content] = useState('');
+
+
+    const [get_recomment_open, set_recomment_open] = useState(false);
+    const [get_comment_id, set_comment_id] = useState('');
 
     const [visible, setVisible] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
@@ -29,8 +37,10 @@ const BoardView = (res) => {
 
         axios.get("http://localhost:5000/board/view/" + board_id)
             .then((response) => {
-                console.log(response.data.post_fin_list.name);
+                console.log("view data", response.data.post_comment);
+                console.log(response.data.post_comment);
                 set_board_data(response.data);
+                set_Comment_List(response.data.post_comment);
                 set_fin_List_name(response.data.post_fin_list.name);
             })
     }, [])
@@ -59,157 +69,226 @@ const BoardView = (res) => {
             })
     }, [get_board_data])
 
-    // useEffect(() => {
-    //     effect
-    // }
-    // }, [input])
+    const updateBoard = () => {
+        history.push('/board/update/' + board_id);
+    }
 
-const updateBoard = () => {
-    history.push('/board/update/' + board_id);
-}
+    const showModal = () => {
+        setVisible(true);
+    };
 
-const showModal = () => {
-    setVisible(true);
-};
+    const handle_DeleteBoard_Ok = () => {
+        setConfirmLoading(true);
+        axios.delete("http://localhost:5000/board/" + board_id)
+            .then((response) => {
+                console.log(response);
+                if (response.data.delete_board_result === 0) {
+                    console.log("삭제 오류");
+                    history.push('/main');
+                }
+                if (response.data.delete_board_result === 1) {
+                    console.log("삭제 성공");
+                    history.push('/main');
+                }
+            })
+    };
 
-const handle_DeleteBoard_Ok = () => {
-    setConfirmLoading(true);
-    axios.delete("http://localhost:5000/board/" + board_id)
-        .then((response) => {
-            console.log(response);
-            if (response.data.delete_board_result === 0) {
-                console.log("삭제 오류");
-                history.push('/main');
-            }
-            if (response.data.delete_board_result === 1) {
-                console.log("삭제 성공");
-                history.push('/main');
-            }
-        })
-};
+    const handle_DeleteBoard_Cancel = () => {
+        setVisible(false);
+    };
 
-const handle_DeleteBoard_Cancel = () => {
-    setVisible(false);
-};
+    const Comment_Change_Handler = (e) => {
+        set_comment_content(e.target.value);
+    }
 
-const Comment_Change_Handler = (e) => {
-    set_comment_content(e.target.value);
-}
+    const ReComment_Change_Handler = (e) => {
+        set_recomment_content(e.target.value);
+    }
 
-const Comment_Insert_Handler = () => {
+    const Comment_Insert_Handler = () => {
 
-    axios.post('http://localhost:5000/board/comment/' + sessionStorage.getItem('user_Token'),
-        {
-            board_id: board_id,
-            comment_content: get_comment_content,
-        })
-        .then((response) => {
-            console.log("comment_result", response.data);
-            set_comment_content('');
-        })
-}
+        axios.post('http://localhost:5000/board/comment/' + sessionStorage.getItem('user_Token'),
+            {
+                board_id: board_id,
+                comment_content: get_comment_content,
+            })
+            .then((response) => {
+                console.log("comment_result", response.data);
+                set_comment_content('');
+            })
 
-return (
-    <>
-        <div className="board_view_wrap">
-            <div className="board_view_Header">
-                주식토론 게시판
-            </div>
-            <div className="board_view_container">
-                <section className="board_content">
-                    <nav>
-                    </nav>
-                    <main>
-                        <div id="board_info_wrap">
-                            <div>
-                                <div id="board_info_title">
-                                    [{get_fin_List_name}]{get_board_data.post_title}
+        axios.get("http://localhost:5000/board/view/" + board_id)
+            .then((response) => {
+                console.log(response.data.post_comment);
+                set_Comment_List(response.data.post_comment);
+            })
+    }
+
+    const ReComment_Handler = (id) => {
+        set_recomment_open(!get_recomment_open);
+        set_comment_id(id);
+        console.log("e", id);
+    }
+
+    const ReComment_Insert_Handler = (recomment_id) => {
+
+        axios.post('http://localhost:5000/board/recomment/' + sessionStorage.getItem('user_Token'),
+            {
+                comment_id: recomment_id,
+                recomment_content: get_recomment_content,
+            })
+            .then((response) => {
+                console.log(response.data);
+            })
+    }
+
+    return (
+        <>
+            <div className="board_view_wrap">
+                <div className="board_view_Header">
+                    주식토론 게시판
+                </div>
+                <div className="board_view_container">
+                    <section className="board_content">
+                        <nav>
+                        </nav>
+                        <main>
+                            <div id="board_info_wrap">
+                                <div>
+                                    <div id="board_info_title">
+                                        [{get_fin_List_name}]{get_board_data.post_title}
+                                    </div>
                                 </div>
+                                <ul id="board_info">
+                                    <li id="board_info_data">
+                                        {get_board_data.post_author}
+                                    </li>
+                                    <li>  |  </li>
+                                    <li id="board_info_data">
+                                        {get_board_data.post_date}
+                                    </li>
+                                    <li>  |  </li>
+                                    <li id="board_info_data">
+                                        조회 : {get_board_data.post_count}
+                                    </li>
+                                    <li>  |  </li>
+                                    <li id="board_info_recommend">
+                                        추천 : {get_board_data.post_recommend}
+                                    </li>
+
+                                </ul>
                             </div>
-                            <ul id="board_info">
-                                <li id="board_info_data">
-                                    {get_board_data.post_author}
-                                </li>
-                                <li>  |  </li>
-                                <li id="board_info_data">
-                                    {get_board_data.post_date}
-                                </li>
-                                <li>  |  </li>
-                                <li id="board_info_data">
-                                    조회 : {get_board_data.post_count}
-                                </li>
-                                <li>  |  </li>
-                                <li id="board_info_recommend">
-                                    추천 : {get_board_data.post_recommend}
-                                </li>
-
-                            </ul>
-                        </div>
-                        <div id="board_content">
-                            <div dangerouslySetInnerHTML={{ __html: get_board_data.post_content }}></div>
-                        </div>
-                    </main>
-                    <aside>
-                    </aside>
-                </section>
-            </div>
-            <div className="BoardView_footer">
-                <div>
-                    <Button type="primary" icon={<TableOutlined />}
-                        onClick={() => history.push('/main')}>
-                        목록
-                    </Button>
+                            <div id="board_content">
+                                <div dangerouslySetInnerHTML={{ __html: get_board_data.post_content }}></div>
+                            </div>
+                        </main>
+                        <aside>
+                        </aside>
+                    </section>
                 </div>
-                <div>
-                    <Button type="primary" icon={<LikeOutlined />} onClick={recommend_Handler}>
-                        추천
-                    </Button>
-                </div>
-                {get_user_check ?
+                <div className="BoardView_footer">
                     <div>
-                        <Button type="primary" icon={<EditOutlined />} onClick={updateBoard}>
-                            수정
+                        <Button type="primary" icon={<TableOutlined />}
+                            onClick={() => history.push('/main')}>
+                            목록
                         </Button>
                     </div>
-                    : ''}
-                {get_user_check ?
                     <div>
-                        <Button type="danger" icon={<DeleteOutlined />} onClick={showModal}>
-                            삭제
+                        <Button type="primary" icon={<LikeOutlined />} onClick={recommend_Handler}>
+                            추천
                         </Button>
                     </div>
-                    : ''}
-            </div>
-            <div>
-                <Modal
-                    title="게시글 삭제"
-                    visible={visible}
-                    onOk={handle_DeleteBoard_Ok}
-                    confirmLoading={confirmLoading}
-                    onCancel={handle_DeleteBoard_Cancel}
-                    okText="삭제"
-                    cancelText="취소"
-                >
-                    <p>정말 삭제하시겠습니까?</p>
-                </Modal>
-            </div>
-            <div className="board_comment_wrap">
-                <div>
-                    <TextArea rows={4} onChange={Comment_Change_Handler} value={get_comment_content} />
+                    {get_user_check ?
+                        <div>
+                            <Button type="primary" icon={<EditOutlined />} onClick={updateBoard}>
+                                수정
+                            </Button>
+                        </div>
+                        : ''}
+                    {get_user_check ?
+                        <div>
+                            <Button type="danger" icon={<DeleteOutlined />} onClick={showModal}>
+                                삭제
+                            </Button>
+                        </div>
+                        : ''}
                 </div>
                 <div>
-                    <Button type="primary" icon={<PlusOutlined />} onClick={Comment_Insert_Handler}>
-                        댓글 등록
-                    </Button>
+                    <Modal
+                        title="게시글 삭제"
+                        visible={visible}
+                        onOk={handle_DeleteBoard_Ok}
+                        confirmLoading={confirmLoading}
+                        onCancel={handle_DeleteBoard_Cancel}
+                        okText="삭제"
+                        cancelText="취소"
+                    >
+                        <p>정말 삭제하시겠습니까?</p>
+                    </Modal>
                 </div>
-                <div>
+                <div className="board_comment_wrap">
+                    <div>
+                        <TextArea rows={4} onChange={Comment_Change_Handler} value={get_comment_content} />
+                    </div>
+                    <div>
+                        <Button type="primary" icon={<PlusOutlined />} onClick={Comment_Insert_Handler}>
+                            댓글 등록
+                        </Button>
+                    </div>
+                    <div>
+                        {get_Comment_List.map((list, index) => {
+
+                            return (
+                                <div className="comment_wrap" key={index}>
+                                    <div className="comment_top">
+                                        <div className="comment_author">
+                                            {list.comment_author}
+                                        </div>
+                                        <div>
+                                            {list.comment_date}
+                                        </div>
+                                    </div>
+                                    <div className="comment_content">
+                                        {list.comment_content}
+                                    </div>
+                                    <div>
+                                        <div>
+                                            <button onClick={() => ReComment_Handler(list._id)}>답글</button>
+                                        </div>
+                                        <div>
+                                            <span>추천</span>
+                                            <span>비추천</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        {
+                                            get_comment_id === list._id ?
+                                                <div>
+                                                    <div>
+                                                        <TextArea rows={3} value={get_recomment_content}
+                                                            onChange={ReComment_Change_Handler} />
+                                                    </div>
+                                                    <div>
+                                                        <Button type="primary" icon={<PlusOutlined />}
+                                                            onClick={() => ReComment_Insert_Handler(list._id)}>
+                                                            답글 등록
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                                : null
+                                        }
+                                    </div>
+
+                                </div>
+                            )
+                        }
+                        )}
+                    </div>
 
                 </div>
-
             </div>
-        </div>
-    </>
-)
+        </>
+    )
 }
 
 export default BoardView;

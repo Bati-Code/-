@@ -10,7 +10,7 @@ import BoardViewPage from './views/Board/BoardView'
 import BoardInsert from "./views/Board/BoardInsert";
 import BoardUpdate from "./views/Board/BoardUpdate";
 import test_AutoComplete from "./views/test/test_AutoComplete";
-
+axios.defaults.withCredentials = true;
 
 const Board = () => {
 

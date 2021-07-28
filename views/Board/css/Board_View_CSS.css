@@ -131,6 +131,30 @@ main #board_info_wrap{
     border-color: #0F5C96
  }
 
+ .comment_wrap{
+    display: flex;
+    flex-direction: column;
+    border-top: solid 1px #cdcdcd;
+    padding-top: 9px;
+ }
+
+ .comment_wrap .comment_top{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 3px 0 4px;
+ }
+
+ .comment_wrap .comment_top .comment_author{
+     font-size: 14px;
+     font-weight: 500;
+ }
+
+ .comment_wrap .comment_content{
+    padding: 14px 3px 8px 4px;
+    min-height: 32px;
+ }
+
 .ant-btn-primary{
     background-color: #2685D0;
     border-radius: 0;

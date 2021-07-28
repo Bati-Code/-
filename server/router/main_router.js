@@ -24,12 +24,13 @@ module.exports = (app) => {
     app.post('/login', (req, res) => {
         const get_user_token = req.body.userToken;
         const get_user_name = req.body.userName;
-
+        console.log("init Login");
         res.send(get_user_token)
         req.session.userInfo = { userToken: get_user_token, userName: get_user_name };
-        session = [...session, req.session];
+        req.session.save();
+        // session = [...session, req.session];
 
-        console.log("Login", session);
+        console.log("Login", req.session);
 
 
     })
@@ -39,49 +40,34 @@ module.exports = (app) => {
 
         const get_user_Token = req.params.user_Token;
 
-        const destroy_session = session.findIndex((item) => { return item.userInfo.userToken === get_user_Token })
-        if (destroy_session) {
-            session.splice(destroy_session, 1);
+        if(req.session.userInfo){
             res.json({ logout_result_code: 1 });
         }
-        else {
+        else{
             res.json({ logout_result_code: 0 });
         }
+        req.session.destroy();
 
-        console.log(session);
+        console.log(req.session);
     })
 
     //세션체크
     app.get('/session_check/:user_Token', (req, res) => {
+        console.log("reqsession", req.session);
 
         const get_user_Token = req.params.user_Token;
         console.log("session_Check", get_user_Token);
 
-        if (session.length !== 0) {
-            const findSession = session.find((element) => {
-                if (element.userInfo.userToken === get_user_Token) {
-                    console.log("good");
-                    res.json({ session_check_result: 1, userName: element.userInfo.userName });
-                }
-                else {
-                    console.log("bad");
-                    res.json({ session_check_result: 0 });
-                }
-            })
+        if (req.session.userInfo) {
+            console.log("있다");
+            res.json({ session_check_result: 1, userName: req.session.userInfo.userName });
         }
         else {
-            console.log("so bad");
+            console.log("없다");
             res.json({ session_check_result: 0 });
         }
 
 
-
-        // if (get_session_user_ID === get_user_ID) {
-        //     res.json({ session_check_result: 1 });
-        // }
-        // else {
-        //     res.json({ session_check_result: 0 });
-        // }
     })
 
     //게시글 저장
@@ -95,22 +81,27 @@ module.exports = (app) => {
             console.log("element", element.userInfo);
             if (element.userInfo.userToken === get_user_Token) {
                 console.log("good");
-
-                new_Board.post_title = req.body.board_title;
-                new_Board.post_author = element.userInfo.userName;
-                new_Board.post_date = moment().format('MM-DD');
-                new_Board.post_count = 0;
-                new_Board.post_recommend = 0;
-                new_Board.post_content = req.body.board_Data;
-                new_Board.post_yn = 'y';
-                new_Board.post_fin_list = req.body.board_item;
-
                 return true;
             }
             else {
                 return false;
             }
         })
+
+        if (findSession) {
+            new_Board.post_title = req.body.board_title;
+            new_Board.post_author = findSession.userInfo.userName;
+            new_Board.post_date = moment().format('MM-DD');
+            new_Board.post_count = 0;
+            new_Board.post_recommend = 0;
+            new_Board.post_content = req.body.board_Data;
+            new_Board.post_yn = 'y';
+            new_Board.post_fin_list = req.body.board_item;
+        }
+        else {
+            res.json({ board_insert: 0 });
+            return false;
+        }
 
         await new_Board.save((err) => {
             if (err) {
@@ -234,41 +225,107 @@ module.exports = (app) => {
             const findSession = session.find((element) => {
                 if (element.userInfo.userToken === get_user_Token) {
                     console.log("comment good");
-
-                    const newcomment = {
-                        comment_content: req.body.comment_content,
-                        comment_author: element.userInfo.userName,
-                        comment_date: moment().format('MM-DD HH:mm:ss'),
-                    }
-
-                    Board.updateOne({ _id: req.body.board_id },
-                        {
-                            $push: { post_comment: newcomment }
-                            
-                        }, (err) => {
-                            if (err) {
-                                console.log("comment insert Error");
-                                res.json({ comment_check_result: 0 });
-                                return;
-                            }
-                            else {
-                                console.log("댓글 INSERT 완료");
-                                res.json({ comment_check_result: 1, userName: element.userInfo.userName });
-                            }
-                        }
-                    )
-
+                    return true;
                 }
                 else {
                     console.log("bad");
                     res.json({ comment_check_result: 0 });
+                    return false;
                 }
             })
+
+            if (findSession) {
+                const newcomment = {
+                    comment_content: req.body.comment_content,
+                    comment_author: findSession.userInfo.userName,
+                    comment_date: moment().format('MM-DD HH:mm:ss'),
+                }
+
+                Board.updateOne({ _id: req.body.board_id },
+                    {
+                        $push: { post_comment: newcomment }
+
+                    }, (err) => {
+                        if (err) {
+                            console.log("comment insert Error");
+                            res.json({ comment_check_result: 0 });
+                            return;
+                        }
+                        else {
+                            console.log("댓글 INSERT 완료");
+                            res.json({ comment_check_result: 1, userName: findSession.userInfo.userName });
+                            return;
+                        }
+                    }
+                )
+            }
+            else {
+                res.json({ comment_check_result: 0 });
+                return;
+            }
+
         }
         else {
             res.json({ comment_check_result: 0 });
+            return;
         }
 
+
+    })
+
+    //답글
+    app.post('/board/recomment/:user_Token', (req, res) => {
+        const get_user_Token = req.params.user_Token;
+
+        if (session.length !== 0) {
+            const findSession = session.find((element) => {
+                if (element.userInfo.userToken === get_user_Token) {
+                    console.log("recomment good");
+                    return true;
+                }
+                else {
+                    console.log("bad");
+                    res.json({ recomment_check_result: 0 });
+                    return false;
+                }
+            })
+
+            if (findSession) {
+                const new_recomment = {
+                    recomment_content: req.body.recomment_content,
+                    recomment_author: findSession.userInfo.userName,
+                    recomment_date: moment().format('MM-DD HH:mm:ss'),
+                }
+
+                console.log(req.body.comment_id);
+                Board.updateOne({ post_comment: { _id: req.body.comment_id } },
+                    {
+                        $push: { post_comment: { comment_recomment: new_recomment } }
+
+                    }, (err) => {
+                        if (err) {
+                            console.log("recomment insert Error");
+                            res.json({ recomment_check_result: 0 });
+                            return;
+                        }
+                        else {
+                            console.log("답글 INSERT 완료");
+                            res.json({ recomment_check_result: 1, userName: findSession.userInfo.userName });
+                            return;
+                        }
+                    }
+                )
+            }
+            else {
+                res.json({ recomment_check_result: 0 });
+                return;
+            }
+
+        }
+        else {
+            res.json({ recomment_check_result: 0 });
+            return;
+        }
 
     })
 
