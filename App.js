@@ -9,7 +9,7 @@ import LoginPage from './views/member/LoginPage'
 import BoardViewPage from './views/Board/BoardView'
 import BoardInsert from "./views/Board/BoardInsert";
 import BoardUpdate from "./views/Board/BoardUpdate";
-import test_AutoComplete from "./views/test/test_AutoComplete";
+
 axios.defaults.withCredentials = true;
 
 const Board = () => {
@@ -17,12 +17,12 @@ const Board = () => {
 	return (
 		<BrowserRouter>
 			<Switch>
-				<Route path="/login" render={() =>  <LoginPage />} ></Route>
+				<Route path="/login" render={() => <LoginPage />} />
 
-				<Route path="/main" component={MainPage}></Route>
-				<Route path="/board/insert" component={BoardInsert}></Route>
-				<Route path="/board/view/:id" component={BoardViewPage} ></Route>
-				<Route path="/board/update/:id" component={BoardUpdate} ></Route>
+				<PrivateRoute path="/main" component={MainPage} />
+				<PrivateRoute path="/board/insert" component={BoardInsert} />
+				<PrivateRoute path="/board/view/:id" component={BoardViewPage} />
+				<PrivateRoute path="/board/update/:id" component={BoardUpdate} /> 
 			</Switch>
 		</BrowserRouter>
 

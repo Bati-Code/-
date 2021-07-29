@@ -46,6 +46,9 @@ const BoardUpdate = (res) => {
                 board_content: get_BoardContent,
                 board_id: board_id,
                 board_item: get_finance_List_Value
+            },
+            {
+                headers: { 'authorization': sessionStorage.getItem('user_Token') }
             }
         )
             .then((request) => {

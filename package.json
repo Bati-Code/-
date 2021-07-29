@@ -32,6 +32,7 @@
 		"moment": "^2.29.1",
 		"mongoose": "^5.13.3",
 		"mongoose-paginate-v2": "^1.4.1",
+		"node-request-interceptor": "^0.6.3",
 		"nodemon": "^2.0.12",
 		"path": "^0.12.7",
 		"query-string": "^7.0.1",

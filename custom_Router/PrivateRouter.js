@@ -11,18 +11,18 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 
 
 
-    useEffect(() => {
-        const loginSession = sessionStorage.getItem('user_Token');
 
-        axios.get('http://localhost:5000/session_check/' + loginSession)
-            .then((response) => {
-                console.log(response.data);
-                if (response.data.session_check_result === 0)
-                    set_session(false);
-                else if (response.data.session_check_result === 1)
-                    set_session(true);
-            })
-    }, [])
+    axios.get('http://localhost:5000/user_check',
+        {
+            headers: { 'authorization': sessionStorage.getItem('user_Token') }
+        })
+        .then((response) => {
+            console.log("PrivateRouter", response.data);
+            if (response.data.user_result === 0)
+                set_session(false);
+            else if (response.data.user_result === 1)
+                set_session(true);
+        })
 
 
     console.log("APP", get_session);
@@ -30,7 +30,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 
     return (
         <Route {...rest} render={(props) => (
-            get_session === 'default' ? null  
+            get_session === 'default' ? null
                 : (get_session ? <Component {...props} />
                     : <>{alert("로그인이 필요한 페이지입니다.")}{<Redirect to="/login" />}</>)
         )}

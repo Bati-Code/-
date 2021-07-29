@@ -28,7 +28,7 @@ app.use(session({
   secret: '@#@$MYSIGN#@$#$',
   resave: false,
   saveUninitialized: true,
-  cookie:{maxAge: 5000},
+  cookie:{maxAge: 60000 * 10},
   rolling: true
 }));
 

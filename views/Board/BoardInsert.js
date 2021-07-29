@@ -52,16 +52,24 @@ const BoardInsert = () => {
 
         if (get_BoardData && get_BoardTitle && get_finance_List_Value) {
 
-            axios.post('http://localhost:5000/board/insert/' + sessionStorage.getItem('user_Token'),
+            axios.post('http://localhost:5000/board/insert',
                 {
                     board_title: get_BoardTitle,
                     board_Data: get_BoardData,
                     board_item: get_finance_List_Value
+                },
+                {
+                    headers: { 'authorization': sessionStorage.getItem('user_Token')}
                 }
+
             )
                 .then((request) => {
                     if (request.data.board_insert === 0) {
                         console.log("업로드 실패");
+                    }
+                    else if (request.data.board_insert === 100) {
+                        console.log("세션 체크 실패");
+                        history.push('/login');
                     }
                     else if (request.data.board_insert === 1) {
                         console.log("업로드 성공");
@@ -88,7 +96,7 @@ const BoardInsert = () => {
                     <Autocomplete
                         id="highlights-demo"
                         style={{ width: '100%' }}
-                        options={fin_list} 
+                        options={fin_list}
                         onChange={AutoComplete_Change_Handler}
                         getOptionLabel={(option) => option.name + "  |  " + option.code}
                         renderInput={(params) => (

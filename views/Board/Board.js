@@ -4,7 +4,7 @@ import "antd/dist/antd.css";
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { Page_Search, Page_Store } from '../../redux/action/page_action';
 import "./css/BoardSearchCSS.css";
 
@@ -31,7 +31,6 @@ const Board = () => {
         if (search) {
             axios.get('http://localhost:5000/board/search/' + menu_select + '/' + search_value + '/' + page)
                 .then((response) => {
-                    console.log(response.data);
 
                     const boardList = response.data.docs;
                     set_Board_Total(response.data.totalDocs);
@@ -152,13 +151,10 @@ const Board = () => {
         }
     }
 
-    console.log(get_BoardList);
-    console.log(search, menu_select, search_value);
-
     return (
         <>
             <div className="board_search_wrap">
-                <Dropdown overlay={menu}>
+                <Dropdown overlay={menu} trigger='click'>
                     <Button>
                         {get_Menu_Text} <DownOutlined />
                     </Button>
@@ -173,9 +169,9 @@ const Board = () => {
                             <div className="board_temp_wrap" key={index}
                                 onClick={() => {
                                     console.log(list._id);
-                                    history.push("/board/view/" + list._id);
+                                    history.push("/board/view/" + list._id); 
                                 }}>
-                                <div className="board_title"> 
+                                <div className="board_title">
                                     [{list.post_fin_list.name}]{list.post_title}
                                 </div>
                                 <ul className="board_info">

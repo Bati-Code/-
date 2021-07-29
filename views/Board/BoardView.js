@@ -43,6 +43,8 @@ const BoardView = (res) => {
                 set_Comment_List(response.data.post_comment);
                 set_fin_List_name(response.data.post_fin_list.name);
             })
+
+        window.scrollTo(0, 0);
     }, [])
 
     useEffect(() => {
@@ -58,11 +60,13 @@ const BoardView = (res) => {
     }
 
     useEffect(() => {
-        axios.get("http://localhost:5000/session_check/" + sessionStorage.getItem('user_Token'))
+        axios.get("http://localhost:5000/user_check",
+            {
+                headers: { 'authorization': sessionStorage.getItem('user_Token') }
+            })
             .then((response) => {
-                console.log("boardVIew", response.data);
                 if (response.data.userName === get_board_data.post_author
-                    && response.data.session_check_result) {
+                    && response.data.user_result === 1) {
                     console.log("board view success");
                     set_user_check(true);
                 }
@@ -79,7 +83,10 @@ const BoardView = (res) => {
 
     const handle_DeleteBoard_Ok = () => {
         setConfirmLoading(true);
-        axios.delete("http://localhost:5000/board/" + board_id)
+        axios.delete("http://localhost:5000/board/" + board_id,
+            {
+                headers: { 'authorization': sessionStorage.getItem('user_Token') }
+            })
             .then((response) => {
                 console.log(response);
                 if (response.data.delete_board_result === 0) {
@@ -107,10 +114,13 @@ const BoardView = (res) => {
 
     const Comment_Insert_Handler = () => {
 
-        axios.post('http://localhost:5000/board/comment/' + sessionStorage.getItem('user_Token'),
+        axios.post('http://localhost:5000/board/comment',
             {
                 board_id: board_id,
                 comment_content: get_comment_content,
+            },
+            {
+                headers: { 'authorization': sessionStorage.getItem('user_Token') }
             })
             .then((response) => {
                 console.log("comment_result", response.data);
@@ -130,15 +140,19 @@ const BoardView = (res) => {
         console.log("e", id);
     }
 
-    const ReComment_Insert_Handler = (recomment_id) => {
+    const ReComment_Insert_Handler = (comment_id) => {
 
-        axios.post('http://localhost:5000/board/recomment/' + sessionStorage.getItem('user_Token'),
-            {
-                comment_id: recomment_id,
+        axios.post('http://localhost:5000/board/recomment',
+            { 
+                board_id : board_id,
+                comment_id: comment_id,
                 recomment_content: get_recomment_content,
+            },
+            {
+                headers: { 'authorization': sessionStorage.getItem('user_Token') }
             })
             .then((response) => {
-                console.log(response.data);
+                console.log(response.data); 
             })
     }
 
@@ -154,7 +168,7 @@ const BoardView = (res) => {
                         </nav>
                         <main>
                             <div id="board_info_wrap">
-                                <div>
+                                <div> 
                                     <div id="board_info_title">
                                         [{get_fin_List_name}]{get_board_data.post_title}
                                     </div>
