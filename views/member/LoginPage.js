@@ -3,13 +3,12 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import "./css/LoginCSS.css";
 
-//admin3 1q2w3e4r$R$
 
 const LoginPage = () => {
 
     const history = useHistory();
 
-    const loginHandler = () =>  {
+    const loginHandler = () => {
         const id = document.getElementById("inputBox_ID").value;
         const pw = document.getElementById("inputBox_PW").value;
 
@@ -30,19 +29,20 @@ const LoginPage = () => {
                 if (response.data.code === 200) {
                     console.log("login");
                     console.log(response.data.result.data);
-                    axios.post('http://localhost:5000/login', 
-                    {
-                        userToken: response.data.result.data.authToken,
-                        userName : response.data.result.data.me.username
-                    })
-                    .then((response) => {
-                        console.log("login_Post", response.data);
-                        let user_Storage = window.sessionStorage;
-                        user_Storage.setItem('user_Token', response.data);
-                        history.push('/main');
-                    })
+                    axios.post('http://192.168.0.7:5000/login',  //192.168.0.7
+                        {
+                            userName: response.data.result.data.me.username
+                        },
+                    )
+                        .then((response) => {
+                            console.log("login_Post", response.data);
+                            let user_Storage = window.sessionStorage;
+                            user_Storage.setItem('user_Token', response.data);
 
-                    
+                            history.push('/main');
+                        })
+
+
                 }
             })
     }

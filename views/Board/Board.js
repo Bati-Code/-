@@ -6,6 +6,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useHistory } from 'react-router-dom';
 import { Page_Search, Page_Store } from '../../redux/action/page_action';
+
+import ChatIcon from '@material-ui/icons/Chat';
 import "./css/BoardSearchCSS.css";
 
 
@@ -46,7 +48,6 @@ const Board = () => {
         else {
             axios.get('http://localhost:5000/board/list/' + page)
                 .then((response) => {
-                    console.log(response.data);
                     const boardList = response.data.docs;
                     set_Board_Total(response.data.totalDocs);
 
@@ -169,10 +170,18 @@ const Board = () => {
                             <div className="board_temp_wrap" key={index}
                                 onClick={() => {
                                     console.log(list._id);
-                                    history.push("/board/view/" + list._id); 
+                                    history.push("/board/view/" + list._id);
                                 }}>
                                 <div className="board_title">
                                     [{list.post_fin_list.name}]{list.post_title}
+                                    <span className="board_comment_count">
+                                        <ChatIcon style={
+                                            {
+                                                fontSize: '1.2rem',
+                                                marginRight: '3px',
+                                            }
+                                        } />{list.post_comment.length}
+                                    </span>
                                 </div>
                                 <ul className="board_info">
                                     <li className="post_author">{list.post_author}</li> <li> | </li>

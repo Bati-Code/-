@@ -6,7 +6,8 @@ module.exports = (env, options) => {
 
 		mode: "development",
 
-		plugins: [],
+		plugins: [
+		],
 
 		output: {
 			path: __dirname + "/public",
@@ -58,6 +59,10 @@ module.exports = (env, options) => {
 							},
 						},
 					],
+				},
+				{
+				test: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
+                use: [ 'raw-loader' ]
 				},
 			],
 		},

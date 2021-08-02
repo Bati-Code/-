@@ -1,6 +1,5 @@
 import { FormOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -10,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import './css/BoardInsertCSS.css';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const BoardUpdate = (res) => {
 
@@ -98,6 +98,7 @@ const BoardUpdate = (res) => {
                             console.log(editor)
                         }}
                         onChange={(event, editor) => {
+                            console.log('change.', editor.getData());
                             set_BoardContent(editor.getData());
                         }}
                         onBlur={(event, editor) => {
@@ -116,7 +117,7 @@ const BoardUpdate = (res) => {
                         </Button>
                     </div>
                     <div>
-                        <Button type="danger" onClick={() => { history.push('/main') }} icon={<CloseOutlined />}>
+                        <Button type="danger" onClick={() => { history.goBack() }} icon={<CloseOutlined />}>
                             취소
                         </Button>
                     </div>

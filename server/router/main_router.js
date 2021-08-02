@@ -3,74 +3,65 @@ const Board = require('../data/board_Schema');
 const session = require('express-session');
 const moment = require('moment');
 const { useState } = require("react");
+const jwt = require('jsonwebtoken');
+const { Base64 } = require('js-base64');
 
+module.exports = (app, secret) => {
 
-module.exports = (app) => {
+    let token_check = false;
 
     app.use('*', (req, res, next) => {
         console.log(req.originalUrl);
+
         if (req.originalUrl == '/login') {
             console.log("pass");
             return next();
         }
         else {
-            // console.log("interceptor", req.baseUrl);
-            if (req.session.userInfo) {
-                console.log("interceptor_session_Token", req.session.userInfo.userToken);
-                let token = req.header('authorization');
-                console.log("get_Token", token);
-                if (token) {
-                    if (token === req.session.userInfo.userToken) {
-                        console.log("check");
-                        req.session.userInfo.session_check = true;
+            let token = req.header('authorization');
+            if (token) {
+                try {
 
-                        return next();
-                    }
-                    else {
-                        console.log("session unmatched");
-                        req.session.userInfo.session_check = false;
-                        return next();
-                    }
+                    jwt.verify(token, secret, (err, decoded) => {
+                        if (err) {
+                            console.log("token verify error");
+                            token_check = false;
+                            next();
+                        }
+                        else {
+                            console.log("token checked");
+                            console.log(decoded);
+                            token_check = true;
+                            next();
+                        }
+                    });
+                } catch (error) {
+                    console.log("catch token error", error);
+                    token_check = false;
+                    return;
                 }
-                else {
-                    console.log("token does not exist");
-                    req.session.userInfo.session_check = false;
-                    return next();
-                }
-            }
-            else {
-                console.log('session expired');
-                next();
-            }
 
+            } else {
+                console.log("token is not exist")
+                token_check = false;
+                return;
+            }
         }
     })
 
-    let session = [];
-
-    // let session;
-
-    //로그인
-    // app.post('/login', (req, res) => {
-    //     const get_data1 = req.body;
-
-    //     session = req.session;
-    //     session.userID = get_data1;
-    //     console.log("loginSession", session);
-    //     res.send(session.userID);
-    // })
-
     //로그인
     app.post('/login', (req, res) => {
-        const get_user_token = req.body.userToken;
-        const get_user_name = req.body.userName;
-        console.log("init Login");
-        res.send(get_user_token)
-        req.session.userInfo = { userToken: get_user_token, userName: get_user_name, session_check: false };
-        req.session.save();
-        // session = [...session, req.session];
 
-        console.log("Login", req.session);
+        console.log("init Login");
+        const get_user_name = req.body.userName;
+        const make_token = jwt.sign({ userName: get_user_name }, secret);
+
+        res.send(make_token);
+
+
+        // req.session.userInfo = { userToken: get_user_token, userName: get_user_name, session_check: false };
+        // req.session.save();
+        console.log("Login", make_token);
 
 
     })
@@ -78,22 +69,20 @@ module.exports = (app) => {
     //로그아웃
     app.get('/logout', (req, res) => {
 
-        req.session.destroy();
         res.json({ logout_result_code: 1 });
 
-        console.log(req.session);
+        console.log("logout");
     })
 
     //유저체크
     app.get('/user_check', (req, res) => {
 
-        if (req.session.userInfo) {
-            if (req.session.userInfo.session_check == true) {
-                res.json({ user_result: 1, userName: req.session.userInfo.userName });
-            }
-            else {
-                res.json({ user_result: 0 });
-            }
+        if (token_check) {
+            const header = req.header('authorization');
+            const array = header.split(".");
+            const userName = JSON.parse(Base64.decode(array[1])).userName;
+
+            res.json({ user_result: 1, userName: userName });
         }
         else {
             res.json({ user_result: 0 });
@@ -104,71 +93,53 @@ module.exports = (app) => {
     //게시글 저장
     app.post('/board/insert', async (req, res) => {
 
-        const get_data = req.body;
-        const get_user_Token = req.params.user_Token;
         const new_Board = new Board();
-        console.log("insert", req.session);
 
-        // const findSession = session.find((element) => {
-        //     console.log("element", element.userInfo);
-        //     if (element.userInfo.userToken === get_user_Token) {
-        //         console.log("good");
-        //         return true;
-        //     }
-        //     else {
-        //         return false;
-        //     }
-        // })
+        console.log("Insert");
 
-        // if (findSession) {
-        //     new_Board.post_title = req.body.board_title;
-        //     new_Board.post_author = findSession.userInfo.userName;
-        //     new_Board.post_date = moment().format('MM-DD');
-        //     new_Board.post_count = 0;
-        //     new_Board.post_recommend = 0;
-        //     new_Board.post_content = req.body.board_Data;
-        //     new_Board.post_yn = 'y';
-        //     new_Board.post_fin_list = req.body.board_item;
-        // }
-        // else {
-        //     res.json({ board_insert: 0 });
-        //     return false;
-        // }
+        if (token_check) {
+            const header = req.header('authorization');
+            const array = header.split(".");
+            const userName = JSON.parse(Base64.decode(array[1])).userName;
 
-        if (req.session.userInfo) {
-            if (req.session.userInfo.session_check == true) {
-                new_Board.post_title = req.body.board_title;
-                new_Board.post_author = req.session.userInfo.userName;
-                new_Board.post_date = moment().format('MM-DD');
-                new_Board.post_count = 0;
-                new_Board.post_recommend = 0;
-                new_Board.post_content = req.body.board_Data;
-                new_Board.post_yn = 'y';
-                new_Board.post_fin_list = req.body.board_item;
+            const query = Board.find();
 
-                await new_Board.save((err) => {
-                    if (err) {
-                        console.log(err);
-                        res.json({ board_insert: 0 });
-                        console.log("게시글 업로드 실패");
-                        return;
-                    }
-                    else {
-                        console.log("게시글 업로드");
-                        res.json({ board_insert: 1 });
-                    }
-                })
-            }
-            else {
-                res.json({ board_insert: 100 });
-            }
+            await query.count((err, count) => {
+                if (err) {
+                    res.json({ board_insert: 0 });
+                    return;
+                }
+                else {
+                    console.log("count", count)
+                    new_Board.post_num = count + 1;
+                    new_Board.post_title = req.body.board_title;
+                    new_Board.post_author = userName;
+                    new_Board.post_date = moment().format('MM-DD');
+                    new_Board.post_count = 0;
+                    new_Board.post_recommend = 0;
+                    new_Board.post_content = req.body.board_Data;
+                    new_Board.post_yn = 'y';
+                    new_Board.post_fin_list = req.body.board_item;
+                }
+            })
+
+
+            await new_Board.save((err) => {
+                if (err) {
+                    console.log(err);
+                    res.json({ board_insert: 0 });
+                    console.log("게시글 업로드 실패");
+                    return;
+                }
+                else {
+                    console.log("게시글 업로드");
+                    res.json({ board_insert: 1 });
+                }
+            })
         }
         else {
             res.json({ board_insert: 100 });
         }
-
-
-
     })
 
     //페이지이동 
@@ -272,36 +243,34 @@ module.exports = (app) => {
     //댓글입력
     app.post('/board/comment', async (req, res) => {
 
-        if (req.session.userInfo) {
-            if (req.session.userInfo.session_check == true) {
+        if (token_check) {
+            const header = req.header('authorization');
+            const array = header.split(".");
+            const userName = JSON.parse(Base64.decode(array[1])).userName;
 
-                const newcomment = {
-                    comment_content: req.body.comment_content,
-                    comment_author: req.session.userInfo.userName,
-                    comment_date: moment().format('MM-DD HH:mm:ss'),
-                }
+            const newcomment = {
+                comment_content: req.body.comment_content,
+                comment_author: userName,
+                comment_date: moment().format('MM-DD HH:mm:ss'),
+            }
 
-                Board.updateOne({ _id: req.body.board_id },
-                    {
-                        $push: { post_comment: newcomment }
+            Board.updateOne({ _id: req.body.board_id },
+                {
+                    $push: { post_comment: newcomment }
 
-                    }, (err) => {
-                        if (err) {
-                            console.log("comment insert Error");
-                            res.json({ comment_check_result: 0 });
-                            return;
-                        }
-                        else {
-                            console.log("댓글 INSERT 완료");
-                            res.json({ comment_check_result: 1, userName: req.session.userInfo.userName });
-                            return;
-                        }
+                }, (err) => {
+                    if (err) {
+                        console.log("comment insert Error");
+                        res.json({ comment_check_result: 0 });
+                        return;
                     }
-                )
-            }
-            else {
-                res.json({ comment_check_result: 0 });
-            }
+                    else {
+                        console.log("댓글 INSERT 완료");
+                        res.json({ comment_check_result: 1, userName: userName });
+                        return;
+                    }
+                }
+            )
         }
         else {
             res.json({ comment_check_result: 0 });
@@ -311,36 +280,46 @@ module.exports = (app) => {
     //답글
     app.post('/board/recomment', (req, res) => {
 
-        if (req.session.userInfo) {
-            if (req.session.userInfo.session_check == true) {
-                const new_recomment = {
-                    recomment_content: req.body.recomment_content,
-                    recomment_author: req.session.userInfo.userName,
-                    recomment_date: moment().format('MM-DD HH:mm:ss'),
-                }
+        console.log(req.body);
 
-                console.log(req.body.comment_id);
-                Board.findOneAndUpdate({ 'post_comment._id': req.body.comment_id },
-                    {
-                        $push: { 'post_comment.comment_recomment': new_recomment }
+        if (token_check) {
+            const header = req.header('authorization');
+            const array = header.split(".");
+            const userName = JSON.parse(Base64.decode(array[1])).userName;
 
-                    }, (err, boards) => {
-                        if (err) {
-                            console.log("recomment insert Error", boards);
-                            res.json({ recomment_check_result: 0 });
-                            return;
+
+            const new_recomment = {
+                recomment_content: req.body.recomment_content,
+                recomment_author: userName,
+                recomment_date: moment().format('MM-DD HH:mm:ss'),
+            }
+
+            console.log(req.body.comment_id);
+            Board.updateOne({ '_id': req.body.board_id },
+                {
+                    $push: { 'post_comment.$[element].comment_recomment': new_recomment }
+
+                },
+                {
+                    "arrayFilters": [
+                        {
+                            'element._id': req.body.comment_id,
                         }
-                        else {
-                            console.log("답글 INSERT 완료", boards);
-                            res.json({ recomment_check_result: 1, userName: req.session.userInfo.userName });
-                            return;
-                        }
+                    ]
+
+                }, (err, boards) => {
+                    if (err) {
+                        console.log("recomment insert Error", err);
+                        res.json({ recomment_check_result: 0 });
+                        return;
                     }
-                )
-            }
-            else {
-                res.json({ recomment_check_result: 0 });
-            }
+                    else {
+                        console.log("답글 INSERT 완료", boards);
+                        res.json({ recomment_check_result: 1, userName: userName });
+                        return;
+                    }
+                }
+            )
         }
         else {
             res.json({ recomment_check_result: 0 });
@@ -351,59 +330,83 @@ module.exports = (app) => {
     //추천수 
     app.get('/board/view/recommend/:board_id', async (req, res) => {
 
-        let board_recommend_count;
+        const header = req.header('authorization');
+        const array = header.split(".");
+        const userName = JSON.parse(Base64.decode(array[1])).userName;
 
-        await Board.findOne({ _id: req.params.board_id }, (err, boards) => {
+        Board.findOne({ _id: req.params.board_id, 'post_recommend_user.recommend_user': userName }, (err, boards) => {
             if (err) {
-                console.log(err);
+                console.log('error');
+                res.json({recommend_update : 0, recommend_count: boards.post_recommend});
                 return;
             }
             else {
-                boards.post_recommend += 1;
-                board_recommend_count = boards.post_recommend;
-                res.json(board_recommend_count);
+                if (boards !== null) {
+                    console.log("이미추천"); //이미 추천
+                    res.json({recommend_update : 0, recommend_count: boards.post_recommend});
+                    return;
+                }
+                else {
+                    Board.findOne({ _id: req.params.board_id }, (err, boards) => {
+                        if (err) {
+                            console.log(err);
+                            res.json({recommend_update : 0, recommend_count: boards.post_recommend});
+                            return;
+                        }
+                        else {
+                            const new_recommend_user = { recommend_user: userName }
+
+                            Board.updateOne({ _id: req.params.board_id },
+                                {
+                                    post_recommend: boards.post_recommend + 1,
+                                    $push: { 'post_recommend_user': new_recommend_user }
+                                },
+                                (err, data) => {
+                                    if (err) {
+                                        console.log("update Error");
+                                        res.json({recommend_update : 0, recommend_count: boards.post_recommend});
+                                        return;
+                                    }
+                                    else {
+                                        console.log("recommend update");
+                                        res.json({recommend_update : 1, recommend_count: boards.post_recommend+1});
+                                        return;
+                                    }
+                                })
+                        }
+                    })
+                }
             }
         })
 
-        await Board.updateOne({ _id: req.params.board_id }, { post_recommend: board_recommend_count }, (err, data) => {
-            if (err) {
-                console.log("update Error");
-                return;
-            }
-            else {
-                console.log("recommend update");
-            }
-        })
+
+
+
 
     })
 
     //게시글 수정
     app.post('/board/update', async (req, res) => {
 
-        if (req.session.userInfo) {
-            if (req.session.userInfo.session_check == true) {
-                await Board.updateOne({ _id: req.body.board_id },
-                    {
-                        post_title: req.body.board_title,
-                        post_content: req.body.board_content,
-                        post_fin_list: req.body.board_item,
+        if (token_check) {
+            await Board.updateOne({ _id: req.body.board_id },
+                {
+                    post_title: req.body.board_title,
+                    post_content: req.body.board_content,
+                    post_fin_list: req.body.board_item,
 
-                    }, (err) => {
-                        if (err) {
-                            console.log("update Error");
-                            res.json({ update_board_result: 0 });
-                            return;
-                        }
-                        else {
-                            console.log("글 수정 완료");
-                            res.json({ update_board_result: 1 });
-                        }
+                }, (err) => {
+                    if (err) {
+                        console.log("update Error");
+                        res.json({ update_board_result: 0 });
+                        return;
                     }
-                )
-            }
-            else {
-                res.json({ update_board_result: 0 });
-            }
+                    else {
+                        console.log("글 수정 완료");
+                        res.json({ update_board_result: 1 });
+                    }
+                }
+            )
         }
         else {
             res.json({ update_board_result: 0 });
@@ -414,30 +417,26 @@ module.exports = (app) => {
     //게시글 삭제
     app.delete('/board/:board_id', async (req, res) => {
 
-        if (req.session.userInfo) {
-            if (req.session.userInfo.session_check == true) {
-                await Board.updateOne({ _id: req.params.board_id }, { post_yn: 'n' }, (err) => {
-                    if (err) {
-                        console.log("Delte Error");
-                        res.json({ delete_board_result: 0 });
-                        return;
-                    }
-                    else {
-                        console.log("delte success");
-                        res.json({ delete_board_result: 1 });
-                    }
-                })
-            }
-            else {
-                res.json({ delete_board_result: 0 });
-            }
+        const header = req.header('authorization');
+        const array = header.split(".");
+        const userName = JSON.parse(Base64.decode(array[1])).userName;
+
+        if (token_check) {
+            await Board.updateOne({ _id: req.params.board_id, post_author: userName }, { post_yn: 'n' }, (err) => {
+                if (err) {
+                    console.log("Delte Error");
+                    res.json({ delete_board_result: 0 });
+                    return;
+                }
+                else {
+                    console.log("delte success");
+                    res.json({ delete_board_result: 1 });
+                }
+            })
         }
         else {
             res.json({ delete_board_result: 0 });
         }
-
-
-
     })
 
 

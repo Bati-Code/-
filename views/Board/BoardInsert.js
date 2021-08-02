@@ -7,10 +7,16 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useAlert } from 'react-alert'
 
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import './css/BoardInsertCSS.css';
 import { useSelector } from 'react-redux';
+
+import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
+
+
+
+import { Editor } from '@tinymce/tinymce-react';
 
 
 const BoardInsert = () => {
@@ -23,25 +29,20 @@ const BoardInsert = () => {
     const history = useHistory();
     const alert = useAlert();
 
+    const editorRef = useRef(null);
+    const log = () => {
+        if (editorRef.current) {
+            console.log(editorRef.current.getContent());
+        }
+    };
+
+
+
     const { fin_list } = useSelector(state => state.financeList);
 
-    // useEffect(() => {
-    //     axios.get('http://hitalk-investment.hitalkplus.com:4050/StockCode?ETF=1')
-    //         .then((response) => {
+    useEffect(() => {
 
-    //             response.data.datalist.map((list, index) => {
-    //                 delete list.reason;
-    //                 delete list.dtfchk;
-    //                 delete list.reason_no;
-    //                 delete list.type;
-    //                 delete list.etfchk;
-    //                 delete list.use_yn;
-    //             })
-
-    //             console.log(response.data.datalist);
-    //             set_finance_List(response.data.datalist);
-    //         })
-    // }, [])
+    }, [])
 
     const BoardTitle_Handler = (e) => {
         set_BoardTitle(e.target.value);
@@ -59,7 +60,7 @@ const BoardInsert = () => {
                     board_item: get_finance_List_Value
                 },
                 {
-                    headers: { 'authorization': sessionStorage.getItem('user_Token')}
+                    headers: { 'authorization': sessionStorage.getItem('user_Token') },
                 }
 
             )
@@ -89,6 +90,8 @@ const BoardInsert = () => {
         console.log(newValue);
     }
 
+    console.log(get_BoardData);
+
     return (
         <>
             <div className='board_insert_wrap'>
@@ -107,14 +110,18 @@ const BoardInsert = () => {
                     <input name="tite" id="title_input"
                         type="text" placeholder="제목을 입력해주세요." onChange={BoardTitle_Handler}></input>
                 </div>
-                <div>
-                    <CKEditor
+                <div id='editor'>
+                    {/* <CKEditor
                         editor={ClassicEditor}
-                        config={{ placeholder: "글 작성" }}
+                        config={{
+                            placeholder: "글 작성",
+                            language: 'ko',
+                        }}
                         onReady={editor => {
                             console.log(editor)
                         }}
                         onChange={(event, editor) => {
+                            console.log(editor.getData());
                             set_BoardData(editor.getData());
                         }}
                         onBlur={(event, editor) => {
@@ -124,7 +131,36 @@ const BoardInsert = () => {
 
                             console.log('Focus.', editor);
                         }}
+                    /> */}
+                    <Editor
+                        onEditorChange={(newValue, editor) => set_BoardData(newValue)}
+                        init={{
+                            selector: 'textarea#basic-example',
+                            placeholder: '글 작성',
+                            height: 500,
+                            menubar: false,
+                            plugins: [
+                                'advlist autolink lists link image charmap print preview anchor',
+                                'searchreplace visualblocks code fullscreen media',
+                                'insertdatetime media table paste code help wordcount'
+                            ],
+                            toolbar: 'undo redo | formatselect | ' +
+                                'bold italic backcolor media | alignleft aligncenter ' +
+                                'alignright alignjustify | bullist numlist outdent indent | ' +
+                                'removeformat | help | custom',
+                            menubar: 'insert',
+                            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                            setup: (editor) => {
+                                editor.ui.registry.addButton('custom', {
+                                    text: 'custom',
+                                    onAction: () => {
+                                        console.log(editor);
+                                    }
+                                })
+                            }
+                        }}
                     />
+
                 </div>
                 <div className='board_insert_button_wrap'>
                     <div>

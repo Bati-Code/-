@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom';
 import { Modal, Button, Input } from 'antd'
-import { LikeOutlined, TableOutlined, EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { LikeOutlined, TableOutlined, EditOutlined, DeleteOutlined, PlusOutlined, RightOutlined, DislikeOutlined } from '@ant-design/icons';
 import './css/Board_View_CSS.css'
 import { useSelector } from 'react-redux';
 
@@ -55,7 +55,7 @@ const BoardView = (res) => {
         axios.get("http://localhost:5000/board/view/recommend/" + board_id)
             .then((request) => {
                 console.log(request.data);
-                set_board_recommend(request.data);
+                set_board_recommend(request.data.recommend_count);
             })
     }
 
@@ -143,8 +143,8 @@ const BoardView = (res) => {
     const ReComment_Insert_Handler = (comment_id) => {
 
         axios.post('http://localhost:5000/board/recomment',
-            { 
-                board_id : board_id,
+            {
+                board_id: board_id,
                 comment_id: comment_id,
                 recomment_content: get_recomment_content,
             },
@@ -152,8 +152,17 @@ const BoardView = (res) => {
                 headers: { 'authorization': sessionStorage.getItem('user_Token') }
             })
             .then((response) => {
-                console.log(response.data); 
+                console.log(response.data);
+                set_recomment_content('');
+                set_recomment_open(false);
             })
+
+        axios.get("http://localhost:5000/board/view/" + board_id)
+            .then((response) => {
+                console.log(response.data.post_comment);
+                set_Comment_List(response.data.post_comment);
+            })
+
     }
 
     return (
@@ -168,7 +177,7 @@ const BoardView = (res) => {
                         </nav>
                         <main>
                             <div id="board_info_wrap">
-                                <div> 
+                                <div>
                                     <div id="board_info_title">
                                         [{get_fin_List_name}]{get_board_data.post_title}
                                     </div>
@@ -265,32 +274,62 @@ const BoardView = (res) => {
                                     <div className="comment_content">
                                         {list.comment_content}
                                     </div>
-                                    <div>
+                                    <div className="comment_function">
                                         <div>
-                                            <button onClick={() => ReComment_Handler(list._id)}>답글</button>
+                                            <Button type="primary" onClick={() => ReComment_Handler(list._id)}>
+                                                답글
+                                            </Button>
                                         </div>
                                         <div>
-                                            <span>추천</span>
-                                            <span>비추천</span>
+                                            <span><LikeOutlined /></span>
+                                            <span><DislikeOutlined /></span>
                                         </div>
                                     </div>
                                     <div>
                                         {
-                                            get_comment_id === list._id ?
-                                                <div>
+                                            get_recomment_open ?
+                                                get_comment_id === list._id ?
                                                     <div>
-                                                        <TextArea rows={3} value={get_recomment_content}
-                                                            onChange={ReComment_Change_Handler} />
+                                                        <div>
+                                                            <TextArea rows={3} value={get_recomment_content}
+                                                                onChange={ReComment_Change_Handler} />
+                                                        </div>
+                                                        <div>
+                                                            <Button type="primary" icon={<PlusOutlined />}
+                                                                onClick={() => ReComment_Insert_Handler(list._id)}>
+                                                                답글 등록
+                                                            </Button>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <Button type="primary" icon={<PlusOutlined />}
-                                                            onClick={() => ReComment_Insert_Handler(list._id)}>
-                                                            답글 등록
-                                                        </Button>
-                                                    </div>
-                                                </div>
+                                                    : null
                                                 : null
                                         }
+                                    </div>
+                                    <div>
+                                        {list.comment_recomment.map((recomment, index) => {
+
+                                            return (
+                                                <div key={index}>
+                                                    <div className='recomment_wrap'>
+                                                        <div className='recomment_top'>
+                                                            <div className="recomment_author">
+                                                                <RightOutlined />
+                                                                {recomment.recomment_author}
+                                                            </div>
+                                                            <div>
+                                                            {recomment.recomment_date}
+                                                            </div>
+                                                        </div>
+                                                        <div className='recomment_info'>
+                                                            {recomment.recomment_content}
+                                                        </div>
+
+
+
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
                                     </div>
 
                                 </div>

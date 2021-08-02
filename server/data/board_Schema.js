@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const boardSchema = new mongoose.Schema({
+  post_num: Number,
   post_title: String,
   post_author: String,
   post_date: String,
@@ -19,7 +20,10 @@ const boardSchema = new mongoose.Schema({
       recomment_author: String,
       recomment_date: String
     }]
-  }]
+  }],
+  post_recommend_user: [{
+    recommend_user: String,
+  }]  
   
 });
 

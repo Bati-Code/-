@@ -48,6 +48,7 @@ const MainPage = () => {
             .then((response) => {
                 console.log(response.data);
                 if (response.data.logout_result_code === 1) {
+                    sessionStorage.clear();
                     history.push('/login');
                 }
             })

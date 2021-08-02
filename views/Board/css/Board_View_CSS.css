@@ -152,8 +152,53 @@ main #board_info_wrap{
 
  .comment_wrap .comment_content{
     padding: 14px 3px 8px 4px;
-    min-height: 32px;
+    min-height: 56px;
  }
+
+ .comment_wrap .comment_function{
+     display: flex;
+     flex-direction: row;
+     justify-content: space-between;
+     padding: 0 3px 0 4px;
+     margin-bottom: 5px;
+ }
+
+ .recomment_wrap{
+    display: flex;
+    flex-direction: column;
+    border-top: solid 1px #cdcdcd;
+    padding-top: 9px;
+ }
+
+ .recomment_wrap .recomment_top{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 3px 0 4px;
+    margin-left: 5px;
+ }
+
+ .recomment_wrap .recomment_top .recomment_author{
+     font-size: 14px;
+     font-weight: 500;
+ }
+ .recomment_wrap .recomment_info{
+    margin-left: 19px;
+ }
+ .recomment_wrap .recomment_content{
+    padding: 14px 3px 8px 4px;
+    min-height: 56px;
+ }
+
+ .recomment_wrap .recomment_function{
+     display: flex;
+     flex-direction: row;
+     justify-content: space-between;
+     padding: 0 3px 0 4px;
+     margin-bottom: 5px;
+ }
+
+
 
 .ant-btn-primary{
     background-color: #2685D0;

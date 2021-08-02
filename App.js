@@ -10,7 +10,17 @@ import BoardViewPage from './views/Board/BoardView'
 import BoardInsert from "./views/Board/BoardInsert";
 import BoardUpdate from "./views/Board/BoardUpdate";
 
-axios.defaults.withCredentials = true;
+axios.interceptors.request.use(
+	(config) => {
+		config.headers.authorization = sessionStorage.getItem('user_Token');
+
+		return config;
+	},
+	function (error) {
+		console.log("에ㅓㄹ");
+		return Promise.reject(error);
+	});
+
 
 const Board = () => {
 
@@ -22,7 +32,7 @@ const Board = () => {
 				<PrivateRoute path="/main" component={MainPage} />
 				<PrivateRoute path="/board/insert" component={BoardInsert} />
 				<PrivateRoute path="/board/view/:id" component={BoardViewPage} />
-				<PrivateRoute path="/board/update/:id" component={BoardUpdate} /> 
+				<PrivateRoute path="/board/update/:id" component={BoardUpdate} />
 			</Switch>
 		</BrowserRouter>
 
