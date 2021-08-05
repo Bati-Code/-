@@ -27,9 +27,9 @@ const BoardUpdate = (res) => {
         axios.get('http://localhost:5000/board/view/' + board_id)
             .then((request) => {
                 set_BoardData(request.data);
-                set_BoardTitle(request.data.post_title);
-                set_BoardContent(request.data.post_content);
-                set_finance_List_Value(request.data.post_fin_list);
+                set_BoardTitle(request.data.list.post_title);
+                set_BoardContent(request.data.list.post_content);
+                set_finance_List_Value(request.data.list.post_fin_list);
             })
     }, [])
 

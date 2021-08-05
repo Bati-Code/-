@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useHistory } from 'react-router-dom';
 import { Page_Search, Page_Store } from '../../redux/action/page_action';
-
+import moment from 'moment';
 import ChatIcon from '@material-ui/icons/Chat';
 import "./css/BoardSearchCSS.css";
 
@@ -185,7 +185,7 @@ const Board = () => {
                                 </div>
                                 <ul className="board_info">
                                     <li className="post_author">{list.post_author}</li> <li> | </li>
-                                    <li>{list.post_date}</li> <li> | </li>
+                                    <li>{moment(list.post_date).format('MM-DD HH:mm')}</li> <li> | </li>
                                     <li>조회 : {list.post_count}</li> <li> | </li>
                                     <li>추천 : {list.post_recommend}</li>
                                 </ul>

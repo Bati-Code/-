@@ -87,6 +87,13 @@ main #board_info_wrap{
     overflow: hidden;
  }
 
+ main #board_info #board_info_recommend{
+    margin: 0 5px 0 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+ }
+
  main #board_info_wrap #board_info_title{
      font-size: 16px;
      text-align: left;
@@ -152,10 +159,10 @@ main #board_info_wrap{
 
  .comment_wrap .comment_content{
     padding: 14px 3px 8px 4px;
-    min-height: 56px;
+    min-height: 60px;
  }
 
- .comment_wrap .comment_function{
+ .comment_wrap .comment_function_wrap{
      display: flex;
      flex-direction: row;
      justify-content: space-between;
@@ -163,11 +170,17 @@ main #board_info_wrap{
      margin-bottom: 5px;
  }
 
+ .comment_wrap .comment_function_wrap .comment_function_list span{
+     margin-left: 5px;
+     line-height: 30px;
+ }
+
  .recomment_wrap{
     display: flex;
     flex-direction: column;
     border-top: solid 1px #cdcdcd;
     padding-top: 9px;
+    background-color: #fafafa;
  }
 
  .recomment_wrap .recomment_top{
@@ -191,11 +204,12 @@ main #board_info_wrap{
  }
 
  .recomment_wrap .recomment_function{
-     display: flex;
-     flex-direction: row;
-     justify-content: space-between;
-     padding: 0 3px 0 4px;
-     margin-bottom: 5px;
+     margin-bottom: 3px;
+ }
+
+ .recomment_wrap .recomment_function .ant-btn{
+    margin: 0 1px;
+    float: right;
  }
 
 
@@ -204,5 +218,14 @@ main #board_info_wrap{
     background-color: #2685D0;
     border-radius: 0;
     border-color: #2685D0;
+}
+
+.comment_function .ant-btn-primary{
+    padding: 3px 10px;
+    font-size: 12px;
+}
+
+#delete_button{
+    margin-left: 5px;
 }
  

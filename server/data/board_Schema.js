@@ -13,18 +13,26 @@ const boardSchema = new mongoose.Schema({
   post_fin_list: Object,
   post_comment: [{
     comment_content: String,
-    comment_author: String, 
+    comment_author: String,
     comment_date: String,
+    comment_recommend: { type: Number, default: 0 },
+    comment_recommend_user: [{
+      comment_recommend_user: String,
+    }],
     comment_recomment: [{
       recomment_content: String,
       recomment_author: String,
-      recomment_date: String
+      recomment_date: String,
+      recomment_recommend: { type: Number, default: 0 },
+      recomment_recommend_user: [{
+        recomment_recommend_user: String,
+      }],
     }]
   }],
   post_recommend_user: [{
     recommend_user: String,
-  }]  
-  
+  }]
+
 });
 
 boardSchema.plugin(mongoosePaginate);
