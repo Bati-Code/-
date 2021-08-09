@@ -1,7 +1,7 @@
 import { FormOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
+
+
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useAlert } from 'react-alert'
@@ -12,7 +12,20 @@ import { useHistory } from 'react-router-dom';
 import './css/BoardInsertCSS.css';
 import { useSelector } from 'react-redux';
 
-import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
+// import Context from '@ckeditor/ckeditor5-core/src/context';
+// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+// import { CKEditor, CKEditorContext } from '@ckeditor/ckeditor5-react';
+// import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
+//import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
+// import AutoImage from '@ckeditor/ckeditor5-image/src/autoimage';
+// import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold';
+// import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
+// import Essentials from '@ckeditor/ckeditor5-essentials/src/essentials';
+// import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
+// import Alignment from '@ckeditor/ckeditor5-alignment/src/alignment'
+// import BlockQuote from '@ckeditor/ckeditor5-block-quote/src/blockquote';
+// import UploadAdapter from '@ckeditor/ckeditor5-adapter-ckfinder/src/uploadadapter';
+// import Autoformat from '@ckeditor/ckeditor5-autoformat/src/autoformat';
 
 
 
@@ -67,6 +80,7 @@ const BoardInsert = () => {
                 .then((request) => {
                     if (request.data.board_insert === 0) {
                         console.log("업로드 실패");
+                        history.push('/main');
                     }
                     else if (request.data.board_insert === 100) {
                         console.log("세션 체크 실패");
@@ -111,45 +125,88 @@ const BoardInsert = () => {
                         type="text" placeholder="제목을 입력해주세요." onChange={BoardTitle_Handler}></input>
                 </div>
                 <div id='editor'>
-                    {/* <CKEditor
-                        editor={ClassicEditor}
-                        config={{
-                            placeholder: "글 작성",
-                            language: 'ko',
-                        }}
-                        onReady={editor => {
-                            console.log(editor)
-                        }}
-                        onChange={(event, editor) => {
-                            console.log(editor.getData());
-                            set_BoardData(editor.getData());
-                        }}
-                        onBlur={(event, editor) => {
-                            console.log('Blur.', editor);
-                        }}
-                        onFocus={(event, editor) => {
+                    {/* <CKEditorContext context={Context}>
+                        <h2>ㅇㅇ</h2>
+                        <CKEditor
+                            editor={ClassicEditor}
+                            config={{
+                                placeholder: "글 작성",
+                                language: 'ko',
+                                plugins: [Paragraph, Bold, Italic, Essentials, Alignment,
+                                    BlockQuote, UploadAdapter,
+                                    Autoformat, AutoImage, ],
+                                blockToolbar: ['bold', 'italic', '|', 'alignment', '|', 'blockQuote']
+                            }}
+                            data="dd"
+                            onReady={editor => {
+                                console.log(editor)
+                            }}
+                            onChange={(event, editor) => {
+                                console.log(editor.getData());
+                                set_BoardData(editor.getData());
+                            }}
+                            onBlur={(event, editor) => {
+                                console.log('Blur.', editor);
+                            }}
+                            onFocus={(event, editor) => {
 
-                            console.log('Focus.', editor);
-                        }}
-                    /> */}
+                                console.log('Focus.', editor);
+                            }}
+                        />
+                    </CKEditorContext> */}
                     <Editor
                         onEditorChange={(newValue, editor) => set_BoardData(newValue)}
+                        apiKey="no-api-key"
                         init={{
-                            selector: 'textarea#basic-example',
                             placeholder: '글 작성',
-                            height: 500,
+                            min_height: 500,
+                            max_height: 500,
+                            max_width: '100%',
+                            language: 'ko_KR',
                             menubar: false,
+                            remove_script_host: false,
+                            relative_urls: false,
+                            convert_urls: true,
+                            image_title: true,
+                            automatic_uploads: true,
+                            file_picker_types: 'image',
+                           
+                            file_picker_callback: function (cb, value, meta) {
+                                var input = document.createElement('input');
+                                input.setAttribute('type', 'file');
+                                input.setAttribute('accept', 'image/*');
+                               
+                                input.onchange = function () {
+                                    var file = this.files[0];
+
+                                    var reader = new FileReader();
+                                    reader.onload = function () {
+                                     
+                                        var id = 'blobid' + (new Date()).getTime();
+                                        var blobCache = tinymce.activeEditor.editorUpload.blobCache;
+                                        var base64 = reader.result.split(',')[1];
+                                        var blobInfo = blobCache.create(id, file, base64);
+                                        blobCache.add(blobInfo);
+
+                                        cb(blobInfo.blobUri(), { title: file.name });
+                                    };
+                                    reader.readAsDataURL(file);
+                                };
+
+                                input.click();
+                            },
+
                             plugins: [
-                                'advlist autolink lists link image charmap print preview anchor',
-                                'searchreplace visualblocks code fullscreen media',
-                                'insertdatetime media table paste code help wordcount'
+                                'advlist autoresize, autolink link image lists charmap print preview hr anchor pagebreak',
+                                'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+                                'table emoticons template paste imagetools'
                             ],
-                            toolbar: 'undo redo | formatselect | ' +
-                                'bold italic backcolor media | alignleft aligncenter ' +
-                                'alignright alignjustify | bullist numlist outdent indent | ' +
-                                'removeformat | help | custom',
-                            menubar: 'insert',
+                            toolbar: 'insertfile undo redo | styleselect | bold italic ' +
+                                '| alignleft aligncenter alignright alignjustify | bullist numlist outdent indent' +
+                                '| link image | print preview media fullpage | forecolor backcolor emoticons',
                             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                            imagetools_toolbar: 'rotateleft rotateright | flipv fliph | editimage imageoptions',
+                            image_caption: true,
                             setup: (editor) => {
                                 editor.ui.registry.addButton('custom', {
                                     text: 'custom',

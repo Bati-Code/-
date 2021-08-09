@@ -29,6 +29,12 @@
     flex-direction: row;
     justify-content: space-evenly;
     margin-top: 10px;
+}
 
+img{
+    max-width: 100%;
+}
 
+iframe{
+    max-width: 100%;
 }

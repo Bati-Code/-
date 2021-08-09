@@ -12,6 +12,7 @@
 	"dependencies": {
 		"@ckeditor/ckeditor5-build-classic": "^29.0.0",
 		"@ckeditor/ckeditor5-react": "^3.0.2",
+		"@ckeditor/ckeditor5-ui": "^29.1.0",
 		"@material-ui/core": "^4.12.2",
 		"@material-ui/icons": "^4.11.2",
 		"@material-ui/lab": "^4.0.0-alpha.60",
@@ -55,6 +56,7 @@
 		"@babel/polyfill": "^7.12.1",
 		"@babel/preset-env": "^7.14.7",
 		"@babel/preset-react": "^7.14.5",
+		"@ckeditor/ckeditor5-alignment": "^29.1.0",
 		"@ckeditor/ckeditor5-dev-webpack-plugin": "^25.3.0",
 		"@ckeditor/ckeditor5-image": "^29.0.0",
 		"@types/antd": "^1.0.0",

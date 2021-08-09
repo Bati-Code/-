@@ -9,7 +9,10 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import './css/BoardInsertCSS.css';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
+// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
+import { Editor } from '@tinymce/tinymce-react';
 
 const BoardUpdate = (res) => {
 
@@ -30,6 +33,8 @@ const BoardUpdate = (res) => {
                 set_BoardTitle(request.data.list.post_title);
                 set_BoardContent(request.data.list.post_content);
                 set_finance_List_Value(request.data.list.post_fin_list);
+
+                console.log(request.data.list.post_fin_list);
             })
     }, [])
 
@@ -65,8 +70,13 @@ const BoardUpdate = (res) => {
     }
 
     const AutoComplete_Change_Handler = (event, newValue) => {
+        set_BoardContent(newValue);
         set_finance_List_Value(newValue);
-        console.log(newValue);
+        console.log(get_finance_List_Value, '|', newValue);
+    }
+
+    const test = (e, v) => {
+        console.log(v);
     }
 
     return (
@@ -89,8 +99,70 @@ const BoardUpdate = (res) => {
                         type="text" placeholder="제목을 입력해주세요."
                         value={get_BoardTitle} onChange={BoardTitle_Handler}></input>
                 </div>
-                <div>
-                    <CKEditor
+                <div id='editor'>
+                    <Editor
+                        onEditorChange={(newValue, editor) => set_BoardContent(newValue)}
+                        value={get_BoardContent}
+                        init={{
+                            placeholder: '글 작성',
+                            height: 500,
+                            language: 'ko_KR',
+                            menubar: false,
+                            relative_urls: false,
+                            remove_script_host: false,
+                            convert_urls: true,
+                            image_title: true,
+                            automatic_uploads: true,
+                            file_picker_types: 'image',
+
+                            file_picker_callback: function (cb, value, meta) {
+                                var input = document.createElement('input');
+                                input.setAttribute('type', 'file');
+                                input.setAttribute('accept', 'image/*');
+
+                                input.onchange = function () {
+                                    var file = this.files[0];
+
+                                    var reader = new FileReader();
+                                    reader.onload = function () {
+
+                                        var id = 'blobid' + (new Date()).getTime();
+                                        var blobCache = tinymce.activeEditor.editorUpload.blobCache;
+                                        var base64 = reader.result.split(',')[1];
+                                        var blobInfo = blobCache.create(id, file, base64);
+                                        blobCache.add(blobInfo);
+
+                                        cb(blobInfo.blobUri(), { title: file.name });
+                                    };
+                                    reader.readAsDataURL(file);
+                                };
+
+                                input.click();
+                            },
+
+                            plugins: [
+                                'advlist autolink link image lists charmap print preview hr anchor pagebreak',
+                                'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+                                'table emoticons template paste imagetools'
+                            ],
+                            toolbar: 'insertfile undo redo | styleselect | bold italic ' +
+                                '| alignleft aligncenter alignright alignjustify | bullist numlist outdent indent' +
+                                '| link image | print preview media fullpage | forecolor backcolor emoticons',
+                            menubar: 'insert',
+                            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                            imagetools_toolbar: 'rotateleft rotateright | flipv fliph | editimage imageoptions',
+                            image_caption: true,
+                            setup: (editor) => {
+                                editor.ui.registry.addButton('custom', {
+                                    text: 'custom',
+                                    onAction: () => {
+                                        console.log(editor);
+                                    }
+                                })
+                            }
+                        }}
+                    />
+                    {/* <CKEditor
                         editor={ClassicEditor}
                         config={{ placeholder: "글 작성" }}
                         data={get_BoardContent}
@@ -108,7 +180,7 @@ const BoardUpdate = (res) => {
 
                             console.log('Focus.', editor);
                         }}
-                    />
+                    /> */}
                 </div>
                 <div className='board_insert_button_wrap'>
                     <div>

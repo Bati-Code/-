@@ -23,7 +23,7 @@ const Board = () => {
     const dispatch = useDispatch();
 
     const { page, search, menu_select, search_value } = useSelector(state => state.pageStore);
-
+    
     useEffect(() => {
         // const meta = document.createElement('meta');
         // meta.name = "viewport";
@@ -48,6 +48,7 @@ const Board = () => {
         else {
             axios.get('http://localhost:5000/board/list/' + page)
                 .then((response) => {
+                    console.log("list effect");
                     const boardList = response.data.docs;
                     set_Board_Total(response.data.totalDocs);
 
@@ -151,6 +152,7 @@ const Board = () => {
                 })
         }
     }
+
 
     return (
         <>

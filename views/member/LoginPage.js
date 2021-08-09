@@ -85,7 +85,6 @@ const LoginPage = () => {
                 </section>
             </div>
             <div className="footer">
-                아이디 찾기|비밀번호 찾기|회원가입
             </div>
         </div >
     )

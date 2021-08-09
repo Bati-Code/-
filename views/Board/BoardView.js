@@ -6,7 +6,7 @@ import { LikeOutlined, TableOutlined, EditOutlined, DeleteOutlined, PlusOutlined
 import './css/Board_View_CSS.css'
 import { useSelector } from 'react-redux';
 import moment from 'moment';
-import { BorderColor } from '@material-ui/icons';
+import { useAlert } from 'react-alert'
 
 
 const BoardView = (res) => {
@@ -35,7 +35,9 @@ const BoardView = (res) => {
     const { TextArea } = Input;
 
     const history = useHistory();
+    const alert = useAlert();
     const board_id = res.match.params.id;
+
 
     useEffect(() => {
         // const meta = document.createElement('meta');
@@ -43,6 +45,7 @@ const BoardView = (res) => {
         // meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover";
         // document.getElementsByTagName('head')[0].appendChild(meta);
 
+        console.log('effect');
         axios.get("http://localhost:5000/board/view/" + board_id)
             .then((response) => {
                 console.log("view data", response.data.userName);
@@ -223,6 +226,11 @@ const BoardView = (res) => {
             .then((response) => {
                 console.log("comment_result", response.data);
                 set_comment_content('');
+                if (response.data.comment_check_result === 0) {
+                    alert.show("댓글 등록에 실패하였습니다.");
+                }
+
+
             })
 
         axios.get("http://localhost:5000/board/view/update/" + board_id)
@@ -280,6 +288,9 @@ const BoardView = (res) => {
                 console.log(response.data);
                 set_recomment_content('');
                 set_recomment_open(false);
+                if (response.data.recomment_check_result === 0) {
+                    alert.show("답글 등록에 실패하였습니다.");
+                }
             })
 
         axios.get("http://localhost:5000/board/view/update/" + board_id)
@@ -319,7 +330,9 @@ const BoardView = (res) => {
         <>
             <div className="board_view_wrap">
                 <div className="board_view_Header">
-                    주식토론 게시판
+                    <a href="/main">
+                        주식토론 게시판
+                    </a>
                 </div>
                 <div className="board_view_container">
                     <section className="board_content">

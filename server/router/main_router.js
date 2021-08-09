@@ -31,7 +31,7 @@ module.exports = (app, secret) => {
                             next();
                         }
                         else {
-                            console.log("token checked");
+                            console.log(moment(), "token checked");
                             //console.log(decoded);
                             token_check = true;
                             next();
@@ -103,6 +103,12 @@ module.exports = (app, secret) => {
             const header = req.header('authorization');
             const array = header.split(".");
             const userName = JSON.parse(Base64.decode(array[1])).userName;
+
+            if (req.body.board_Data === "") {
+                res.json({ board_insert: 0 });
+                console.log("게시글 업로드 실패");
+                return;
+            }
 
             const query = Board.find();
 
@@ -243,29 +249,32 @@ module.exports = (app, secret) => {
             const array = header.split(".");
             const userName = JSON.parse(Base64.decode(array[1])).userName;
 
-            let board_count;
             console.log("view_id", req.params.board_id);
-            await Board.findOne({ _id: req.params.board_id }, (err, boards) => {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                else {
-                    boards.post_count += 1;
-                    board_count = boards.post_count;
-                    res.json({ list: boards, userName: userName });
-                }
-            })
 
-            await Board.updateOne({ _id: req.params.board_id }, { post_count: board_count }, (err, data) => {
-                if (err) {
-                    console.log("update Error");
-                    return;
-                }
-                else {
-                    console.log("update clear");
-                }
-            })
+            await Board.updateOne(
+                { _id: req.params.board_id },
+                { $inc: { 'post_count': + 0.5 } },
+                (err, data) => {
+                    if (err) {
+                        console.log("update Error");
+                        return;
+                    }
+                    else {
+                        console.log("update clear");
+
+                        Board.findOne({ _id: req.params.board_id },
+                            (err, boards) => {
+                                if (err) {
+                                    console.log(err);
+                                    return;
+                                }
+                                else {
+                                    console.log(boards.post_count);
+                                    res.json({ list: boards, userName: userName });
+                                }
+                            })
+                    }
+                })
         }
         else {
             res.json({ board_view_result: 0 });
@@ -284,6 +293,12 @@ module.exports = (app, secret) => {
             const header = req.header('authorization');
             const array = header.split(".");
             const userName = JSON.parse(Base64.decode(array[1])).userName;
+
+
+            if (req.body.comment_content === "") {
+                res.json({ comment_check_result: 0 });
+                return;
+            }
 
             const newcomment = {
                 comment_content: req.body.comment_content,
@@ -339,7 +354,7 @@ module.exports = (app, secret) => {
                     else {
                         const recommend_user = boards.post_comment[0].comment_recommend_user;
                         const user_index = recommend_user.findIndex((e) => e.comment_recommend_user === userName);
-                      
+
                         let recommend_count = boards.post_comment[0].comment_recommend;
 
                         if (recommend_count === undefined)
@@ -439,6 +454,10 @@ module.exports = (app, secret) => {
             const array = header.split(".");
             const userName = JSON.parse(Base64.decode(array[1])).userName;
 
+            if (req.body.recomment_content === "") {
+                res.json({ recomment_check_result: 0 });
+                return;
+            }
 
             const new_recomment = {
                 recomment_content: req.body.recomment_content,
