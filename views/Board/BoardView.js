@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom';
 import { Modal, Button, Input } from 'antd'
 import { LikeOutlined, TableOutlined, EditOutlined, DeleteOutlined, PlusOutlined, RightOutlined, DislikeOutlined } from '@ant-design/icons';
-import './css/Board_View_CSS.css'
+import './css/Board_View_CSS.css';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { useAlert } from 'react-alert'
@@ -329,10 +329,8 @@ const BoardView = (res) => {
     return (
         <>
             <div className="board_view_wrap">
-                <div className="board_view_Header">
-                    <a href="/main">
+                <div className="board_view_Header" onClick={() => history.goBack()}>
                         주식토론 게시판
-                    </a>
                 </div>
                 <div className="board_view_container">
                     <section className="board_content">

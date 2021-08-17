@@ -1,0 +1,24 @@
+.interestWrap{
+    display: flex;
+    flex-direction: column;
+    margin: 15px;
+}
+
+.interestWrap .ant-btn{
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.interestWrap .interest_List{
+    border: 1px solid #DBDBDB;
+    min-height: 500px;
+    padding: 15px;
+}
+
+.interestWrap .interest_List .interest_List_Item{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3px;
+    border-bottom: 1px solid #DBDBDB;
+}

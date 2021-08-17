@@ -1,15 +1,14 @@
 import { DownOutlined, FilterTwoTone } from '@ant-design/icons';
-import { Button, Dropdown, Input, Menu, Pagination } from 'antd';
+import { Button, Dropdown, Input, Menu, Pagination, Radio } from 'antd';
 import "antd/dist/antd.css";
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useHistory } from 'react-router-dom';
-import { Page_Search, Page_Store } from '../../redux/action/page_action';
+import { Page_Search, Page_Store, Page_Reset } from '../../redux/action/page_action';
 import moment from 'moment';
 import ChatIcon from '@material-ui/icons/Chat';
 import "./css/BoardSearchCSS.css";
-
 
 const { Search } = Input;
 
@@ -17,13 +16,12 @@ const Board = () => {
 
     const [get_BoardList, set_BoardList] = useState([]);
     const [get_Board_Total, set_Board_Total] = useState(0);
-    const [get_Menu_Text, set_Menu_Text] = useState('제목');
 
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const { page, search, menu_select, search_value } = useSelector(state => state.pageStore);
-    
+    const { count, page, search, menu_select, search_value } = useSelector(state => state.pageStore);
+
     useEffect(() => {
         // const meta = document.createElement('meta');
         // meta.name = "viewport";
@@ -31,6 +29,7 @@ const Board = () => {
         // document.getElementsByTagName('head')[0].appendChild(meta);
 
         if (search) {
+            console.log(menu_select, " : ", search_value);
             axios.get('http://localhost:5000/board/search/' + menu_select + '/' + search_value + '/' + page)
                 .then((response) => {
 
@@ -64,19 +63,32 @@ const Board = () => {
 
     }, [])
 
-    const onSearch = (value) => {
+    useEffect(() => {
+        axios.get('http://localhost:5000/board/list/' + page)
+            .then((response) => {
+                console.log("list effect");
+                const boardList = response.data.docs;
+                set_Board_Total(response.data.totalDocs);
 
-        if (value) {
-            console.log("search Value", value);
-            axios.get('http://localhost:5000/board/search/' + get_Menu_Text + '/' + value + '/1')
+                boardList.map((list, index) => {
+                    list.index = index + 1;
+                    list.key = index + 1;
+                });
+
+                set_BoardList(boardList);
+            })
+    }, [count])
+
+    useEffect(() => {
+
+        console.log(menu_select, search_value);
+        if (search_value) {
+            axios.get('http://localhost:5000/board/search/' + menu_select + '/' + search_value + '/1')
                 .then((response) => {
-
                     const boardList = response.data.docs;
                     console.log(boardList);
 
                     set_Board_Total(response.data.totalDocs);
-
-                    dispatch(Page_Search(get_Menu_Text, value));
 
                     boardList.map((list, index) => {
                         list.index = index + 1;
@@ -87,39 +99,40 @@ const Board = () => {
 
                 })
         }
-        else {
-            alert("검색할 내용을 입력하세요.");
-        }
 
-    }
+    }, [search_value, search])
 
+    // const onSearch = (value) => {
 
-    const Menu_Handler = (e) => {
-        console.log(e);
-        set_Menu_Text(e.key);
-    }
+    //     if (value) {
+    //         console.log("search Value", value);
+    //         axios.get('http://localhost:5000/board/search/' + get_Menu_Text + '/' + value + '/1')
+    //             .then((response) => {
 
-    const menu = (
-        <Menu onClick={Menu_Handler}>
-            <Menu.Item key="제목" icon={<FilterTwoTone />}>
-                제목
-            </Menu.Item>
-            <Menu.Item key="작성자" icon={<FilterTwoTone />}>
-                작성자
-            </Menu.Item>
-            <Menu.Item key="내용" icon={<FilterTwoTone />}>
-                내용
-            </Menu.Item>
-            <Menu.Item key="종목명" icon={<FilterTwoTone />}>
-                종목명
-            </Menu.Item>
-            <Menu.Item key="종목코드" icon={<FilterTwoTone />}>
-                종목코드
-            </Menu.Item>
-        </Menu>
-    );
+    //                 const boardList = response.data.docs;
+    //                 console.log(boardList);
+
+    //                 set_Board_Total(response.data.totalDocs);
+
+    //                 dispatch(Page_Search(get_Menu_Text, value));
+
+    //                 boardList.map((list, index) => {
+    //                     list.index = index + 1;
+    //                     list.key = index + 1;
+    //                 });
+
+    //                 set_BoardList(boardList);
+
+    //             })
+    //     }
+    //     else {
+    //         alert("검색할 내용을 입력하세요.");
+    //     }
+
+    // }
 
     const PageNation_Handler = (page_value) => {
+        console.log("page", page_value);
         dispatch(Page_Store(page_value));
 
         if (search) {
@@ -156,7 +169,7 @@ const Board = () => {
 
     return (
         <>
-            <div className="board_search_wrap">
+            {/* <div className="board_search_wrap">
                 <Dropdown overlay={menu} trigger='click'>
                     <Button>
                         {get_Menu_Text} <DownOutlined />
@@ -164,7 +177,7 @@ const Board = () => {
                 </Dropdown>
                 <Search placeholder="검색할 내용을 입력하세요."
                     onSearch={onSearch} enterButton />
-            </div>
+            </div> */}
             <div>
                 {
                     get_BoardList.map((list, index) => {

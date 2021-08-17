@@ -69,6 +69,19 @@ body{
      align-items: center;
  }
 
+
+ .board_content main .top_Nav_Wrap{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.board_content main .top_Nav_Wrap .ant-radio-button-wrapper{
+    width: 50%;
+}
+
+
  .board_content aside{
      background-color: white;
      flex-basis: 0%;

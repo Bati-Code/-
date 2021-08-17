@@ -1,16 +1,24 @@
-import { FormOutlined, UserOutlined } from '@ant-design/icons';
+import { DownOutlined, FormOutlined, UserOutlined, FilterTwoTone } from '@ant-design/icons';
 import axios from 'axios'
-import { Button } from 'antd';
+import { Button, Dropdown, Input, Menu, Radio } from 'antd';
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch } from 'react-redux';
 
-
+import { slide as TOP_Menu } from 'react-burger-menu'
 import { Finance_List_Store } from '../../redux/action/finance_list_action';
+import { Page_Search, Page_Reset } from '../../redux/action/page_action';
 import Board from './Board'
+import Top_Fin_list from '../Finance_List/Top_Fin_List';
 import './css/BoardCSS.css'
+import "./css/Board_Menu_CSS.css";
+
+const { Search } = Input;
 
 const MainPage = () => {
+    const [get_Menu_Text, set_Menu_Text] = useState('제목');
+    const [get_Radio_Option, set_Radio_Option] = useState('a');
+
     const history = useHistory();
     const dispatch = useDispatch();
 
@@ -37,6 +45,31 @@ const MainPage = () => {
 
     }, [])
 
+    const Menu_Handler = (e) => {
+        console.log(e);
+        set_Menu_Text(e.key);
+    }
+
+    const menu = (
+        <Menu onClick={Menu_Handler}>
+            <Menu.Item key="제목" icon={<FilterTwoTone />}>
+                제목
+            </Menu.Item>
+            <Menu.Item key="작성자" icon={<FilterTwoTone />}>
+                작성자
+            </Menu.Item>
+            <Menu.Item key="내용" icon={<FilterTwoTone />}>
+                내용
+            </Menu.Item>
+            <Menu.Item key="종목명" icon={<FilterTwoTone />}>
+                종목명
+            </Menu.Item>
+            <Menu.Item key="종목코드" icon={<FilterTwoTone />}>
+                종목코드
+            </Menu.Item>
+        </Menu>
+    );
+
     const Insert_Session_Handler = () => {
 
         history.push('/board/insert');
@@ -54,20 +87,66 @@ const MainPage = () => {
             })
     }
 
+    const onSearch = (value) => {
+        console.log(get_Menu_Text, value);
+        dispatch(Page_Search(get_Menu_Text, value));
+        set_Radio_Option('a');
+    };
+
+
+    const main_Header_Handler = () => {
+        dispatch(Page_Reset());
+    }
+
+    const Radio_Handler = (e) => {
+        console.log(e.target.value);
+        set_Radio_Option(e.target.value);
+    }
+
     return (
         <>
             <div className="board_wrap">
                 <div className="board_Header">
-                    <a href="/main">
-                        주식토론 게시판
-                    </a>
+                    <div>
+                        <div>
+                            <TOP_Menu
+                                width={300}>
+                                <p onClick={() => { history.push('/fin_interest') }}>관심 종목</p>
+                                <p>Home</p>
+                                <p>Home</p>
+                            </TOP_Menu>
+                        </div>
+                        <div onClick={main_Header_Handler}>
+                            주식토론 게시판
+                        </div>
+                    </div>
                 </div>
                 <div className="container">
                     <section className="board_content">
                         <nav>
                         </nav>
                         <main>
-                            <Board></Board>
+                            <div>
+                                <div className="board_search_wrap">
+                                    <Dropdown overlay={menu} trigger='click'>
+                                        <Button>
+                                            {get_Menu_Text} <DownOutlined />
+                                        </Button>
+                                    </Dropdown>
+                                    <Search placeholder="검색할 내용을 입력하세요."
+                                        onSearch={onSearch} enterButton />
+                                </div>
+                            </div>
+                            <div className="top_Nav_Wrap">
+                                <Radio.Group defaultValue="a" style={{ width: '100%' }} onChange={Radio_Handler}
+                                    value={get_Radio_Option}>
+                                    <Radio.Button value="a">전체글</Radio.Button>
+                                    <Radio.Button value="b">종목별 게시판</Radio.Button>
+                                </Radio.Group>
+                            </div>
+                            {get_Radio_Option === 'a' ? <Board />
+                                : get_Radio_Option === 'b' ? <Top_Fin_list />
+                                    : null}
                         </main>
                         <aside>
                         </aside>

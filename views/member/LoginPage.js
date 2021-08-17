@@ -29,7 +29,7 @@ const LoginPage = () => {
                 if (response.data.code === 200) {
                     console.log("login");
                     console.log(response.data.result.data);
-                    axios.post('http://192.168.0.7:5000/login',  //192.168.0.7
+                    axios.post('http://192.168.0.45:5000/login',  //192.168.0.45
                         {
                             userName: response.data.result.data.me.username
                         },

@@ -4,6 +4,7 @@ import { Button } from 'antd';
 
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+
 import { useAlert } from 'react-alert'
 
 import axios from 'axios';
@@ -25,12 +26,10 @@ import { useSelector } from 'react-redux';
 // import Alignment from '@ckeditor/ckeditor5-alignment/src/alignment'
 // import BlockQuote from '@ckeditor/ckeditor5-block-quote/src/blockquote';
 // import UploadAdapter from '@ckeditor/ckeditor5-adapter-ckfinder/src/uploadadapter';
-// import Autoformat from '@ckeditor/ckeditor5-autoformat/src/autoformat';
-
+// import Autoformat from '@ckeditor/ckeditor5-autoformat/src/autoformat
 
 
 import { Editor } from '@tinymce/tinymce-react';
-
 
 const BoardInsert = () => {
 
@@ -170,18 +169,18 @@ const BoardInsert = () => {
                             image_title: true,
                             automatic_uploads: true,
                             file_picker_types: 'image',
-                           
+
                             file_picker_callback: function (cb, value, meta) {
                                 var input = document.createElement('input');
                                 input.setAttribute('type', 'file');
                                 input.setAttribute('accept', 'image/*');
-                               
+
                                 input.onchange = function () {
                                     var file = this.files[0];
 
                                     var reader = new FileReader();
                                     reader.onload = function () {
-                                     
+
                                         var id = 'blobid' + (new Date()).getTime();
                                         var blobCache = tinymce.activeEditor.editorUpload.blobCache;
                                         var base64 = reader.result.split(',')[1];

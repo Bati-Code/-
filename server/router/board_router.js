@@ -1,58 +1,59 @@
-const { default: axios } = require("axios");
-const Board = require('../data/board_Schema');
-const moment = require('moment');
-const { useState } = require("react");
 const jwt = require('jsonwebtoken');
+const express = require('express');
+const moment = require('moment');
 const { Base64 } = require('js-base64');
+
+const Board = require('../data/board_Schema');
 const Mongoose = require('mongoose');
 const ObjectId = Mongoose.Types.ObjectId;
 
-module.exports = (app, secret) => {
+const router = express.Router();
 
-    //로그인
-    app.post('/login', (req, res) => {
+module.exports = (secret) => {
 
-        console.log("init Login");
-        const get_user_name = req.body.userName;
-        const make_token = jwt.sign({ userName: get_user_name }, secret);
+    let token_check = false;
 
-        res.send(make_token);
+    router.use('*', (req, res, next) => {
+        console.log("board_router", req.originalUrl);
 
-
-        // req.session.userInfo = { userToken: get_user_token, userName: get_user_name, session_check: false };
-        // req.session.save();
-        console.log("Login", make_token);
-
-
-    })
-
-    //로그아웃
-    app.get('/logout', (req, res) => {
-
-        res.json({ logout_result_code: 1 });
-
-        console.log("logout");
-    })
-
-    //유저체크
-    app.get('/user_check', async (req, res) => {
-        console.log(token_check);
-
-        if (token_check) {
-            const header = req.header('authorization');
-            const array = header.split(".");
-            const userName = JSON.parse(Base64.decode(array[1])).userName;
-
-            await res.json({ user_result: 1, userName: userName });
+        if (req.originalUrl == '/login') {
+            console.log("pass");
+            return next();
         }
         else {
-            res.json({ user_result: 0 });
-        }
+            let token = req.header('authorization');
+            if (token) {
+                try {
 
+                    jwt.verify(token, secret, (err, decoded) => {
+                        if (err) {
+                            console.log("token verify error", err);
+                            token_check = false;
+                            next();
+                        }
+                        else {
+                            console.log(moment(), "token checked");
+                            //console.log(decoded);
+                            token_check = true;
+                            next();
+                        }
+                    });
+                } catch (error) {
+                    console.log("catch token error", error);
+                    token_check = false;
+                    return;
+                }
+
+            } else {
+                console.log("token is not exist")
+                token_check = false;
+                return;
+            }
+        }
     })
 
     //게시글 저장
-    app.post('/board/insert', async (req, res) => {
+    router.post('/insert', async (req, res) => {
 
         const new_Board = new Board();
 
@@ -110,7 +111,7 @@ module.exports = (app, secret) => {
     })
 
     //페이지이동 
-    app.get('/board/list/:page', async (req, res) => {
+    router.get('/list/:page', async (req, res) => {
 
         let page = parseInt(req.params.page);
         console.log("page", page)
@@ -137,7 +138,7 @@ module.exports = (app, secret) => {
     })
 
     //검색
-    app.get('/board/search/:menuItem/:value/:page', async (req, res) => {
+    router.get('/search/:menuItem/:value/:page', async (req, res) => {
         let page = parseInt(req.params.page);
         const menuItem = req.params.menuItem;
         let value = req.params.value;
@@ -179,7 +180,7 @@ module.exports = (app, secret) => {
     })
 
     //상세페이지 업데이트
-    app.get('/board/view/update/:board_id', async (req, res) => {
+    router.get('/view/update/:board_id', async (req, res) => {
 
         if (token_check) {
             const header = req.header('authorization');
@@ -197,10 +198,13 @@ module.exports = (app, secret) => {
                 }
             })
         }
+        else{
+            console.log('token')
+        }
     })
 
     //상세페이지
-    app.get('/board/view/:board_id', async (req, res) => {
+    router.get('/view/:board_id', async (req, res) => {
 
 
         if (token_check) {
@@ -246,7 +250,7 @@ module.exports = (app, secret) => {
     })
 
     //댓글입력
-    app.post('/board/comment', async (req, res) => {
+    router.post('/comment', async (req, res) => {
 
         if (token_check) {
             const header = req.header('authorization');
@@ -289,7 +293,7 @@ module.exports = (app, secret) => {
     })
 
     //댓글 추천
-    app.post('/board/comment/recommend', (req, res) => {
+    router.post('/comment/recommend', (req, res) => {
 
         if (token_check) {
             const header = req.header('authorization');
@@ -404,7 +408,7 @@ module.exports = (app, secret) => {
     })
 
     //답글
-    app.post('/board/recomment', (req, res) => {
+    router.post('/recomment', (req, res) => {
 
         console.log(req.body);
 
@@ -458,7 +462,7 @@ module.exports = (app, secret) => {
     })
 
     //답글 추천
-    app.post('/board/recomment/recommend', async (req, res) => {
+    router.post('/recomment/recommend', async (req, res) => {
 
 
         if (token_check) {
@@ -590,7 +594,7 @@ module.exports = (app, secret) => {
     })
 
     //추천수 
-    app.get('/board/view/recommend/:board_id', async (req, res) => {
+    router.get('/view/recommend/:board_id', async (req, res) => {
 
         const header = req.header('authorization');
         const array = header.split(".");
@@ -659,7 +663,7 @@ module.exports = (app, secret) => {
     })
 
     //게시글 수정
-    app.post('/board/update', async (req, res) => {
+    router.post('/update', async (req, res) => {
 
         if (token_check) {
             await Board.updateOne({ _id: req.body.board_id },
@@ -688,7 +692,7 @@ module.exports = (app, secret) => {
     })
 
     //게시글 삭제
-    app.delete('/board/:board_id', async (req, res) => {
+    router.delete('/:board_id', async (req, res) => {
 
         const header = req.header('authorization');
         const array = header.split(".");
@@ -713,7 +717,7 @@ module.exports = (app, secret) => {
     })
 
     //댓글삭제
-    app.delete('/board/comment/:comment_id', (req, res) => {
+    router.delete('/comment/:comment_id', (req, res) => {
         console.log('delete Comment');
 
         if (token_check) {
@@ -773,7 +777,7 @@ module.exports = (app, secret) => {
     })
 
     //답글삭제
-    app.delete('/board/recomment/:board_id/:comment_id/:recomment_id', (req, res) => {
+    router.delete('/recomment/:board_id/:comment_id/:recomment_id', (req, res) => {
 
         if (token_check) {
 
@@ -842,7 +846,5 @@ module.exports = (app, secret) => {
     })
 
 
-
-
-
+    return router;
 }

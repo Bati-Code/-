@@ -1,0 +1,48 @@
+.board_Header{
+    width: 100%;
+    height: fit-content;
+    padding: 12px;
+    text-align: center;
+    font-size: 23px;
+    color:white;
+    background-color: #2685D0;
+    font-weight: bold;
+    letter-spacing: -1px;
+}
+
+.finance_info_function{
+    display:flex;
+    justify-content: flex-end;
+    margin: 5px;
+}
+
+.finance_info_label{
+    text-align: center;
+    font-weight: 600;
+}
+
+.voteWrap{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    min-height: 25px;
+    text-align: center;
+}
+
+.voteWrap .up_count{
+    background-color: aqua;
+    min-width: 5%;
+}
+
+.voteWrap .down_count{
+    background-color: plum;
+    min-width: 5%;
+}
+
+.info_content{
+    text-align: center;
+}
+
+.label{
+    width:10%
+}

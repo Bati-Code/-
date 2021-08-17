@@ -10,6 +10,11 @@ import BoardViewPage from './views/Board/BoardView'
 import BoardInsert from "./views/Board/BoardInsert";
 import BoardUpdate from "./views/Board/BoardUpdate";
 
+import Fin_Interest from './views/member_info/Fin_Interest'
+import Fin_Info from "./views/Finance_List/Fin_Info";
+
+
+
 axios.interceptors.request.use(
 	(config) => {
 		config.headers.authorization = sessionStorage.getItem('user_Token');
@@ -33,6 +38,11 @@ const Board = () => {
 				<PrivateRoute path="/board/insert" component={BoardInsert} />
 				<PrivateRoute path="/board/view/:id" component={BoardViewPage} />
 				<PrivateRoute path="/board/update/:id" component={BoardUpdate} />
+
+
+
+				<PrivateRoute path="/fin_interest" component={Fin_Interest} />
+				<PrivateRoute path="/fin_info" component={Fin_Info} />
 			</Switch>
 		</BrowserRouter>
 

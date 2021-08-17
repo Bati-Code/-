@@ -11,7 +11,7 @@ import './public/css/alertCSS.css';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const devTools =
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__({trace: true, traceLimit: 25});
 const store = createStore(Reducer, devTools);
 console.log(store.getState());
 

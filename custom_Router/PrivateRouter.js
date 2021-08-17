@@ -13,9 +13,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 
 
     axios.get('http://localhost:5000/user_check',
-        {
-            headers: { 'authorization': sessionStorage.getItem('user_Token') }
-        })
+        )
         .then((response) => {
             console.log("PrivateRouter", response.data);
             if (response.data.user_result === 0)
