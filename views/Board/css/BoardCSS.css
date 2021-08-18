@@ -12,6 +12,10 @@ body{
     flex-direction: column;
 }
 
+.MainMenu{
+    position: absolute;
+    margin-top: 4px;
+}
 
 .board_wrap{
     background-color: white;
@@ -78,7 +82,8 @@ body{
 }
 
 .board_content main .top_Nav_Wrap .ant-radio-button-wrapper{
-    width: 50%;
+    width: 33.333333333%;
+    font-size: 14px;
 }
 
 

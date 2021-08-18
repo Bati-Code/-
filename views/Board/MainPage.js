@@ -1,31 +1,38 @@
 import { DownOutlined, FormOutlined, UserOutlined, FilterTwoTone } from '@ant-design/icons';
 import axios from 'axios'
-import { Button, Dropdown, Input, Menu, Radio } from 'antd';
+import { Button, Dropdown, Input, Menu, Radio, Drawer } from 'antd';
+import MenuIcon from '@material-ui/icons/Menu';
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { slide as TOP_Menu } from 'react-burger-menu'
+import { useAlert } from 'react-alert'
+
 import { Finance_List_Store } from '../../redux/action/finance_list_action';
-import { Page_Search, Page_Reset } from '../../redux/action/page_action';
+import { Page_Search, Page_Reset, Page_Radio, Page_Store } from '../../redux/action/page_action';
+
 import Board from './Board'
 import Top_Fin_list from '../Finance_List/Top_Fin_List';
 import './css/BoardCSS.css'
-import "./css/Board_Menu_CSS.css";
 
 const { Search } = Input;
 
 const MainPage = () => {
     const [get_Menu_Text, set_Menu_Text] = useState('제목');
     const [get_Radio_Option, set_Radio_Option] = useState('a');
+    const [get_Drawer_Visible, set_Drawer_Visible] = useState(false);
 
     const history = useHistory();
     const dispatch = useDispatch();
+    const alert = useAlert();
+
+    const { radio } = useSelector(state => state.pageStore);
+
 
     useEffect(() => {
         // const meta = document.createElement('meta');
         // meta.name = "viewport";
-        // meta.content = "width=device-width, initial-scale=0.9, maximum-scale=1.0, user-scalable=no, viewport-fit=cover";
+        // meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover";
         // document.getElementsByTagName('head')[0].appendChild(meta);
 
         axios.get('http://hitalk-investment.hitalkplus.com:4050/StockCode?ETF=1')
@@ -89,8 +96,15 @@ const MainPage = () => {
 
     const onSearch = (value) => {
         console.log(get_Menu_Text, value);
-        dispatch(Page_Search(get_Menu_Text, value));
-        set_Radio_Option('a');
+        if (!value) {
+            alert.show('검색할 내용을 입력하세요.');
+            return;
+        }
+        else {
+            dispatch(Page_Search(get_Menu_Text, value));
+            dispatch(Page_Radio('a'));
+        }
+
     };
 
 
@@ -99,8 +113,17 @@ const MainPage = () => {
     }
 
     const Radio_Handler = (e) => {
-        console.log(e.target.value);
-        set_Radio_Option(e.target.value);
+        dispatch(Page_Store(1));
+        dispatch(Page_Radio(e.target.value));
+    }
+
+
+    const drawer_Open_Handler = () => {
+        set_Drawer_Visible(true);
+    }
+
+    const drawer_Close_Handler = () => {
+        set_Drawer_Visible(false);
     }
 
     return (
@@ -109,12 +132,21 @@ const MainPage = () => {
                 <div className="board_Header">
                     <div>
                         <div>
-                            <TOP_Menu
-                                width={300}>
-                                <p onClick={() => { history.push('/fin_interest') }}>관심 종목</p>
-                                <p>Home</p>
-                                <p>Home</p>
-                            </TOP_Menu>
+                            <Drawer
+                                title="메뉴"
+                                placement='left'
+                                closable={false}
+                                onClose={drawer_Close_Handler}
+                                visible={get_Drawer_Visible}
+                                key='main'
+                            >
+                                <p onClick={() => history.push('/fin_interest')}>관심 종목</p>
+                                <p>Some contents...</p>
+                                <p>Some contents...</p>
+                            </Drawer>
+                        </div>
+                        <div className="MainMenu">
+                            <MenuIcon onClick={drawer_Open_Handler} />
                         </div>
                         <div onClick={main_Header_Handler}>
                             주식토론 게시판
@@ -139,14 +171,16 @@ const MainPage = () => {
                             </div>
                             <div className="top_Nav_Wrap">
                                 <Radio.Group defaultValue="a" style={{ width: '100%' }} onChange={Radio_Handler}
-                                    value={get_Radio_Option}>
+                                    value={radio}>
                                     <Radio.Button value="a">전체글</Radio.Button>
-                                    <Radio.Button value="b">종목별 게시판</Radio.Button>
+                                    <Radio.Button value="b">개념글</Radio.Button>
+                                    <Radio.Button value="c">인기 종목</Radio.Button>
                                 </Radio.Group>
                             </div>
-                            {get_Radio_Option === 'a' ? <Board />
-                                : get_Radio_Option === 'b' ? <Top_Fin_list />
-                                    : null}
+                            {radio === 'a' ? <Board />
+                                : radio === 'b' ? <Board />
+                                    : radio === 'c' ? <Top_Fin_list />
+                                        : null}
                         </main>
                         <aside>
                         </aside>
@@ -163,7 +197,6 @@ const MainPage = () => {
                             로그아웃
                         </Button>
                     </div>
-
                 </div>
             </div>
         </>

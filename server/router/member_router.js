@@ -136,7 +136,7 @@ module.exports = (secret) => {
     })
 
     //관심종목 카운트 function
-    const finance_interest_inc = (res, fin_name, fin_code, num) => {
+    const finance_interest_inc = (res, fin_name, fin_code, num, fin_data) => {
 
         Finance.findOne({ finance_code: fin_code },
             (err, boards) => {
@@ -145,11 +145,12 @@ module.exports = (secret) => {
                     return;
                 }
                 else {
-                    console.log("count", boards);
                     if (boards === null) {
                         const new_Finance = new Finance();
                         new_Finance.finance_name = fin_name;
                         new_Finance.finance_code = fin_code;
+                        new_Finance.finance_data = fin_data;
+
 
                         new_Finance.save((err) => {
                             if (err) {
@@ -174,7 +175,6 @@ module.exports = (secret) => {
                                             return;
                                         }
                                         else {
-                                            console.log(results);
                                             res.json({ fin_interest_insert_result: 1 });
                                             return;
                                         }
@@ -197,7 +197,6 @@ module.exports = (secret) => {
                                     return;
                                 }
                                 else {
-                                    console.log(results);
                                     res.json({ fin_interest_insert_result: 1 });
                                     return;
                                 }
@@ -215,14 +214,6 @@ module.exports = (secret) => {
             const header = req.header('authorization');
             const array = header.split(".");
             const userName = JSON.parse(Base64.decode(array[1])).userName;
-
-
-            //////////////////////////////////////////
-
-            /////////////////////////////////////
-
-
-            console.log(req.body.fin_interest_data);
 
             Member.findOne({ member_name: userName }, (err, boards) => {
                 if (err) {
@@ -246,7 +237,7 @@ module.exports = (secret) => {
                                 }
                                 else {
                                     finance_interest_inc(res, req.body.fin_interest_data.name,
-                                        req.body.fin_interet_data.code, 1);
+                                        req.body.fin_interet_data.code, 1, req.body.fin_interest_data);
                                 }
                             })
                         }
@@ -264,7 +255,7 @@ module.exports = (secret) => {
                                 member_name: userName,
                             },
                             {
-                                'member_Fin_Interest': { $elemMatch: { 'code': req.body.fin_interest_data?.code } }
+                                'member_Fin_Interest': { $elemMatch: { 'code': req.body.fin_interest_data.code } }
                             }, (err, boards) => {
                                 if (err) {
                                     res.json({ fin_interest_insert_result: 0 });
@@ -284,16 +275,15 @@ module.exports = (secret) => {
                                                         return;
                                                     }
                                                     else {
-                                                        console.log(result);
+                                                        console.log("관심종목 추가");
                                                         finance_interest_inc(res, req.body.fin_interest_data.name,
-                                                            req.body.fin_interest_data.code, 1);
+                                                            req.body.fin_interest_data.code, 1, req.body.fin_interest_data);
                                                         return;
                                                     }
                                                 })
                                             return;
                                         }
                                         else {
-                                            console.log("이미 있음");
                                             res.json({ fin_interest_insert_result: 0 });
                                             return;
                                         }
@@ -323,8 +313,6 @@ module.exports = (secret) => {
             const array = header.split(".");
             const userName = JSON.parse(Base64.decode(array[1])).userName;
 
-            console.log("delete", req.body.fin_interest_code);
-
             Member.findOne(
                 {
                     member_name: userName,
@@ -353,8 +341,8 @@ module.exports = (secret) => {
                                     return;
                                 }
                                 else {
-                                    console.log(results, "관심종목 삭제");
-                                    finance_interest_inc(res, 0, req.body.fin_interest_code, -1);
+                                    console.log("관심종목 삭제");
+                                    finance_interest_inc(res, 0, req.body.fin_interest_code, -1, 0);
                                     return;
                                 }
                             }

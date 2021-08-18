@@ -12,31 +12,50 @@
 
 .finance_info_function{
     display:flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     margin: 5px;
+    color: red;
+}
+
+.finance_info_function .finance_back{
+    color: black;
 }
 
 .finance_info_label{
     text-align: center;
     font-weight: 600;
+    font-size: 18px;
 }
 
 .voteWrap{
-    display: flex;
-    flex-direction: row;
+    display: table;
     width: 100%;
     min-height: 25px;
     text-align: center;
+    font-weight: 550;
+    margin: 15px 0 15px;
 }
 
 .voteWrap .up_count{
-    background-color: aqua;
+    display: table-cell;
+    vertical-align: middle;
+    transition: 0.2s;
+    background-color: #F53B8E;
     min-width: 5%;
+    color: white;
+    border-bottom-left-radius: 40px;
+    border-top-left-radius: 40px;
 }
 
 .voteWrap .down_count{
-    background-color: plum;
+    display: table-cell;
+    vertical-align: middle;
+    transition: 0.2s;
+    background-color: #1FBFDB;
     min-width: 5%;
+    color: white;
+    border-top-right-radius: 40px;
+    border-bottom-right-radius: 40px;
 }
 
 .info_content{
@@ -44,5 +63,7 @@
 }
 
 .label{
+    display: table-cell;
+    vertical-align: middle;
     width:10%
 }

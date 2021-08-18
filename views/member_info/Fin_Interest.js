@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import { Button } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 
-import { Page_Search, Page_Store } from '../../redux/action/page_action';
+import { Page_Reset, Page_Search, Page_Store } from '../../redux/action/page_action';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import './css/Fin_InterestCSS.css'
@@ -71,15 +71,18 @@ const Fin_Interest = () => {
         history.push("/main");
     }
 
+    const Header_Handler = () => {
+        dispatch(Page_Reset());
+        history.push('/main');
+    }
+
     return (
         <>
             <div className="board_wrap">
                 <div className="board_Header">
                     <div>
-                        <div>
-                            <a href="/main">
+                        <div onClick={Header_Handler}>
                                 주식토론 게시판
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -88,7 +91,6 @@ const Fin_Interest = () => {
                         <nav>
                         </nav>
                         <main>
-                            메인
                             <div className="interestWrap">
                                 <div>
                                     <Autocomplete

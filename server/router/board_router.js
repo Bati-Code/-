@@ -4,6 +4,7 @@ const moment = require('moment');
 const { Base64 } = require('js-base64');
 
 const Board = require('../data/board_Schema');
+const Finance = require('../data/finance_Schema');
 const Mongoose = require('mongoose');
 const ObjectId = Mongoose.Types.ObjectId;
 
@@ -101,7 +102,42 @@ module.exports = (secret) => {
                 }
                 else {
                     console.log("게시글 업로드");
-                    res.json({ board_insert: 1 });
+
+                    Finance.findOne({ finance_code: req.body.board_item.code }
+                        , (err, boards) => {
+                            if (err) {
+                                console.log(err);
+                                return;
+                            }
+                            else {
+                                console.log(boards);
+
+                                if (!boards) {
+                                    const new_Finance = new Finance();
+                                    new_Finance.finance_name = req.body.board_item.name;
+                                    new_Finance.finance_code = req.body.board_item.code;
+                                    new_Finance.finance_data = req.body.board_item;
+
+                                    new_Finance.save((err) => {
+                                        if (err) {
+                                            console.log("finance save err");
+                                            res.json({ fin_interest_insert_result: 0 });
+                                            return;
+                                        }
+                                        else {
+                                            console.log("종목 업로드 성공");
+                                            res.json({ board_insert: 1 });
+                                            return;
+                                        }
+                                    })
+                                }
+                                else {
+                                    res.json({ board_insert: 1 });
+                                    return;
+                                }
+                            }
+                        })
+
                 }
             })
         }
@@ -122,6 +158,37 @@ module.exports = (secret) => {
         console.log(page);
 
         const query = Board.find({ post_yn: 'y' });
+
+        const options = {
+            sort: { _id: -1 },
+            lean: true,
+            limit: 10,
+            page: page
+        };
+
+        await Board.paginate(query, options)
+            .then((result) => {
+                res.json(result);
+            })
+
+    })
+
+    //개념글 페이지 이동
+    router.get('/list/best/:page', async (req, res) => {
+
+        let page = parseInt(req.params.page);
+        console.log("page", page)
+
+        if (!page)
+            page = 1;
+
+        console.log(page);
+
+        const query = Board.find(
+            {
+                post_yn: 'y',
+                post_recommend: { $gt: 10 }
+            });
 
         const options = {
             sort: { _id: -1 },
@@ -198,7 +265,7 @@ module.exports = (secret) => {
                 }
             })
         }
-        else{
+        else {
             console.log('token')
         }
     })

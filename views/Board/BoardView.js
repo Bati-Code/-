@@ -373,7 +373,7 @@ const BoardView = (res) => {
                 <div className="BoardView_footer">
                     <div>
                         <Button type="primary" icon={<TableOutlined />}
-                            onClick={() => history.push('/main')}>
+                            onClick={() => history.goBack()}>
                             목록
                         </Button>
                     </div>

@@ -20,16 +20,11 @@ const Board = () => {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const { count, page, search, menu_select, search_value } = useSelector(state => state.pageStore);
+    const { count, page, search, menu_select, search_value, radio } = useSelector(state => state.pageStore);
 
-    useEffect(() => {
-        // const meta = document.createElement('meta');
-        // meta.name = "viewport";
-        // meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover";
-        // document.getElementsByTagName('head')[0].appendChild(meta);
 
+    const Get_Board_View = () => {
         if (search) {
-            console.log(menu_select, " : ", search_value);
             axios.get('http://localhost:5000/board/search/' + menu_select + '/' + search_value + '/' + page)
                 .then((response) => {
 
@@ -47,7 +42,6 @@ const Board = () => {
         else {
             axios.get('http://localhost:5000/board/list/' + page)
                 .then((response) => {
-                    console.log("list effect");
                     const boardList = response.data.docs;
                     set_Board_Total(response.data.totalDocs);
 
@@ -59,14 +53,44 @@ const Board = () => {
                     set_BoardList(boardList);
                 })
         }
+    }
+
+    const Get_Best_Board_view = () => {
+        axios.get('http://localhost:5000/board/list/best/' + page)
+            .then((response) => {
+                const boardList = response.data.docs;
+                set_Board_Total(response.data.totalDocs);
+
+                boardList.map((list, index) => {
+                    list.index = index + 1;
+                    list.key = index + 1;
+                });
+                set_BoardList(boardList);
+            })
+    }
 
 
+    useEffect(() => {
+        if (radio !== 'b')
+            Get_Board_View();
+        else {
+            Get_Best_Board_view();
+        }
     }, [])
+
+    useEffect(() => {
+        if (radio !== 'b') {
+            Get_Board_View();
+        }
+        else {
+            Get_Best_Board_view();
+        }
+
+    }, [radio, page])
 
     useEffect(() => {
         axios.get('http://localhost:5000/board/list/' + page)
             .then((response) => {
-                console.log("list effect");
                 const boardList = response.data.docs;
                 set_Board_Total(response.data.totalDocs);
 
@@ -81,7 +105,6 @@ const Board = () => {
 
     useEffect(() => {
 
-        console.log(menu_select, search_value);
         if (search_value) {
             axios.get('http://localhost:5000/board/search/' + menu_select + '/' + search_value + '/1')
                 .then((response) => {
@@ -135,49 +158,40 @@ const Board = () => {
         console.log("page", page_value);
         dispatch(Page_Store(page_value));
 
-        if (search) {
-            axios.get('http://localhost:5000/board/search/' + menu_select + '/' + search_value + '/' + page_value)
-                .then((response) => {
-                    console.log(response.data);
+        // if (search) {
+        //     axios.get('http://localhost:5000/board/search/' + menu_select + '/' + search_value + '/' + page_value)
+        //         .then((response) => {
+        //             console.log(response.data);
 
-                    const boardList = response.data.docs;
+        //             const boardList = response.data.docs;
 
-                    boardList.map((list, index) => {
-                        list.index = index + 1;
-                        list.key = index + 1;
-                    });
+        //             boardList.map((list, index) => {
+        //                 list.index = index + 1;
+        //                 list.key = index + 1;
+        //             });
 
-                    set_BoardList(boardList);
-                })
-        }
-        else {
-            axios.get('http://localhost:5000/board/list/' + page_value)
-                .then((response) => {
-                    console.log(response.data);
-                    const boardList = response.data.docs;
+        //             set_BoardList(boardList);
+        //         })
+        // }
+        // else {
+        //     axios.get('http://localhost:5000/board/list/' + page_value)
+        //         .then((response) => {
+        //             console.log(response.data);
+        //             const boardList = response.data.docs;
 
-                    boardList.map((list, index) => {
-                        list.index = index + 1;
-                        list.key = index + 1;
-                    });
+        //             boardList.map((list, index) => {
+        //                 list.index = index + 1;
+        //                 list.key = index + 1;
+        //             });
 
-                    set_BoardList(boardList);
-                })
-        }
+        //             set_BoardList(boardList);
+        //         })
+        // }
     }
 
 
     return (
         <>
-            {/* <div className="board_search_wrap">
-                <Dropdown overlay={menu} trigger='click'>
-                    <Button>
-                        {get_Menu_Text} <DownOutlined />
-                    </Button>
-                </Dropdown>
-                <Search placeholder="검색할 내용을 입력하세요."
-                    onSearch={onSearch} enterButton />
-            </div> */}
             <div>
                 {
                     get_BoardList.map((list, index) => {

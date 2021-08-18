@@ -5,3 +5,28 @@
 .ant-card-body{
     font-size: 12px;
 }
+
+.Fin_searchwrap{
+    width: 100%;
+}
+
+.Fin_List .MuiOutlinedInput-root{
+    border-radius: 0;
+}
+
+.Fin_List .MuiFormControl-marginNormal{
+    margin: 5px;
+    margin-bottom: 0;
+}
+
+.Fin_List .MuiInputBase-fullWidth{
+    width: 97.3%;
+}
+
+.Fin_searchwrap .Fin_List_Search_Button{
+    width: 100%;
+}
+.Fin_List_Search_Button .ant-btn{
+    width: 97.3%;
+    border-radius: 0;
+}
