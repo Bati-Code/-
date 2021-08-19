@@ -6,6 +6,7 @@ import { Page_Radio, Page_Reset, Page_Search } from '../../redux/action/page_act
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
+import { Base64 } from 'js-base64';
 
 import Board from '../Board/Board';
 import './css/Fin_Info_CSS.css'
@@ -27,8 +28,35 @@ const Fin_Info = () => {
                 finance_name: session_fin_name,
             })
             .then((response) => {
-                console.log(response.data);
+                console.log("Get_Finance_data", response.data);
                 set_Finance_Info(response.data);
+
+                const header = window.sessionStorage.getItem('user_Token');
+                const array = header.split(".");
+                const userName = JSON.parse(Base64.decode(array[1])).userName;
+
+                const up_Count_User_Array = response.data.finance_Up_Count_User;
+                const down_Count_User_Array = response.data.finance_Down_Count_User;
+
+                const up_user_Index = up_Count_User_Array.findIndex((e) => e === userName);
+                const down_user_Index = down_Count_User_Array.findIndex((e) => e === userName);
+
+                console.log(up_user_Index);
+
+                if (up_user_Index !== -1) {
+                    document.getElementById('up_count').style.border = "5px double #C42F72";
+                }
+                else {
+                    document.getElementById('up_count').style.border = "4px solid #F53B8E";
+                }
+
+                if (down_user_Index !== -1) {
+                    document.getElementById('down_count').style.border = "5px double #1AA2BA";
+                }
+                else {
+                    document.getElementById('down_count').style.border = "5px solid #1FBFDB";
+                }
+
             })
     }
 
@@ -123,9 +151,9 @@ const Fin_Info = () => {
                         <div>
                             <div className="finance_info_function">
                                 <div className="finance_back">
-                                    <KeyboardBackspaceIcon onClick={Back_Arrow_Handler}/>
+                                    <KeyboardBackspaceIcon onClick={Back_Arrow_Handler} />
                                 </div>
-                                <div className = "finance_interest"> 
+                                <div className="finance_interest">
                                     {get_Fin_Interest_Match
                                         ? <FavoriteIcon onClick={Delete_Interest_Handler} />
                                         : <FavoriteBorderIcon onClick={Insert_Interest_Handler} />}
@@ -140,7 +168,7 @@ const Fin_Info = () => {
                                     <br />
                                     ({get_Finance_Info.finance_Up_Count})
                                 </div>
-                                <div className="up_count"
+                                <div className="up_count" id='up_count'
                                     onClick={Up_Count_Handler}
                                     style={{
                                         width: `${get_Finance_Info.finance_Up_Count
@@ -150,7 +178,7 @@ const Fin_Info = () => {
                                         / (get_Finance_Info.finance_Up_Count + get_Finance_Info.finance_Down_Count) * 100)}%
 
                                 </div>
-                                <div className="down_count"
+                                <div className="down_count" id='down_count'
                                     onClick={Down_Count_Handler}
                                     style={{
                                         width: `${get_Finance_Info.finance_Down_Count

@@ -104,47 +104,54 @@ module.exports = (secret) => {
                     return;
                 }
                 else {
-                    console.log("UPCOUNT", boards);
-                    const user_Array = boards.finance_Up_Count_User;
-                    const user_Array_Index = user_Array.findIndex((e) => e === userName);
-                    console.log("INDEX", user_Array_Index);
+                    if (boards) {
+                        console.log("UPCOUNT", boards);
+                        const user_Array = boards.finance_Up_Count_User;
+                        const user_Array_Index = user_Array.findIndex((e) => e === userName);
+                        console.log("INDEX", user_Array_Index);
 
-                    if (user_Array_Index === -1) {
-                        console.log('empty');
-                        Finance.updateOne({ finance_name: req.body.finance_name },
-                            {
-                                $inc: { finance_Up_Count: 1 },
-                                $push: { finance_Up_Count_User: userName }
-                            },
-                            (err, results) => {
-                                if (err) {
-                                    console.log(err);
-                                    res.json({ up_count_result: 0 });
-                                    return;
-                                }
-                                else {
-                                    res.json({ up_count_result: 1 });
-                                }
-                            })
+                        if (user_Array_Index === -1) {
+                            console.log('empty');
+                            Finance.updateOne({ finance_name: req.body.finance_name },
+                                {
+                                    $inc: { finance_Up_Count: 1 },
+                                    $push: { finance_Up_Count_User: userName }
+                                },
+                                (err, results) => {
+                                    if (err) {
+                                        console.log(err);
+                                        res.json({ up_count_result: 0 });
+                                        return;
+                                    }
+                                    else {
+                                        res.json({ up_count_result: 1 });
+                                    }
+                                })
 
+                        }
+                        else {
+                            Finance.updateOne({ finance_name: req.body.finance_name },
+                                {
+                                    $inc: { finance_Up_Count: -1 },
+                                    $pull: { finance_Up_Count_User: userName }
+                                },
+                                (err, results) => {
+                                    if (err) {
+                                        console.log(err);
+                                        res.json({ up_count_result: 0 });
+                                        return;
+                                    }
+                                    else {
+                                        res.json({ up_count_result: 100 });
+                                    }
+                                })
+                        }
                     }
                     else {
-                        Finance.updateOne({ finance_name: req.body.finance_name },
-                            {
-                                $inc: { finance_Up_Count: -1 },
-                                $pull: { finance_Up_Count_User: userName }
-                            },
-                            (err, results) => {
-                                if (err) {
-                                    console.log(err);
-                                    res.json({ up_count_result: 0 });
-                                    return;
-                                }
-                                else {
-                                    res.json({ up_count_result: 1 });
-                                }
-                            })
+                        res.json({ up_count_result: 0 });
+                        return;
                     }
+
                 }
             })
 
@@ -207,7 +214,7 @@ module.exports = (secret) => {
                                     return;
                                 }
                                 else {
-                                    res.json({ down_count_result: 1 });
+                                    res.json({ down_count_result: 100 });
                                 }
                             })
                     }

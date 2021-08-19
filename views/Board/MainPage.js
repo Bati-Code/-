@@ -186,18 +186,21 @@ const MainPage = () => {
                         </aside>
                     </section>
                 </div>
-                <div className="Board_footer">
-                    <div>
-                        <Button onClick={Insert_Session_Handler} icon={<FormOutlined />}>
-                            글 작성
-                        </Button>
+                {radio === 'c' ? null
+                    :
+                    <div className="Board_footer">
+                        <div>
+                            <Button onClick={Insert_Session_Handler} icon={<FormOutlined />}>
+                                글 작성
+                            </Button>
+                        </div>
+                        <div>
+                            <Button onClick={logout_Handler} icon={<UserOutlined />}>
+                                로그아웃
+                            </Button>
+                        </div>
                     </div>
-                    <div>
-                        <Button onClick={logout_Handler} icon={<UserOutlined />}>
-                            로그아웃
-                        </Button>
-                    </div>
-                </div>
+                }
             </div>
         </>
     )
