@@ -3,10 +3,10 @@
 	"version": "1.0.0",
 	"description": "react first step",
 	"license": "MIT",
+	"main": "index.js",
 	"scripts": {
 		"start": "webpack serve --hot --open --config webpack.dev.config.js",
-		"build": "webpack --mode=production --config webpack.dev.config.js",
-		"server": "nodemon ./server/server.js"
+		"build": "webpack --mode=production --config webpack.dev.config.js"
 	},
 	"dependencies": {
 		"@ckeditor/ckeditor5-build-classic": "^29.0.0",
