@@ -130,7 +130,6 @@ const Fin_Interest = () => {
                     </section>
                 </div>
                 <div className="Board_footer">
-                    푸터
                 </div>
             </div>
         </>

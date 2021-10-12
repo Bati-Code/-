@@ -3,7 +3,6 @@
 	"version": "1.0.0",
 	"description": "react first step",
 	"license": "MIT",
-	"main": "./index.js",
 	"scripts": {
 		"start": "webpack serve --hot --open --config webpack.dev.config.js",
 		"build": "webpack --mode=production --config webpack.dev.config.js",

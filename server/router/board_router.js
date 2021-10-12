@@ -132,7 +132,7 @@ module.exports = (secret) => {
                                     })
                                 }
                                 else {
-                                    res.json({ board_insert: 1 });
+                                    res.json({ board_insert: 0 });
                                     return;
                                 }
                             }
@@ -747,7 +747,42 @@ module.exports = (secret) => {
                     }
                     else {
                         console.log("글 수정 완료");
-                        res.json({ update_board_result: 1 });
+                        Finance.findOne({ finance_code: req.body.board_item.code }
+                            , (err, boards) => {
+                                if (err) {
+                                    console.log(err);
+                                    return;
+                                }
+                                else {
+                                    console.log(boards);
+
+                                    if (!boards) {
+                                        const new_Finance = new Finance();
+                                        new_Finance.finance_name = req.body.board_item.name;
+                                        new_Finance.finance_code = req.body.board_item.code;
+                                        new_Finance.finance_data = req.body.board_item;
+
+                                        new_Finance.save((err) => {
+                                            if (err) {
+                                                console.log("finance save err");
+                                                res.json({ update_board_result: 0 });
+                                                return;
+                                            }
+                                            else {
+                                                console.log("종목 업로드 성공");
+                                                res.json({ update_board_result: 1 });
+                                                return;
+                                            }
+                                        })
+                                    }
+                                    else {
+                                        res.json({ update_board_result: 1});
+                                        return;
+                                    }
+                                }
+                            })
+
+
                     }
                 }
             )

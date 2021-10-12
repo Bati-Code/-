@@ -202,7 +202,7 @@ const Board = () => {
                                     history.push("/board/view/" + list._id);
                                 }}>
                                 <div className="board_title">
-                                    [{list.post_fin_list.name}]{list.post_title}
+                                    [{list.post_fin_list.name}] {list.post_title}
                                     <span className="board_comment_count">
                                         <ChatIcon style={
                                             {

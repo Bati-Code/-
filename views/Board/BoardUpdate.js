@@ -34,7 +34,7 @@ const BoardUpdate = (res) => {
                 set_BoardContent(request.data.list.post_content);
                 set_finance_List_Value(request.data.list.post_fin_list);
 
-                console.log(request.data.list.post_fin_list);
+                console.log(request.data.list);
             })
     }, [])
 

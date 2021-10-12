@@ -141,8 +141,6 @@ const MainPage = () => {
                                 key='main'
                             >
                                 <p onClick={() => history.push('/fin_interest')}>관심 종목</p>
-                                <p>Some contents...</p>
-                                <p>Some contents...</p>
                             </Drawer>
                         </div>
                         <div className="MainMenu">

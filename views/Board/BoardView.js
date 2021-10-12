@@ -37,6 +37,7 @@ const BoardView = (res) => {
     const history = useHistory();
     const alert = useAlert();
     const board_id = res.match.params.id;
+    const space = " ";
 
 
     useEffect(() => {
@@ -340,7 +341,7 @@ const BoardView = (res) => {
                             <div id="board_info_wrap">
                                 <div>
                                     <div id="board_info_title">
-                                        [{get_fin_List_name}]{get_board_data.post_title}
+                                        [{get_fin_List_name}] {get_board_data.post_title}
                                     </div>
                                 </div>
                                 <ul id="board_info">
