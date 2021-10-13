@@ -5,7 +5,7 @@ import { Modal, Button, Input } from 'antd'
 import { LikeOutlined, TableOutlined, EditOutlined, DeleteOutlined, PlusOutlined, RightOutlined, DislikeOutlined } from '@ant-design/icons';
 import './css/Board_View_CSS.css';
 import { useSelector } from 'react-redux';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { useAlert } from 'react-alert'
 import { server_config } from '../../server_config';
 
@@ -47,21 +47,21 @@ const BoardView = (res) => {
         // meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover";
         // document.getElementsByTagName('head')[0].appendChild(meta);
 
-        console.log('effect');
+        //console.log('effect');
         axios.get(server_config.server_Address + "/board/view/" + board_id)
             .then((response) => {
-                console.log("view data", response.data.userName);
-                console.log(response.data.list.post_recommend_user);
+                //console.log("view data", response.data.userName);
+                //console.log(response.data.list.post_recommend_user);
                 set_board_data(response.data.list);
                 set_Comment_List(response.data.list.post_comment);
                 set_fin_List_name(response.data.list.post_fin_list.name);
                 const recommend_user_list = response.data.list.post_recommend_user;
 
                 const index = recommend_user_list.findIndex((list) => list.recommend_user === response.data.userName);
-                console.log("index", index);
+                //console.log("index", index);
 
                 if (index !== -1) {
-                    console.log("이미 추천");
+                    //console.log("이미 추천");
                     set_recommend_check(true);
                 }
                 else {
@@ -80,7 +80,7 @@ const BoardView = (res) => {
     const recommend_Handler = () => {
         axios.get(server_config.server_Address + "/board/view/recommend/" + board_id)
             .then((request) => {
-                console.log(request.data);
+                //console.log(request.data);
                 set_board_recommend(request.data.recommend_count);
                 if (request.data.recommend_update === 1) {
                     set_recommend_check(true);
@@ -96,7 +96,7 @@ const BoardView = (res) => {
             .then((response) => {
                 if (response.data.userName === get_board_data.post_author
                     && response.data.user_result === 1) {
-                    console.log("board view success");
+                    //console.log("board view success");
                     set_user_check(true);
                 }
                 set_userName(response.data.userName);
@@ -119,13 +119,13 @@ const BoardView = (res) => {
                 headers: { 'authorization': sessionStorage.getItem('user_Token') }
             })
             .then((response) => {
-                console.log(response);
+                //console.log(response);
                 if (response.data.delete_board_result === 0) {
-                    console.log("삭제 오류");
+                    //console.log("삭제 오류");
                     history.push('/main');
                 }
                 if (response.data.delete_board_result === 1) {
-                    console.log("삭제 성공");
+                    //console.log("삭제 성공");
                     history.push('/main');
                 }
             })
@@ -145,19 +145,19 @@ const BoardView = (res) => {
         setConfirmLoading(true);
         axios.delete(server_config.server_Address + "/board/comment/" + get_comment_id)
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 if (response.data.delete_comment_result === 0) {
-                    console.log("삭제 오류");
+                    //console.log("삭제 오류");
                     setConfirmLoading(false);
                 }
                 if (response.data.delete_comment_result === 1) {
-                    console.log("삭제 성공");
+                    //console.log("삭제 성공");
                     setConfirmLoading(false);
                     set_comment_Visible(false);
 
                     axios.get(server_config.server_Address + "/board/view/update/" + board_id)
                         .then((response) => {
-                            console.log(response.data.list.post_comment);
+                            //console.log(response.data.list.post_comment);
                             set_Comment_List(response.data.list.post_comment);
                         })
                 }
@@ -180,19 +180,19 @@ const BoardView = (res) => {
         axios.delete(server_config.server_Address + "/board/recomment/" +
             get_board_data._id + '/' + get_recomment_for_comment_id + '/' + get_recomment_id)
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 if (response.data.delete_recomment_result === 0) {
-                    console.log("삭제 오류");
+                    //console.log("삭제 오류");
                     setConfirmLoading(false);
                 }
                 if (response.data.delete_recomment_result === 1) {
-                    console.log("삭제 성공");
+                    //console.log("삭제 성공");
                     setConfirmLoading(false);
                     set_recomment_Visible(false);
 
                     axios.get(server_config.server_Address + "/board/view/update/" + board_id)
                         .then((response) => {
-                            console.log(response.data.list.post_comment);
+                            //console.log(response.data.list.post_comment);
                             set_Comment_List(response.data.list.post_comment);
                         })
                 }
@@ -226,7 +226,7 @@ const BoardView = (res) => {
                 headers: { 'authorization': sessionStorage.getItem('user_Token') }
             })
             .then((response) => {
-                console.log("comment_result", response.data);
+                //console.log("comment_result", response.data);
                 set_comment_content('');
                 if (response.data.comment_check_result === 0) {
                     alert.show("댓글 등록에 실패하였습니다.");
@@ -249,7 +249,7 @@ const BoardView = (res) => {
                 comment_id: comment_id
             })
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 document.getElementById(comment_id).innerText = response.data.recommend_count;
 
                 if (response.data.comment_recommend_result === 1) {
@@ -272,7 +272,7 @@ const BoardView = (res) => {
     const ReComment_Handler = (id) => {
         set_recomment_open(!get_recomment_open);
         set_comment_id(id);
-        console.log("e", id);
+        //console.log("e", id);
     }
 
     const ReComment_Insert_Handler = (comment_id) => {
@@ -287,7 +287,7 @@ const BoardView = (res) => {
                 headers: { 'authorization': sessionStorage.getItem('user_Token') }
             })
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 set_recomment_content('');
                 set_recomment_open(false);
                 if (response.data.recomment_check_result === 0) {
@@ -297,14 +297,14 @@ const BoardView = (res) => {
 
         axios.get(server_config.server_Address + "/board/view/update/" + board_id)
             .then((response) => {
-                console.log(response.data.list.post_comment);
+                //console.log(response.data.list.post_comment);
                 set_Comment_List(response.data.list.post_comment);
             })
     }
 
     //답글 추천
     const ReComment_recommend_Handler = (comment_id, recomment_id) => {
-        console.log(comment_id, recomment_id);
+        //console.log(comment_id, recomment_id);
         axios.post(server_config.server_Address + '/board/recomment/recommend',
             {
                 board_id: board_id,
@@ -312,7 +312,7 @@ const BoardView = (res) => {
                 recomment_id: recomment_id,
             })
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 document.getElementById(recomment_id).innerText = response.data.recommend_count;
 
 
@@ -351,7 +351,7 @@ const BoardView = (res) => {
                                     </li>
                                     <li>  |  </li>
                                     <li id="board_info_data">
-                                        {moment(get_board_data.post_date).format('MM-DD HH:mm')}
+                                        {dayjs(get_board_data.post_date).format('MM-DD HH:mm')}
                                     </li>
                                     <li>  |  </li>
                                     <li id="board_info_data">

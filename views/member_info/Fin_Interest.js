@@ -25,48 +25,48 @@ const Fin_Interest = () => {
 
     const AutoComplete_Change_Handler = (event, newValue) => {
         set_finance_List_Value(newValue);
-        console.log(newValue);
+        //console.log(newValue);
     }
 
     //관심종목 뷰
     const Fin_Interest_View_Handler = () => {
         axios.get(server_config.server_Address + '/fin_interest/view')
             .then((response) => {
-                console.log(response.data.fin_interest_data);
+                //console.log(response.data.fin_interest_data);
                 set_fin_interest_List(response.data.fin_interest_data);
             })
     }
 
     //관심종목 추가
     const Fin_Interest_Add_Handler = () => {
-        console.log(get_finance_List_Value);
+        //console.log(get_finance_List_Value);
         axios.post(server_config.server_Address + '/fin_interest/insert',
             {
                 fin_interest_data: get_finance_List_Value,
             },
         )
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 Fin_Interest_View_Handler();
             })
     }
 
     //관심종목 삭제
     const Fin_Interest_Delete_Handler = (list_code) => {
-        console.log(list_code);
+        //console.log(list_code);
         axios.post(server_config.server_Address + '/fin_interest/delete',
             {
                 fin_interest_code: list_code
             })
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 Fin_Interest_View_Handler();
             })
     }
 
     //관심종목 게시글
     const Fin_Interest_Board_Handler = (list_code) => {
-        console.log(list_code);
+        //console.log(list_code);
         dispatch(Page_Search("종목코드", list_code));
         dispatch(Page_Store(1));
         history.push("/main");

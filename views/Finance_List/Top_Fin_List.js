@@ -22,7 +22,7 @@ const Top_Fin_list = () => {
     useEffect(() => {
         axios.get(server_config.server_Address + '/finance/best')
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 set_Best_Finance_List(response.data);
             })
 
@@ -42,7 +42,7 @@ const Top_Fin_list = () => {
     //관심종목 autocomplete
     const AutoComplete_Change_Handler = (event, newValue) => {
         set_finance_List_Value(newValue);
-        console.log(newValue);
+        //console.log(newValue);
     }
 
     return (

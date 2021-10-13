@@ -54,7 +54,7 @@ const MainPage = () => {
     }, [])
 
     const Menu_Handler = (e) => {
-        console.log(e);
+        //console.log(e);
         set_Menu_Text(e.key);
     }
 
@@ -87,7 +87,7 @@ const MainPage = () => {
 
         axios.get(server_config.server_Address + '/logout')
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 if (response.data.logout_result_code === 1) {
                     sessionStorage.clear();
                     history.push('/login');
@@ -96,7 +96,7 @@ const MainPage = () => {
     }
 
     const onSearch = (value) => {
-        console.log(get_Menu_Text, value);
+        //console.log(get_Menu_Text, value);
         if (!value) {
             alert.show('검색할 내용을 입력하세요.');
             return;

@@ -8,7 +8,7 @@ import { server_config } from '../server_config';
 const PrivateRoute = ({ component: Component, ...rest }) => {
 
     const [get_session, set_session] = useState('default');
-    console.log("PrivateRouter");
+    //console.log("PrivateRouter");
 
 
 
@@ -17,14 +17,14 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
         axios.get(server_config.server_Address + '/user_check',
         )
         .then((response) => {
-            console.log("PrivateRouter : ", response.data);
+            //console.log("PrivateRouter : ", response.data);
             if (response.data.user_result === 0)
                 set_session(false);
             else if (response.data.user_result === 1)
                 set_session(true);
         })
         .catch((err) => {
-            console.log(err.response);
+            //console.log(err.response);
             set_session(false);
         })
 
@@ -33,7 +33,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
    
 
 
-    console.log("APP", get_session);
+    //console.log("APP", get_session);
 
 
     return (

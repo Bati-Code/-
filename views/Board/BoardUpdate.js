@@ -35,13 +35,13 @@ const BoardUpdate = (res) => {
                 set_BoardContent(request.data.list.post_content);
                 set_finance_List_Value(request.data.list.post_fin_list);
 
-                console.log(request.data.list);
+                //console.log(request.data.list);
             })
     }, [])
 
     const BoardTitle_Handler = (e) => {
         set_BoardTitle(e.target.value);
-        console.log(get_BoardTitle);
+        //console.log(get_BoardTitle);
     }
 
     const BoardUpdate_Handler = () => {
@@ -59,10 +59,10 @@ const BoardUpdate = (res) => {
         )
             .then((request) => {
                 if (request.data.update_board_result === 0) {
-                    console.log("업데이트 실패");
+                    //console.log("업데이트 실패");
                 }
                 else if (request.data.update_board_result === 1) {
-                    console.log("업데이트 성공");
+                    //console.log("업데이트 성공");
                     history.push('/main');
                 }
 
@@ -73,11 +73,11 @@ const BoardUpdate = (res) => {
     const AutoComplete_Change_Handler = (event, newValue) => {
         set_BoardContent(newValue);
         set_finance_List_Value(newValue);
-        console.log(get_finance_List_Value, '|', newValue);
+        //console.log(get_finance_List_Value, '|', newValue);
     }
 
     const test = (e, v) => {
-        console.log(v);
+        //console.log(v);
     }
 
     return (
@@ -157,7 +157,7 @@ const BoardUpdate = (res) => {
                                 editor.ui.registry.addButton('custom', {
                                     text: 'custom',
                                     onAction: () => {
-                                        console.log(editor);
+                                        //console.log(editor);
                                     }
                                 })
                             }
@@ -168,18 +168,18 @@ const BoardUpdate = (res) => {
                         config={{ placeholder: "글 작성" }}
                         data={get_BoardContent}
                         onReady={editor => {
-                            console.log(editor)
+                            //console.log(editor)
                         }}
                         onChange={(event, editor) => {
-                            console.log('change.', editor.getData());
+                            //console.log('change.', editor.getData());
                             set_BoardContent(editor.getData());
                         }}
                         onBlur={(event, editor) => {
-                            console.log('Blur.', editor);
+                            //console.log('Blur.', editor);
                         }}
                         onFocus={(event, editor) => {
 
-                            console.log('Focus.', editor);
+                            //console.log('Focus.', editor);
                         }}
                     /> */}
                 </div>

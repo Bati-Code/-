@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useHistory } from 'react-router-dom';
 import { Page_Search, Page_Store, Page_Reset } from '../../redux/action/page_action';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import ChatIcon from '@material-ui/icons/Chat';
 import "./css/BoardSearchCSS.css";
 import { server_config } from '../../server_config';
@@ -111,7 +111,7 @@ const Board = () => {
             axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value + '/1')
                 .then((response) => {
                     const boardList = response.data.docs;
-                    console.log(boardList);
+                    //console.log(boardList);
 
                     set_Board_Total(response.data.totalDocs);
 
@@ -130,12 +130,12 @@ const Board = () => {
     // const onSearch = (value) => {
 
     //     if (value) {
-    //         console.log("search Value", value);
+    //         //console.log("search Value", value);
     //         axios.get(server_config.server_Address + '/board/search/' + get_Menu_Text + '/' + value + '/1')
     //             .then((response) => {
 
     //                 const boardList = response.data.docs;
-    //                 console.log(boardList);
+    //                 //console.log(boardList);
 
     //                 set_Board_Total(response.data.totalDocs);
 
@@ -157,13 +157,13 @@ const Board = () => {
     // }
 
     const PageNation_Handler = (page_value) => {
-        console.log("page", page_value);
+        //console.log("page", page_value);
         dispatch(Page_Store(page_value));
 
         // if (search) {
         //     axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value + '/' + page_value)
         //         .then((response) => {
-        //             console.log(response.data);
+        //             //console.log(response.data);
 
         //             const boardList = response.data.docs;
 
@@ -178,7 +178,7 @@ const Board = () => {
         // else {
         //     axios.get(server_config.server_Address + '/board/list/' + page_value)
         //         .then((response) => {
-        //             console.log(response.data);
+        //             //console.log(response.data);
         //             const boardList = response.data.docs;
 
         //             boardList.map((list, index) => {
@@ -200,7 +200,7 @@ const Board = () => {
                         return (
                             <div className="board_temp_wrap" key={index}
                                 onClick={() => {
-                                    console.log(list._id);
+                                    //console.log(list._id);
                                     history.push("/board/view/" + list._id);
                                 }}>
                                 <div className="board_title">
@@ -216,7 +216,7 @@ const Board = () => {
                                 </div>
                                 <ul className="board_info">
                                     <li className="post_author">{list.post_author}</li> <li> | </li>
-                                    <li>{moment(list.post_date).format('MM-DD HH:mm')}</li> <li> | </li>
+                                    <li>{dayjs(list.post_date).format('MM-DD HH:mm')}</li> <li> | </li>
                                     <li>조회 : {list.post_count}</li> <li> | </li>
                                     <li>추천 : {list.post_recommend}</li>
                                 </ul>

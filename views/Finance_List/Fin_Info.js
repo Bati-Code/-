@@ -29,7 +29,7 @@ const Fin_Info = () => {
                 finance_name: session_fin_name,
             })
             .then((response) => {
-                console.log("Get_Finance_data", response.data);
+                //console.log("Get_Finance_data", response.data);
                 set_Finance_Info(response.data);
 
                 const header = window.sessionStorage.getItem('user_Token');
@@ -42,7 +42,7 @@ const Fin_Info = () => {
                 const up_user_Index = up_Count_User_Array.findIndex((e) => e === userName);
                 const down_user_Index = down_Count_User_Array.findIndex((e) => e === userName);
 
-                console.log(up_user_Index);
+                //console.log(up_user_Index);
 
                 if (up_user_Index !== -1) {
                     document.getElementById('up_count').style.border = "5px double #C42F72";
@@ -75,8 +75,8 @@ const Fin_Info = () => {
 
     useEffect(() => {
         dispatch(Page_Search('종목명', session_fin_name));
-        console.log("effect");
-        console.log(session_fin_name)
+        //console.log("effect");
+        //console.log(session_fin_name)
         Get_Finance_Data(session_fin_name);
         Get_Fin_Interest_List(session_fin_name);
 
@@ -88,7 +88,7 @@ const Fin_Info = () => {
                 finance_name: fin_name,
             })
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 Get_Finance_Data();
             })
     }
@@ -99,7 +99,7 @@ const Fin_Info = () => {
                 finance_name: fin_name,
             })
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 Get_Finance_Data();
             })
     }
@@ -116,7 +116,7 @@ const Fin_Info = () => {
                 fin_interest_code: get_Finance_Info.finance_code
             })
             .then((response) => {
-                console.log("삭제", response.data);
+                //console.log("삭제", response.data);
                 Get_Fin_Interest_List();
             })
 
@@ -130,7 +130,7 @@ const Fin_Info = () => {
             },
         )
             .then((response) => {
-                console.log("추가", response.data);
+                //console.log("추가", response.data);
                 Get_Fin_Interest_List();
             })
     }

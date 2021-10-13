@@ -45,7 +45,7 @@ const BoardInsert = () => {
     const editorRef = useRef(null);
     const log = () => {
         if (editorRef.current) {
-            console.log(editorRef.current.getContent());
+            //console.log(editorRef.current.getContent());
         }
     };
 
@@ -59,7 +59,7 @@ const BoardInsert = () => {
 
     const BoardTitle_Handler = (e) => {
         set_BoardTitle(e.target.value);
-        console.log(get_BoardTitle);
+        //console.log(get_BoardTitle);
     }
 
     const BoardInsert_Handler = () => {
@@ -79,15 +79,15 @@ const BoardInsert = () => {
             )
                 .then((request) => {
                     if (request.data.board_insert === 0) {
-                        console.log("업로드 실패");
+                        //console.log("업로드 실패");
                         history.push('/main');
                     }
                     else if (request.data.board_insert === 100) {
-                        console.log("세션 체크 실패");
+                        //console.log("세션 체크 실패");
                         history.push('/login');
                     }
                     else if (request.data.board_insert === 1) {
-                        console.log("업로드 성공");
+                        //console.log("업로드 성공");
                         history.push('/main');
                     }
 
@@ -101,10 +101,10 @@ const BoardInsert = () => {
 
     const AutoComplete_Change_Handler = (event, newValue) => {
         set_finance_List_Value(newValue);
-        console.log(newValue);
+        //console.log(newValue);
     }
 
-    console.log(get_BoardData);
+    //console.log(get_BoardData);
 
     return (
         <>
@@ -139,18 +139,18 @@ const BoardInsert = () => {
                             }}
                             data="dd"
                             onReady={editor => {
-                                console.log(editor)
+                                //console.log(editor)
                             }}
                             onChange={(event, editor) => {
-                                console.log(editor.getData());
+                                //console.log(editor.getData());
                                 set_BoardData(editor.getData());
                             }}
                             onBlur={(event, editor) => {
-                                console.log('Blur.', editor);
+                                //console.log('Blur.', editor);
                             }}
                             onFocus={(event, editor) => {
 
-                                console.log('Focus.', editor);
+                                //console.log('Focus.', editor);
                             }}
                         />
                     </CKEditorContext> */}
@@ -211,7 +211,7 @@ const BoardInsert = () => {
                                 editor.ui.registry.addButton('custom', {
                                     text: 'custom',
                                     onAction: () => {
-                                        console.log(editor);
+                                        //console.log(editor);
                                     }
                                 })
                             }
