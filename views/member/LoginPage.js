@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import { server_config } from "../../server_config";
 import "./css/LoginCSS.css";
 
 
@@ -29,7 +30,7 @@ const LoginPage = () => {
                 if (response.data.code === 200) {
                     console.log("login");
                     console.log(response.data.result.data);
-                    axios.post('http://192.168.0.45:5000/login',  //192.168.0.45
+                    axios.post(server_config.server_Address +'/login',  //192.168.0.45
                         {
                             userName: response.data.result.data.me.username
                         },
