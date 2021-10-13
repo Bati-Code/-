@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Page_Search } from '../../redux/action/page_action';
 
 import './css/Top_Fin_List_CSS.css'
+import { server_config } from '../../server_config';
 
 const Top_Fin_list = () => {
     const [get_Best_Finance_List, set_Best_Finance_List] = useState([]);
@@ -19,7 +20,7 @@ const Top_Fin_list = () => {
     const { fin_list } = useSelector(state => state.financeList);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/finance/best')
+        axios.get(server_config.server_Address + '/finance/best')
             .then((response) => {
                 console.log(response.data);
                 set_Best_Finance_List(response.data);

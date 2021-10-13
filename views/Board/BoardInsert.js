@@ -30,6 +30,7 @@ import { useSelector } from 'react-redux';
 
 
 import { Editor } from '@tinymce/tinymce-react';
+import { server_config } from '../../server_config';
 
 const BoardInsert = () => {
 
@@ -65,7 +66,7 @@ const BoardInsert = () => {
 
         if (get_BoardData && get_BoardTitle && get_finance_List_Value) {
 
-            axios.post('http://localhost:5000/board/insert',
+            axios.post(server_config.server_Address + '/board/insert',
                 {
                     board_title: get_BoardTitle,
                     board_Data: get_BoardData,

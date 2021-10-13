@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import './css/Fin_InterestCSS.css'
 import { useHistory } from 'react-router-dom';
+import { server_config } from '../../server_config';
 
 const Fin_Interest = () => {
     const [get_finance_List_Value, set_finance_List_Value] = useState({});
@@ -29,7 +30,7 @@ const Fin_Interest = () => {
 
     //관심종목 뷰
     const Fin_Interest_View_Handler = () => {
-        axios.get('http://localhost:5000/fin_interest/view')
+        axios.get(server_config.server_Address + '/fin_interest/view')
             .then((response) => {
                 console.log(response.data.fin_interest_data);
                 set_fin_interest_List(response.data.fin_interest_data);
@@ -39,7 +40,7 @@ const Fin_Interest = () => {
     //관심종목 추가
     const Fin_Interest_Add_Handler = () => {
         console.log(get_finance_List_Value);
-        axios.post('http://localhost:5000/fin_interest/insert',
+        axios.post(server_config.server_Address + '/fin_interest/insert',
             {
                 fin_interest_data: get_finance_List_Value,
             },
@@ -53,7 +54,7 @@ const Fin_Interest = () => {
     //관심종목 삭제
     const Fin_Interest_Delete_Handler = (list_code) => {
         console.log(list_code);
-        axios.post('http://localhost:5000/fin_interest/delete',
+        axios.post(server_config.server_Address + '/fin_interest/delete',
             {
                 fin_interest_code: list_code
             })

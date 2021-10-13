@@ -10,6 +10,7 @@ import { Base64 } from 'js-base64';
 
 import Board from '../Board/Board';
 import './css/Fin_Info_CSS.css'
+import { server_config } from '../../server_config';
 
 const Fin_Info = () => {
     const [get_Finance_Info, set_Finance_Info] = useState('');
@@ -23,7 +24,7 @@ const Fin_Info = () => {
     const session_fin_name = window.sessionStorage.getItem('fin_name');
 
     const Get_Finance_Data = () => {
-        axios.post('http://localhost:5000/finance/info',
+        axios.post(server_config.server_Address + '/finance/info',
             {
                 finance_name: session_fin_name,
             })
@@ -61,7 +62,7 @@ const Fin_Info = () => {
     }
 
     const Get_Fin_Interest_List = () => {
-        axios.get('http://localhost:5000/fin_interest/view')
+        axios.get(server_config.server_Address + '/fin_interest/view')
             .then((response) => {
                 const fin_interest_array = response.data.fin_interest_data;
                 const find_array_index = fin_interest_array.findIndex((element) => element.name === session_fin_name);
@@ -82,7 +83,7 @@ const Fin_Info = () => {
     }, [])
 
     const Up_Count_Handler = () => {
-        axios.post('http://localhost:5000/finance/up',
+        axios.post(server_config.server_Address + '/finance/up',
             {
                 finance_name: fin_name,
             })
@@ -93,7 +94,7 @@ const Fin_Info = () => {
     }
 
     const Down_Count_Handler = () => {
-        axios.post('http://localhost:5000/finance/down',
+        axios.post(server_config.server_Address + '/finance/down',
             {
                 finance_name: fin_name,
             })
@@ -110,7 +111,7 @@ const Fin_Info = () => {
 
     //관심종목삭제
     const Delete_Interest_Handler = () => {
-        axios.post('http://localhost:5000/fin_interest/delete',
+        axios.post(server_config.server_Address + '/fin_interest/delete',
             {
                 fin_interest_code: get_Finance_Info.finance_code
             })
@@ -123,7 +124,7 @@ const Fin_Info = () => {
 
     //관심종목추가
     const Insert_Interest_Handler = () => {
-        axios.post('http://localhost:5000/fin_interest/insert',
+        axios.post(server_config.server_Address + '/fin_interest/insert',
             {
                 fin_interest_data: get_Finance_Info.finance_data,
             },

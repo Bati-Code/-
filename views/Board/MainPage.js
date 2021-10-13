@@ -14,6 +14,7 @@ import { Page_Search, Page_Reset, Page_Radio, Page_Store } from '../../redux/act
 import Board from './Board'
 import Top_Fin_list from '../Finance_List/Top_Fin_List';
 import './css/BoardCSS.css'
+import { server_config } from '../../server_config';
 
 const { Search } = Input;
 
@@ -84,7 +85,7 @@ const MainPage = () => {
 
     const logout_Handler = () => {
 
-        axios.get('http://localhost:5000/logout')
+        axios.get(server_config.server_Address + '/logout')
             .then((response) => {
                 console.log(response.data);
                 if (response.data.logout_result_code === 1) {

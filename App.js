@@ -22,7 +22,7 @@ axios.interceptors.request.use(
 		return config;
 	},
 	function (error) {
-		console.log("에ㅓㄹ");
+		console.log("axios interceptor error");
 		return Promise.reject(error);
 	});
 
@@ -31,6 +31,7 @@ const Board = () => {
 
 	return (
 		<BrowserRouter>
+			<Route exact path="/" component={LoginPage} />
 			<Switch>
 				<Route path="/login" render={() => <LoginPage />} />
 

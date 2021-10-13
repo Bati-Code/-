@@ -9,6 +9,7 @@ import { Page_Search, Page_Store, Page_Reset } from '../../redux/action/page_act
 import moment from 'moment';
 import ChatIcon from '@material-ui/icons/Chat';
 import "./css/BoardSearchCSS.css";
+import { server_config } from '../../server_config';
 
 const { Search } = Input;
 
@@ -23,9 +24,10 @@ const Board = () => {
     const { count, page, search, menu_select, search_value, radio } = useSelector(state => state.pageStore);
 
 
+    
     const Get_Board_View = () => {
         if (search) {
-            axios.get('http://localhost:5000/board/search/' + menu_select + '/' + search_value + '/' + page)
+            axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value + '/' + page)
                 .then((response) => {
 
                     const boardList = response.data.docs;
@@ -40,7 +42,7 @@ const Board = () => {
                 })
         }
         else {
-            axios.get('http://localhost:5000/board/list/' + page)
+            axios.get(server_config.server_Address + '/board/list/' + page)
                 .then((response) => {
                     const boardList = response.data.docs;
                     set_Board_Total(response.data.totalDocs);
@@ -56,7 +58,7 @@ const Board = () => {
     }
 
     const Get_Best_Board_view = () => {
-        axios.get('http://localhost:5000/board/list/best/' + page)
+        axios.get(server_config.server_Address + '/board/list/best/' + page)
             .then((response) => {
                 const boardList = response.data.docs;
                 set_Board_Total(response.data.totalDocs);
@@ -89,7 +91,7 @@ const Board = () => {
     }, [radio, page])
 
     useEffect(() => {
-        axios.get('http://localhost:5000/board/list/' + page)
+        axios.get(server_config.server_Address + '/board/list/' + page)
             .then((response) => {
                 const boardList = response.data.docs;
                 set_Board_Total(response.data.totalDocs);
@@ -106,7 +108,7 @@ const Board = () => {
     useEffect(() => {
 
         if (search_value) {
-            axios.get('http://localhost:5000/board/search/' + menu_select + '/' + search_value + '/1')
+            axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value + '/1')
                 .then((response) => {
                     const boardList = response.data.docs;
                     console.log(boardList);
@@ -129,7 +131,7 @@ const Board = () => {
 
     //     if (value) {
     //         console.log("search Value", value);
-    //         axios.get('http://localhost:5000/board/search/' + get_Menu_Text + '/' + value + '/1')
+    //         axios.get(server_config.server_Address + '/board/search/' + get_Menu_Text + '/' + value + '/1')
     //             .then((response) => {
 
     //                 const boardList = response.data.docs;
@@ -159,7 +161,7 @@ const Board = () => {
         dispatch(Page_Store(page_value));
 
         // if (search) {
-        //     axios.get('http://localhost:5000/board/search/' + menu_select + '/' + search_value + '/' + page_value)
+        //     axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value + '/' + page_value)
         //         .then((response) => {
         //             console.log(response.data);
 
@@ -174,7 +176,7 @@ const Board = () => {
         //         })
         // }
         // else {
-        //     axios.get('http://localhost:5000/board/list/' + page_value)
+        //     axios.get(server_config.server_Address + '/board/list/' + page_value)
         //         .then((response) => {
         //             console.log(response.data);
         //             const boardList = response.data.docs;

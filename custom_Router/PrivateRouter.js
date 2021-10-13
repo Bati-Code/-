@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Redirect, Route } from 'react-router-dom';
+import { server_config } from '../server_config';
 
 
 
@@ -11,16 +12,25 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 
 
 
+    useEffect(() => {
 
-    axios.get('http://localhost:5000/user_check',
+        axios.get(server_config.server_Address + '/user_check',
         )
         .then((response) => {
-            console.log("PrivateRouter", response.data);
+            console.log("PrivateRouter : ", response.data);
             if (response.data.user_result === 0)
                 set_session(false);
             else if (response.data.user_result === 1)
                 set_session(true);
         })
+        .catch((err) => {
+            console.log(err.response);
+            set_session(false);
+        })
+
+    }, [])
+
+   
 
 
     console.log("APP", get_session);

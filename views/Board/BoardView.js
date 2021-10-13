@@ -7,6 +7,7 @@ import './css/Board_View_CSS.css';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { useAlert } from 'react-alert'
+import { server_config } from '../../server_config';
 
 
 const BoardView = (res) => {
@@ -47,7 +48,7 @@ const BoardView = (res) => {
         // document.getElementsByTagName('head')[0].appendChild(meta);
 
         console.log('effect');
-        axios.get("http://localhost:5000/board/view/" + board_id)
+        axios.get(server_config.server_Address + "/board/view/" + board_id)
             .then((response) => {
                 console.log("view data", response.data.userName);
                 console.log(response.data.list.post_recommend_user);
@@ -77,7 +78,7 @@ const BoardView = (res) => {
     }, [get_board_recommend])
 
     const recommend_Handler = () => {
-        axios.get("http://localhost:5000/board/view/recommend/" + board_id)
+        axios.get(server_config.server_Address + "/board/view/recommend/" + board_id)
             .then((request) => {
                 console.log(request.data);
                 set_board_recommend(request.data.recommend_count);
@@ -91,7 +92,7 @@ const BoardView = (res) => {
     }
 
     useEffect(() => {
-        axios.get("http://localhost:5000/user_check")
+        axios.get(server_config.server_Address + "/user_check")
             .then((response) => {
                 if (response.data.userName === get_board_data.post_author
                     && response.data.user_result === 1) {
@@ -113,7 +114,7 @@ const BoardView = (res) => {
 
     const handle_DeleteBoard_Ok = () => {
         setConfirmLoading(true);
-        axios.delete("http://localhost:5000/board/" + board_id,
+        axios.delete(server_config.server_Address + "/board/" + board_id,
             {
                 headers: { 'authorization': sessionStorage.getItem('user_Token') }
             })
@@ -142,7 +143,7 @@ const BoardView = (res) => {
 
     const handle_DeleteComment_Ok = () => {
         setConfirmLoading(true);
-        axios.delete("http://localhost:5000/board/comment/" + get_comment_id)
+        axios.delete(server_config.server_Address + "/board/comment/" + get_comment_id)
             .then((response) => {
                 console.log(response.data);
                 if (response.data.delete_comment_result === 0) {
@@ -154,7 +155,7 @@ const BoardView = (res) => {
                     setConfirmLoading(false);
                     set_comment_Visible(false);
 
-                    axios.get("http://localhost:5000/board/view/update/" + board_id)
+                    axios.get(server_config.server_Address + "/board/view/update/" + board_id)
                         .then((response) => {
                             console.log(response.data.list.post_comment);
                             set_Comment_List(response.data.list.post_comment);
@@ -176,7 +177,7 @@ const BoardView = (res) => {
 
     const handle_Delete_ReComment_Ok = () => {
         setConfirmLoading(true);
-        axios.delete("http://localhost:5000/board/recomment/" +
+        axios.delete(server_config.server_Address + "/board/recomment/" +
             get_board_data._id + '/' + get_recomment_for_comment_id + '/' + get_recomment_id)
             .then((response) => {
                 console.log(response.data);
@@ -189,7 +190,7 @@ const BoardView = (res) => {
                     setConfirmLoading(false);
                     set_recomment_Visible(false);
 
-                    axios.get("http://localhost:5000/board/view/update/" + board_id)
+                    axios.get(server_config.server_Address + "/board/view/update/" + board_id)
                         .then((response) => {
                             console.log(response.data.list.post_comment);
                             set_Comment_List(response.data.list.post_comment);
@@ -216,7 +217,7 @@ const BoardView = (res) => {
     //댓글
     const Comment_Insert_Handler = () => {
 
-        axios.post('http://localhost:5000/board/comment',
+        axios.post(server_config.server_Address + '/board/comment',
             {
                 board_id: board_id,
                 comment_content: get_comment_content,
@@ -234,7 +235,7 @@ const BoardView = (res) => {
 
             })
 
-        axios.get("http://localhost:5000/board/view/update/" + board_id)
+        axios.get(server_config.server_Address + "/board/view/update/" + board_id)
             .then((response) => {
                 set_Comment_List(response.data.list.post_comment);
             })
@@ -242,7 +243,7 @@ const BoardView = (res) => {
 
     //댓글 추천
     const comment_recommend_Handler = (comment_id) => {
-        axios.post('http://localhost:5000/board/comment/recommend',
+        axios.post(server_config.server_Address + '/board/comment/recommend',
             {
                 board_id: board_id,
                 comment_id: comment_id
@@ -276,7 +277,7 @@ const BoardView = (res) => {
 
     const ReComment_Insert_Handler = (comment_id) => {
 
-        axios.post('http://localhost:5000/board/recomment',
+        axios.post(server_config.server_Address + '/board/recomment',
             {
                 board_id: board_id,
                 comment_id: comment_id,
@@ -294,7 +295,7 @@ const BoardView = (res) => {
                 }
             })
 
-        axios.get("http://localhost:5000/board/view/update/" + board_id)
+        axios.get(server_config.server_Address + "/board/view/update/" + board_id)
             .then((response) => {
                 console.log(response.data.list.post_comment);
                 set_Comment_List(response.data.list.post_comment);
@@ -304,7 +305,7 @@ const BoardView = (res) => {
     //답글 추천
     const ReComment_recommend_Handler = (comment_id, recomment_id) => {
         console.log(comment_id, recomment_id);
-        axios.post('http://localhost:5000/board/recomment/recommend',
+        axios.post(server_config.server_Address + '/board/recomment/recommend',
             {
                 board_id: board_id,
                 comment_id: comment_id,

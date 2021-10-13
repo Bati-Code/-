@@ -13,6 +13,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor'
 // import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import { Editor } from '@tinymce/tinymce-react';
+import { server_config } from '../../server_config';
 
 const BoardUpdate = (res) => {
 
@@ -27,7 +28,7 @@ const BoardUpdate = (res) => {
     const { fin_list } = useSelector(state => state.financeList);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/board/view/' + board_id)
+        axios.get(server_config.server_Address + '/board/view/' + board_id)
             .then((request) => {
                 set_BoardData(request.data);
                 set_BoardTitle(request.data.list.post_title);
@@ -45,7 +46,7 @@ const BoardUpdate = (res) => {
 
     const BoardUpdate_Handler = () => {
 
-        axios.post('http://localhost:5000/board/update',
+        axios.post(server_config.server_Address + '/board/update',
             {
                 board_title: get_BoardTitle,
                 board_content: get_BoardContent,
