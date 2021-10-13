@@ -72,13 +72,13 @@ const Board = () => {
     }
 
 
-    useEffect(() => {
-        if (radio !== 'b')
-            Get_Board_View();
-        else {
-            Get_Best_Board_view();
-        }
-    }, [])
+    // useEffect(() => {
+    //     if (radio !== 'b')
+    //         Get_Board_View();
+    //     else {
+    //         Get_Best_Board_view();
+    //     }
+    // }, [])
 
     useEffect(() => {
         if (radio !== 'b') {
