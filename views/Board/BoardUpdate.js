@@ -63,7 +63,7 @@ const BoardUpdate = (res) => {
                 }
                 else if (request.data.update_board_result === 1) {
                     //console.log("업데이트 성공");
-                    history.push('/main');
+                    history.goBack();
                 }
 
             })
