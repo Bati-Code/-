@@ -72,13 +72,13 @@ const Board = () => {
     }
 
 
-    // useEffect(() => {
-    //     if (radio !== 'b')
-    //         Get_Board_View();
-    //     else {
-    //         Get_Best_Board_view();
-    //     }
-    // }, [])
+    useEffect(() => {
+        if (radio !== 'b')
+            Get_Board_View();
+        else {
+            Get_Best_Board_view();
+        }
+    }, [])
 
     useEffect(() => {
         if (radio !== 'b') {
@@ -226,7 +226,7 @@ const Board = () => {
                 }
             </div>
             <div>
-                <Pagination current={page} onChange={PageNation_Handler} total={get_Board_Total} />
+                <Pagination current={page} onChange={PageNation_Handler} total={get_Board_Total} showSizeChanger={false} />
             </div>
         </>
     )
