@@ -114,7 +114,7 @@ const MainPage = () => {
     }
 
     const Radio_Handler = (e) => {
-        dispatch(Page_Store(1));
+        //dispatch(Page_Store(1));
         dispatch(Page_Radio(e.target.value));
     }
 

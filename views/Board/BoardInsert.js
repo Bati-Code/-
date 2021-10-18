@@ -13,22 +13,6 @@ import { useHistory } from 'react-router-dom';
 import './css/BoardInsertCSS.css';
 import { useSelector } from 'react-redux';
 
-// import Context from '@ckeditor/ckeditor5-core/src/context';
-// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-// import { CKEditor, CKEditorContext } from '@ckeditor/ckeditor5-react';
-// import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
-//import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
-// import AutoImage from '@ckeditor/ckeditor5-image/src/autoimage';
-// import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold';
-// import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
-// import Essentials from '@ckeditor/ckeditor5-essentials/src/essentials';
-// import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
-// import Alignment from '@ckeditor/ckeditor5-alignment/src/alignment'
-// import BlockQuote from '@ckeditor/ckeditor5-block-quote/src/blockquote';
-// import UploadAdapter from '@ckeditor/ckeditor5-adapter-ckfinder/src/uploadadapter';
-// import Autoformat from '@ckeditor/ckeditor5-autoformat/src/autoformat
-
-
 import { Editor } from '@tinymce/tinymce-react';
 import { server_config } from '../../server_config';
 
@@ -48,9 +32,6 @@ const BoardInsert = () => {
             //console.log(editorRef.current.getContent());
         }
     };
-
-
-
     const { fin_list } = useSelector(state => state.financeList);
 
     useEffect(() => {
@@ -104,8 +85,6 @@ const BoardInsert = () => {
         //console.log(newValue);
     }
 
-    //console.log(get_BoardData);
-
     return (
         <>
             <div className='board_insert_wrap'>
@@ -125,38 +104,8 @@ const BoardInsert = () => {
                         type="text" placeholder="제목을 입력해주세요." onChange={BoardTitle_Handler}></input>
                 </div>
                 <div id='editor'>
-                    {/* <CKEditorContext context={Context}>
-                        <h2>ㅇㅇ</h2>
-                        <CKEditor
-                            editor={ClassicEditor}
-                            config={{
-                                placeholder: "글 작성",
-                                language: 'ko',
-                                plugins: [Paragraph, Bold, Italic, Essentials, Alignment,
-                                    BlockQuote, UploadAdapter,
-                                    Autoformat, AutoImage, ],
-                                blockToolbar: ['bold', 'italic', '|', 'alignment', '|', 'blockQuote']
-                            }}
-                            data="dd"
-                            onReady={editor => {
-                                //console.log(editor)
-                            }}
-                            onChange={(event, editor) => {
-                                //console.log(editor.getData());
-                                set_BoardData(editor.getData());
-                            }}
-                            onBlur={(event, editor) => {
-                                //console.log('Blur.', editor);
-                            }}
-                            onFocus={(event, editor) => {
-
-                                //console.log('Focus.', editor);
-                            }}
-                        />
-                    </CKEditorContext> */}
                     <Editor
                         onEditorChange={(newValue, editor) => set_BoardData(newValue)}
-                        apiKey="no-api-key"
                         init={{
                             placeholder: '글 작성',
                             min_height: 500,
@@ -165,7 +114,7 @@ const BoardInsert = () => {
                             language: 'ko_KR',
                             menubar: false,
                             remove_script_host: false,
-                            relative_urls: false,
+                            relative_urls: true,
                             convert_urls: true,
                             image_title: true,
                             automatic_uploads: true,
@@ -176,48 +125,54 @@ const BoardInsert = () => {
                                 input.setAttribute('type', 'file');
                                 input.setAttribute('accept', 'image/*');
 
-                                input.onchange = function () {
-                                    var file = this.files[0];
-
-                                    var reader = new FileReader();
-                                    reader.onload = function () {
-
-                                        var id = 'blobid' + (new Date()).getTime();
-                                        var blobCache = tinymce.activeEditor.editorUpload.blobCache;
-                                        var base64 = reader.result.split(',')[1];
-                                        var blobInfo = blobCache.create(id, file, base64);
-                                        blobCache.add(blobInfo);
-
-                                        cb(blobInfo.blobUri(), { title: file.name });
-                                    };
-                                    reader.readAsDataURL(file);
-                                };
-
                                 input.click();
+
+                                input.onchange = function () {
+                                    const file = this.files[0];
+                                    const bodyFormData = new FormData();
+
+                                    bodyFormData.append("imgs", file);
+
+                                    bodyFormData.append("path", "community/board");
+                                    var reader = new FileReader();
+                                    reader.readAsDataURL(file);
+
+                                    reader.onload = () => {
+                                        axios.post('http://103.57.61.87:8889/hitalk_msg_test/api/v1/image_upload',
+                                            bodyFormData)
+                                            .then((response) => {
+                                                console.log(response.data);
+                                                if (response.data.code == 200) {
+                                                    cb(response.data.images[0].imgurl, { title: file.name });
+                                                }
+                                            })
+                                    };
+
+                                };
                             },
 
                             plugins: [
-                                'advlist autoresize, autolink link image lists charmap print preview hr anchor pagebreak',
-                                'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+                                'advlist autoresize, autolink image lists charmap print preview hr anchor pagebreak',
+                                'searchreplace visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
                                 'table emoticons template paste imagetools'
                             ],
                             toolbar: 'insertfile undo redo | styleselect | bold italic ' +
                                 '| alignleft aligncenter alignright alignjustify | bullist numlist outdent indent' +
-                                '| link image | print preview media fullpage | forecolor backcolor emoticons',
+                                '| image | custom preview media fullpage | forecolor backcolor emoticons',
                             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
                             imagetools_toolbar: 'rotateleft rotateright | flipv fliph | editimage imageoptions',
                             image_caption: true,
                             setup: (editor) => {
+
                                 editor.ui.registry.addButton('custom', {
                                     text: 'custom',
                                     onAction: () => {
-                                        //console.log(editor);
                                     }
                                 })
                             }
                         }}
                     />
-
+                    <input type='file' id='file' ref={editorRef} style={{ display: 'none' }} />
                 </div>
                 <div className='board_insert_button_wrap'>
                     <div>
