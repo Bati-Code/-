@@ -4,6 +4,7 @@ import { Button } from 'antd';
 
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import { Skeleton } from '@material-ui/lab';
 
 import { useAlert } from 'react-alert'
 
@@ -27,12 +28,15 @@ const BoardInsert = () => {
     const alert = useAlert();
 
     const editorRef = useRef(null);
+
     const log = () => {
         if (editorRef.current) {
             //console.log(editorRef.current.getContent());
         }
     };
     const { fin_list } = useSelector(state => state.financeList);
+
+    let localstream;
 
     useEffect(() => {
 
@@ -41,6 +45,40 @@ const BoardInsert = () => {
     const BoardTitle_Handler = (e) => {
         set_BoardTitle(e.target.value);
         //console.log(get_BoardTitle);
+    }
+
+    const onChange_Handler = (e) => {
+        console.log(e);
+
+        var file = e.target.files[0];
+        const bodyFormData = new FormData();
+        
+        bodyFormData.append("imgs", file);
+        bodyFormData.append("path", "community/board");
+
+        
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+
+            axios.post('http://103.57.61.87:8889/hitalk_msg_test/api/v1/image_upload',
+                bodyFormData)
+                .then((response) => {
+                    console.log(response.data);
+                    if (response.data.code == 200) {
+                        tinymce.execCommand('mceInsertContent', false,
+                            "<img src='" + response.data.images[0].imgurl +
+                            "' data-mce-src='" + response.data.images[0].imgurl +
+                            "' data-originalFileName='" + response.data.images[0].imgurl + 
+                            "' width=100%>");
+                    }
+                })
+                .catch((error) => {
+                    tinymce.execCommand('mceInsertContent', false,
+                        error + "");
+                })
+
+        };
     }
 
     const BoardInsert_Handler = () => {
@@ -91,6 +129,7 @@ const BoardInsert = () => {
                 <div className='board_insert_finance_list'>
                     <Autocomplete
                         id="highlights-demo"
+                        disableListWrap
                         style={{ width: '100%' }}
                         options={fin_list}
                         onChange={AutoComplete_Change_Handler}
@@ -114,65 +153,72 @@ const BoardInsert = () => {
                             language: 'ko_KR',
                             menubar: false,
                             remove_script_host: false,
-                            relative_urls: true,
+                            relative_urls: false,
                             convert_urls: true,
                             image_title: true,
                             automatic_uploads: true,
                             file_picker_types: 'image',
+                            branding: false,
+                            imagetools_cors_hosts: ['103.57.61.87',
+                                'hitalk-msg.s3.ap-northeast-2.amazonaws.com'],
 
                             file_picker_callback: function (cb, value, meta) {
-                                var input = document.createElement('input');
-                                input.setAttribute('type', 'file');
-                                input.setAttribute('accept', 'image/*');
 
-                                input.click();
+                                editorRef.current.click();
 
-                                input.onchange = function () {
-                                    const file = this.files[0];
-                                    const bodyFormData = new FormData();
+                                //     input.click();
 
-                                    bodyFormData.append("imgs", file);
+                                //     input.onchange = function () {
+                                //         const file = this.files[0];
+                                //         const bodyFormData = new FormData();
 
-                                    bodyFormData.append("path", "community/board");
-                                    var reader = new FileReader();
-                                    reader.readAsDataURL(file);
+                                //         bodyFormData.append("imgs", file);
 
-                                    reader.onload = () => {
-                                        axios.post('http://103.57.61.87:8889/hitalk_msg_test/api/v1/image_upload',
-                                            bodyFormData)
-                                            .then((response) => {
-                                                console.log(response.data);
-                                                if (response.data.code == 200) {
-                                                    cb(response.data.images[0].imgurl, { title: file.name });
-                                                }
-                                            })
-                                    };
+                                //         bodyFormData.append("path", "community/board");
+                                //         var reader = new FileReader();
+                                //         reader.readAsDataURL(file);
 
-                                };
+                                //         reader.onload = () => {
+                                //             axios.post('http://103.57.61.87:8889/hitalk_msg_test/api/v1/image_upload',
+                                //                 bodyFormData)
+                                //                 .then((response) => {
+                                //                     console.log(response.data);
+                                //                     if (response.data.code == 200) {
+                                //                         cb(response.data.images[0].imgurl, { title: file.name });
+                                //                     }
+                                //                 })
+                                //         };
+
+                                //     };
+                                // },
+
                             },
 
                             plugins: [
                                 'advlist autoresize, autolink image lists charmap print preview hr anchor pagebreak',
                                 'searchreplace visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-                                'table emoticons template paste imagetools'
+                                'table emoticons template paste'
                             ],
                             toolbar: 'insertfile undo redo | styleselect | bold italic ' +
                                 '| alignleft aligncenter alignright alignjustify | bullist numlist outdent indent' +
-                                '| image | custom preview media fullpage | forecolor backcolor emoticons',
+                                '| custom preview media fullpage | forecolor backcolor emoticons',
                             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                            imagetools_toolbar: 'rotateleft rotateright | flipv fliph | editimage imageoptions',
                             image_caption: true,
                             setup: (editor) => {
 
                                 editor.ui.registry.addButton('custom', {
-                                    text: 'custom',
+                                    icon: 'image',
                                     onAction: () => {
-                                    }
+                                        editorRef.current.click();
+                                    },
                                 })
                             }
                         }}
                     />
-                    <input type='file' id='file' ref={editorRef} style={{ display: 'none' }} />
+                </div>
+                <div>
+                    <input type="file" accept="image/*" onChange={onChange_Handler} 
+                    style={{display: 'none'}} ref={editorRef}></input>
                 </div>
                 <div className='board_insert_button_wrap'>
                     <div>

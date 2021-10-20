@@ -35,6 +35,7 @@ const BoardUpdate = (res) => {
                 set_BoardContent(request.data.list.post_content);
                 set_finance_List_Value(request.data.list.post_fin_list);
 
+
                 //console.log(request.data.list);
             })
     }, [])
@@ -63,7 +64,7 @@ const BoardUpdate = (res) => {
                 }
                 else if (request.data.update_board_result === 1) {
                     //console.log("업데이트 성공");
-                    history.goBack();
+                    history.push('/board/view/' + board_id);
                 }
 
             })
@@ -190,7 +191,7 @@ const BoardUpdate = (res) => {
                         </Button>
                     </div>
                     <div>
-                        <Button type="danger" onClick={() => { history.goBack() }} icon={<CloseOutlined />}>
+                        <Button type="danger" onClick={() => {  history.push('/board/view/' + board_id) }} icon={<CloseOutlined />}>
                             취소
                         </Button>
                     </div>

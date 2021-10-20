@@ -17,7 +17,7 @@ const store = createStore(Reducer, devTools);
 
 const options = {
     position: positions.BOTTOM_CENTER,
-    timeout: 2500,
+    timeout: 5000,
     offset: '30px',
     transition: transitions.SCALE,
 }
