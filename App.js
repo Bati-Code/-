@@ -44,6 +44,7 @@ const Board = () => {
 
 				<PrivateRoute path="/fin_interest" component={Fin_Interest} />
 				<PrivateRoute path="/fin_info" component={Fin_Info} />
+				<PrivateRoute path="/" component={MainPage} />
 			</Switch>
 		</BrowserRouter>
 
