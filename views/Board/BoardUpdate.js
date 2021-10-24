@@ -1,10 +1,10 @@
 import { FormOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, Spin } from 'antd';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -15,15 +15,19 @@ import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor'
 import { Editor } from '@tinymce/tinymce-react';
 import { server_config } from '../../server_config';
 
-const BoardUpdate = (res) => {
 
+const BoardUpdate = (res) => {
+    
     const [get_BoardData, set_BoardData] = useState('');
     const [get_BoardTitle, set_BoardTitle] = useState('');
     const [get_BoardContent, set_BoardContent] = useState('');
     const [get_finance_List_Value, set_finance_List_Value] = useState({});
-
+    const [get_url, set_url] = useState('');
+    const [get_loading, set_loading] = useState(false);
+    
     const history = useHistory();
-
+    const editorRef = useRef(null);
+    
     const board_id = res.match.params.id;
     const { fin_list } = useSelector(state => state.financeList);
 
@@ -77,9 +81,54 @@ const BoardUpdate = (res) => {
         //console.log(get_finance_List_Value, '|', newValue);
     }
 
-    const test = (e, v) => {
-        //console.log(v);
+    const onChange_Handler = (e) => {
+
+        var file = e.target.files[0];
+        const bodyFormData = new FormData();
+        const file_name = file.name;
+        bodyFormData.append("imgs", file);
+        bodyFormData.append("path", "community/board");
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+
+            if (get_url.file_name == file_name) {
+                tinymce.execCommand('mceInsertContent', false,
+                    "<img src='" + get_url.url +
+                    "' data-mce-src='" + get_url.url +
+                    "' data-originalFileName='" + get_url.url +
+                    "' style = '" + "max-width: 100%;" + "'>");
+            }
+            else {
+                set_loading(true);
+                axios.post('http://103.57.61.87:8889/hitalk_msg_test/api/v1/image_upload',
+                    bodyFormData)
+                    .then((response) => {
+                        console.log(response.data);
+                        if (response.data.code == 200) {
+                            set_loading(false);
+                            tinymce.execCommand('mceInsertContent', false,
+                                "<img src='" + response.data.images[0].imgurl +
+                                "' data-mce-src='" + response.data.images[0].imgurl +
+                                "' data-originalFileName='" + response.data.images[0].imgurl +
+                                "' style = '" + "max-width: 100%;" + "'>");
+
+                            set_url({ "file_name": file_name, "url": response.data.images[0].imgurl });
+                        }
+                    })
+                    .catch((error) => {
+                        tinymce.execCommand('mceInsertContent', false,
+                            error + "");
+                    })
+            }
+        };
+
+        e.target.value = "";
+
     }
+
+
+
 
     return (
         <>
@@ -101,88 +150,53 @@ const BoardUpdate = (res) => {
                         type="text" placeholder="제목을 입력해주세요."
                         value={get_BoardTitle} onChange={BoardTitle_Handler}></input>
                 </div>
-                <div id='editor'>
-                    <Editor
-                        onEditorChange={(newValue, editor) => set_BoardContent(newValue)}
-                        value={get_BoardContent}
-                        init={{
-                            placeholder: '글 작성',
-                            height: 500,
-                            language: 'ko_KR',
-                            menubar: false,
-                            relative_urls: false,
-                            remove_script_host: false,
-                            convert_urls: true,
-                            image_title: true,
-                            automatic_uploads: true,
-                            file_picker_types: 'image',
+                <Spin spinning={get_loading}>
+                    <div id='editor'>
+                        <Editor
+                            onEditorChange={(newValue, editor) => set_BoardContent(newValue)}
+                            value={get_BoardContent}
+                            init={{
+                                placeholder: '글 작성',
+                                height: 500,
+                                language: 'ko_KR',
+                                menubar: false,
+                                relative_urls: false,
+                                remove_script_host: false,
+                                convert_urls: true,
+                                image_title: true,
+                                automatic_uploads: true,
+                                file_picker_types: 'image',
 
-                            file_picker_callback: function (cb, value, meta) {
-                                var input = document.createElement('input');
-                                input.setAttribute('type', 'file');
-                                input.setAttribute('accept', 'image/*');
+                                file_picker_callback: function (cb, value, meta) {
+                                    editorRef.current.click();
+                                },
 
-                                input.onchange = function () {
-                                    var file = this.files[0];
-
-                                    var reader = new FileReader();
-                                    reader.onload = function () {
-
-                                        var id = 'blobid' + (new Date()).getTime();
-                                        var blobCache = tinymce.activeEditor.editorUpload.blobCache;
-                                        var base64 = reader.result.split(',')[1];
-                                        var blobInfo = blobCache.create(id, file, base64);
-                                        blobCache.add(blobInfo);
-
-                                        cb(blobInfo.blobUri(), { title: file.name });
-                                    };
-                                    reader.readAsDataURL(file);
-                                };
-
-                                input.click();
-                            },
-
-                            plugins: [
-                                'advlist autolink link image lists charmap print preview hr anchor pagebreak',
-                                'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-                                'table emoticons template paste imagetools'
-                            ],
-                            toolbar: 'insertfile undo redo | styleselect | bold italic ' +
-                                '| alignleft aligncenter alignright alignjustify | bullist numlist outdent indent' +
-                                '| link image | print preview media fullpage | forecolor backcolor emoticons',
-                            menubar: 'insert',
-                            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                            imagetools_toolbar: 'rotateleft rotateright | flipv fliph | editimage imageoptions',
-                            image_caption: true,
-                            setup: (editor) => {
-                                editor.ui.registry.addButton('custom', {
-                                    text: 'custom',
-                                    onAction: () => {
-                                        //console.log(editor);
-                                    }
-                                })
-                            }
-                        }}
-                    />
-                    {/* <CKEditor
-                        editor={ClassicEditor}
-                        config={{ placeholder: "글 작성" }}
-                        data={get_BoardContent}
-                        onReady={editor => {
-                            //console.log(editor)
-                        }}
-                        onChange={(event, editor) => {
-                            //console.log('change.', editor.getData());
-                            set_BoardContent(editor.getData());
-                        }}
-                        onBlur={(event, editor) => {
-                            //console.log('Blur.', editor);
-                        }}
-                        onFocus={(event, editor) => {
-
-                            //console.log('Focus.', editor);
-                        }}
-                    /> */}
+                                plugins: [
+                                    'advlist autolink link image lists charmap print preview hr anchor pagebreak',
+                                    'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+                                    'table emoticons template paste'
+                                ],
+                                toolbar: 'insertfile undo redo | styleselect | bold italic ' +
+                                    '| alignleft aligncenter alignright alignjustify | bullist numlist outdent indent' +
+                                    '| link  | custom preview media fullpage | forecolor backcolor emoticons',
+                                menubar: 'insert',
+                                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                                image_caption: true,
+                                setup: (editor) => {
+                                    editor.ui.registry.addButton('custom', {
+                                        icon: 'image',
+                                        onAction: () => {
+                                            editorRef.current.click();
+                                        },
+                                    })
+                                }
+                            }}
+                        />
+                    </div>
+                </Spin>
+                <div>
+                    <input type="file" accept="image/*" onChange={onChange_Handler}
+                        style={{ display: 'none' }} ref={editorRef}></input>
                 </div>
                 <div className='board_insert_button_wrap'>
                     <div>
@@ -191,7 +205,7 @@ const BoardUpdate = (res) => {
                         </Button>
                     </div>
                     <div>
-                        <Button type="danger" onClick={() => {  history.push('/board/view/' + board_id) }} icon={<CloseOutlined />}>
+                        <Button type="danger" onClick={() => { history.push('/board/view/' + board_id) }} icon={<CloseOutlined />}>
                             취소
                         </Button>
                     </div>

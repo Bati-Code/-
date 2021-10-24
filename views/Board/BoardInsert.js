@@ -41,15 +41,13 @@ const BoardInsert = () => {
     const BoardTitle_Handler = (e) => {
         set_BoardTitle(e.target.value);
         //console.log(get_BoardTitle);
-        console.log("AA");
-        tinymce.DOM.loadCSS('./css/BoardInsertCSS.css');
+        //tinymce.DOM.loadCSS('./css/BoardInsertCSS.css');
 
     }
 
     const temp = () => {
         tinymce.activeEditor.dom.remove(tinymce.activeEditor.dom.select('p'));
         //console.log(get_BoardTitle);
-        console.log("BB");
     }
 
     const onChange_Handler = (e) => {
@@ -230,7 +228,7 @@ const BoardInsert = () => {
                                 plugins: [
                                     'advlist autoresize, autolink image lists charmap print preview hr anchor pagebreak',
                                     'searchreplace visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-                                    'table emoticons template paste, link, imagetool'
+                                    'table emoticons template paste, link'
                                 ],
                                 toolbar: 'insertfile undo redo | styleselect | bold italic ' +
                                     '| alignleft aligncenter alignright alignjustify | bullist numlist outdent indent' +
