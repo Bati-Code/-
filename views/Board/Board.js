@@ -19,6 +19,7 @@ const Board = () => {
     const [get_Board_Total, set_Board_Total] = useState(0);
     const [get_Modal_Visible, set_Modal_Visible] = useState(false);
     const [get_Modal_Board_List, set_Modal_Board_List] = useState([]);
+    const [get_attention_count, set_attention_count] = useState([]);
 
     const history = useHistory();
     const dispatch = useDispatch();
@@ -59,7 +60,9 @@ const Board = () => {
                             'fin_code_list': fin_code_List,
                         })
                         .then((response) => {
-                            list.fin_attention = response.data.countBoard;
+                            //list.fin_attention = response.data.countBoard;
+                            console.log(response.data.countBoard);
+                            set_attention_count(response.data.countBoard);
                             set_BoardList(boardList);
                         })
 
@@ -193,7 +196,7 @@ const Board = () => {
                                     onClick={() => {
                                         history.push("/board/view/" + list._id);
                                     }}>
-                                    [{list.post_fin_list.name}] {list.post_title}
+                                    [{list?.post_fin_list.name}] {list.post_title}
                                     <span className="board_comment_count">
                                         <ChatIcon style={
                                             {
@@ -211,7 +214,7 @@ const Board = () => {
                                     <li>{DateDisplay(list.post_date)}</li> <li> | </li>
                                     <li>조회 : {list.post_count}</li> <li> | </li>
                                     <li>추천 : {list.post_recommend}</li>
-                                    <li>관심도 : {list.fin_attention}</li>
+                                    <li>관심도 : {get_attention_count[list.index -1].fin_count}</li>
                                 </ul>
                             </div>
                         )
@@ -233,7 +236,7 @@ const Board = () => {
                                         Modal_Visible_Handler(0, '');
                                         history.push("/board/view/" + list._id);
                                     }}>
-                                    [{list.post_fin_list.name}] {list.post_title}
+                                    [{list?.post_fin_list.name}] {list.post_title}
                                     <span className="board_comment_count">
                                         <ChatIcon style={
                                             {
