@@ -17,17 +17,16 @@ import { server_config } from '../../server_config';
 
 
 const BoardUpdate = (res) => {
-    
+
     const [get_BoardData, set_BoardData] = useState('');
     const [get_BoardTitle, set_BoardTitle] = useState('');
     const [get_BoardContent, set_BoardContent] = useState('');
     const [get_finance_List_Value, set_finance_List_Value] = useState({});
-    const [get_url, set_url] = useState('');
     const [get_loading, set_loading] = useState(false);
-    
+
     const history = useHistory();
     const editorRef = useRef(null);
-    
+
     const board_id = res.match.params.id;
     const { fin_list } = useSelector(state => state.financeList);
 
@@ -82,49 +81,41 @@ const BoardUpdate = (res) => {
     }
 
     const onChange_Handler = (e) => {
-
-        var file = e.target.files[0];
         const bodyFormData = new FormData();
-        const file_name = file.name;
-        bodyFormData.append("imgs", file);
+
+        for (let i = 0; i < e.target.files.length; i++) {
+            bodyFormData.append("imgs", e.target.files[i]);
+            console.log(i);
+        }
         bodyFormData.append("path", "community/board");
-        var reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function () {
 
-            if (get_url.file_name == file_name) {
-                tinymce.execCommand('mceInsertContent', false,
-                    "<img src='" + get_url.url +
-                    "' data-mce-src='" + get_url.url +
-                    "' data-originalFileName='" + get_url.url +
-                    "' style = '" + "max-width: 100%;" + "'>");
-            }
-            else {
-                set_loading(true);
-                axios.post('http://103.57.61.87:8889/hitalk_msg_test/api/v1/image_upload',
-                    bodyFormData)
-                    .then((response) => {
-                        console.log(response.data);
-                        if (response.data.code == 200) {
-                            set_loading(false);
-                            tinymce.execCommand('mceInsertContent', false,
-                                "<img src='" + response.data.images[0].imgurl +
-                                "' data-mce-src='" + response.data.images[0].imgurl +
-                                "' data-originalFileName='" + response.data.images[0].imgurl +
-                                "' style = '" + "max-width: 100%;" + "'>");
-
-                            set_url({ "file_name": file_name, "url": response.data.images[0].imgurl });
-                        }
-                    })
-                    .catch((error) => {
+        set_loading(true);
+        axios.post('http://103.57.61.87:8889/hitalk_msg_test/api/v1/image_upload',
+            bodyFormData)
+            .then((response) => {
+                console.log(response.data);
+                if (response.data.code == 200) {
+                    set_loading(false);
+                    for (let i = 0; i < response.data.images.length; i++) {
                         tinymce.execCommand('mceInsertContent', false,
-                            error + "");
-                    })
-            }
-        };
+                            "<img src='" + response.data.images[i].imgurl +
+                            "' data-mce-src='" + response.data.images[i].imgurl +
+                            "' data-originalFileName='" + response.data.images[i].imgurl +
+                            "' style = '" + "max-width: 100%;" + "'>");
+                    }
+                } else {
+                    set_loading(false);
+                    alert.show("이미지 파일 업로드 실패");
+
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+                set_loading(false);
+                alert.show("이미지 파일 업로드 실패");
+            })
 
         e.target.value = "";
-
     }
 
 
@@ -166,6 +157,7 @@ const BoardUpdate = (res) => {
                                 image_title: true,
                                 automatic_uploads: true,
                                 file_picker_types: 'image',
+                                branding: false,
 
                                 file_picker_callback: function (cb, value, meta) {
                                     editorRef.current.click();
@@ -173,7 +165,7 @@ const BoardUpdate = (res) => {
 
                                 plugins: [
                                     'advlist autolink link image lists charmap print preview hr anchor pagebreak',
-                                    'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+                                    'searchreplace visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
                                     'table emoticons template paste'
                                 ],
                                 toolbar: 'insertfile undo redo | styleselect | bold italic ' +
@@ -196,7 +188,7 @@ const BoardUpdate = (res) => {
                 </Spin>
                 <div>
                     <input type="file" accept="image/*" onChange={onChange_Handler}
-                        style={{ display: 'none' }} ref={editorRef}></input>
+                        style={{ display: 'none' }} ref={editorRef} multiple></input>
                 </div>
                 <div className='board_insert_button_wrap'>
                     <div>
