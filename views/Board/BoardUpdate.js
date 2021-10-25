@@ -75,7 +75,7 @@ const BoardUpdate = (res) => {
     }
 
     const AutoComplete_Change_Handler = (event, newValue) => {
-        set_BoardContent(newValue);
+        //set_BoardContent(newValue);
         set_finance_List_Value(newValue);
         //console.log(get_finance_List_Value, '|', newValue);
     }
