@@ -35,3 +35,6 @@
 iframe{
     max-width: 100%;
 }
+#editor p{
+    word-break: break-all;
+}

@@ -132,6 +132,7 @@ const BoardUpdate = (res) => {
                         options={fin_list}
                         onChange={AutoComplete_Change_Handler}
                         getOptionLabel={(option) => option.name + "  |  " + option.code}
+                        getOptionSelected={(option, value) => option.name === value.name}
                         renderInput={(params) => (
                             <TextField {...params} label="종목" variant="outlined" margin="normal" />
                         )} />
