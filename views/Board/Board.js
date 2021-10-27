@@ -248,7 +248,7 @@ const Board = () => {
                                     onClick={() => {
                                         Modal_Visible_Handler(3, list.post_fin_list.name);
                                     }}>관심도 : {
-                                        get_attention_count[list.index - 1]?.total_count != 0 ?
+                                        get_attention_count[list.index - 1]?.total_count !== 0 ?
                                         (Math.round(get_attention_count[list.index - 1]?.fin_count /
                                         get_attention_count[list.index - 1]?.total_count * 100))
                                         : 0

@@ -174,6 +174,8 @@ const BoardUpdate = (res) => {
                                     '| link  | custom preview media fullpage | forecolor backcolor emoticons',
                                 menubar: 'insert',
                                 content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                                content_style: 'p { margin: 3px; }',
+                                content_style: 'img { max-width: 100%; }',
                                 image_caption: true,
                                 setup: (editor) => {
                                     editor.ui.registry.addButton('custom', {

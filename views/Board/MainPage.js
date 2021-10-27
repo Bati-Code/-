@@ -20,6 +20,7 @@ const { Search } = Input;
 
 const MainPage = () => {
     const [get_Menu_Text, set_Menu_Text] = useState('제목');
+    const [get_Search_Value, set_Search_Value] = useState('');
     const [get_Radio_Option, set_Radio_Option] = useState('a');
     const [get_Drawer_Visible, set_Drawer_Visible] = useState(false);
 
@@ -56,6 +57,7 @@ const MainPage = () => {
     const Menu_Handler = (e) => {
         //console.log(e);
         set_Menu_Text(e.key);
+        set_Search_Value('');
     }
 
     const menu = (
@@ -110,6 +112,7 @@ const MainPage = () => {
 
 
     const main_Header_Handler = () => {
+        set_Search_Value('');
         dispatch(Page_Reset());
     }
 
@@ -125,6 +128,10 @@ const MainPage = () => {
 
     const drawer_Close_Handler = () => {
         set_Drawer_Visible(false);
+    }
+
+    const Search_Input_Handler = (e) => {
+        set_Search_Value(e.target.value);
     }
 
     return (
@@ -165,7 +172,8 @@ const MainPage = () => {
                                         </Button>
                                     </Dropdown>
                                     <Search placeholder="검색할 내용을 입력하세요."
-                                        onSearch={onSearch} enterButton />
+                                        onSearch={onSearch} onChange={Search_Input_Handler}
+                                        value={get_Search_Value} enterButton />
                                 </div>
                             </div>
                             <div className="top_Nav_Wrap">

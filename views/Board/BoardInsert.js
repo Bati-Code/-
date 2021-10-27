@@ -33,7 +33,6 @@ const BoardInsert = () => {
 
 
     useEffect(() => {
-
     }, [])
 
     const BoardTitle_Handler = (e) => {
@@ -153,7 +152,7 @@ const BoardInsert = () => {
                                 max_width: '100%',
                                 language: 'ko_KR',
                                 menubar: false,
-                                remove_script_host: false,
+                                //remove_script_host: false,
                                 relative_urls: false,
                                 convert_urls: true,
                                 image_title: true,
@@ -166,17 +165,19 @@ const BoardInsert = () => {
                                 },
 
                                 plugins: [
-                                    'advlist autoresize, autolink image lists charmap print preview hr anchor pagebreak',
+                                    'advlist autoresize autolink image lists charmap print preview hr anchor pagebreak',
                                     'searchreplace visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
                                     'table emoticons template paste, link'
                                 ],
                                 toolbar: 'insertfile undo redo | styleselect | bold italic ' +
                                     '| alignleft aligncenter alignright alignjustify | bullist numlist outdent indent' +
-                                    '| custom preview media link | forecolor backcolor emoticons',
-                                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                                    '| custom preview media | forecolor backcolor emoticons',
+                                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px}',
+                                content_style: 'p { margin: 3px; }',
+                                content_style: 'img { max-width: 100%; }',
                                 image_caption: true,
                                 setup: (editor) => {
-
+                                    //tinymce.editor[0].dom.setStyle(tinymce.activeEditor.dom.select('p'), 'background-color', 'red');
                                     editor.ui.registry.addButton('custom', {
                                         icon: 'image',
                                         onAction: () => {

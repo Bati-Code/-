@@ -33,6 +33,7 @@ const BoardView = (res) => {
     const [get_recomment_for_comment_id, set_recomment_for_comment_id] = useState('');
     const [get_recomment_id, set_recomment_id] = useState('');
 
+    //모달
     const [visible, setVisible] = useState(false);
     const [comment_visible, set_comment_Visible] = useState(false);
     const [recomment_visible, set_recomment_Visible] = useState(false);
@@ -41,7 +42,10 @@ const BoardView = (res) => {
 
     const [get_loading, set_loading] = useState(true);
 
-
+    const [get_report_form_data, set_report_form_data] = useState({
+        selected_value: '',
+        content: ''
+    });
 
     const { TextArea } = Input;
 
@@ -341,13 +345,28 @@ const BoardView = (res) => {
             })
     }
 
-    const select_Change_Handler = (e) => {
-        console.log(e.target);
-        set_selected_value(e.target.value);
-    }
-
     const textArea_Change_Handler = (e) => {
         console.log(e.target.value);
+        console.log(e.target.name);
+
+        set_report_form_data({
+            ...get_report_form_data,
+            [e.target.name]: e.target.value
+        });
+    }
+
+    const report_Confirm_Handler = () => {
+        console.log(get_report_form_data);
+        axios.post(server_config.server_Address + '/report/report',
+        {
+            report_form_data: get_report_form_data,
+            report_user: get_userName,
+            board_id: board_id,
+            bad_user: get_board_data.post_author
+        })
+        .then((response) => {
+            console.log(response.data);
+        })
     }
 
     return (
@@ -471,6 +490,7 @@ const BoardView = (res) => {
                         visible={get_report_modal_visible}
                         onCancel={() => { set_report_modal_visible(false) }}
                         okText="신고"
+                        onOk={report_Confirm_Handler}
                         cancelText="취소"
                     >
                         <div id="report_wrap">
@@ -489,12 +509,11 @@ const BoardView = (res) => {
                                         <InputLabel id="select_label">신고 사항</InputLabel>
                                         <Select
                                             labelId="select_label"
-                                            name='report'
+                                            name='selected_value'
                                             id='report'
-                                            value={get_selected_value}
+                                            value={get_report_form_data.selected_value}
                                             label='신고 사항'
-                                            onChange={select_Change_Handler}>
-
+                                            onChange={textArea_Change_Handler}>
                                             <MenuItem value={'AA'}>AA</MenuItem>
                                             <MenuItem value={'BB'}>BB</MenuItem>
                                         </Select>
@@ -503,7 +522,8 @@ const BoardView = (res) => {
                             </div>
                         </div>
                         <div>
-                            <textarea id="report_textarea" onChange={textArea_Change_Handler}/>
+                            <textarea id="content" name="content"
+                                value={get_report_form_data.content} onChange={textArea_Change_Handler} />
                         </div>
 
                     </Modal>
