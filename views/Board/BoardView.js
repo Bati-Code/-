@@ -2,7 +2,11 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom';
 import { Modal, Button, Input, Skeleton } from 'antd'
-import { LikeOutlined, TableOutlined, EditOutlined, DeleteOutlined, PlusOutlined, RightOutlined, DislikeOutlined } from '@ant-design/icons';
+import { LikeOutlined, TableOutlined, EditOutlined, DeleteOutlined, PlusOutlined, RightOutlined, AlertOutlined } from '@ant-design/icons';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import './css/Board_View_CSS.css';
 import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
@@ -18,6 +22,7 @@ const BoardView = (res) => {
     const [get_fin_List_name, set_fin_List_name] = useState('');
     const [get_recommend_check, set_recommend_check] = useState(false);
     const [get_userName, set_userName] = useState('');
+    const [get_selected_value, set_selected_value] = useState('');
 
     const [get_comment_content, set_comment_content] = useState('');
     const [get_recomment_content, set_recomment_content] = useState('');
@@ -31,6 +36,7 @@ const BoardView = (res) => {
     const [visible, setVisible] = useState(false);
     const [comment_visible, set_comment_Visible] = useState(false);
     const [recomment_visible, set_recomment_Visible] = useState(false);
+    const [get_report_modal_visible, set_report_modal_visible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
 
     const [get_loading, set_loading] = useState(true);
@@ -335,280 +341,338 @@ const BoardView = (res) => {
             })
     }
 
+    const select_Change_Handler = (e) => {
+        console.log(e.target);
+        set_selected_value(e.target.value);
+    }
+
+    const textArea_Change_Handler = (e) => {
+        console.log(e.target.value);
+    }
+
     return (
         <>
             <div className="board_view_wrap">
                 <div className="board_view_Header" onClick={() => history.push('/main')}>
                     주식토론 게시판
                 </div>
-                    <div className="board_view_container">
-                        <section className="board_content">
-                            <nav>
-                            </nav>
+                <div className="board_view_container">
+                    <section className="board_content">
+                        <nav>
+                        </nav>
 
-                            <main>
-                                <div id="board_info_wrap">
-                                    <div>
-                                        <div id="board_info_title">
-                                            [{get_fin_List_name}] {get_board_data.post_title}
-                                        </div>
+                        <main>
+                            <div id="board_info_wrap">
+                                <div>
+                                    <div id="board_info_title">
+                                        [{get_fin_List_name}] {get_board_data.post_title}
                                     </div>
-                                    <ul id="board_info">
-                                        <li id="board_info_data">
-                                            {get_board_data.post_author}
-                                        </li>
-                                        <li>  |  </li>
-                                        <li id="board_info_data">
-                                            {dayjs(get_board_data.post_date).format('MM-DD HH:mm')}
-                                        </li>
-                                        <li>  |  </li>
-                                        <li id="board_info_data">
-                                            조회 : {get_board_data.post_count}
-                                        </li>
-                                        <li>  |  </li>
-                                        <li id="board_info_recommend">
-                                            추천 : {get_board_data.post_recommend}
-                                        </li>
+                                </div>
+                                <ul id="board_info">
+                                    <li id="board_info_data">
+                                        {get_board_data.post_author}
+                                    </li>
+                                    <li>  |  </li>
+                                    <li id="board_info_data">
+                                        {dayjs(get_board_data.post_date).format('MM-DD HH:mm')}
+                                    </li>
+                                    <li>  |  </li>
+                                    <li id="board_info_data">
+                                        조회 : {get_board_data.post_count}
+                                    </li>
+                                    <li>  |  </li>
+                                    <li id="board_info_recommend">
+                                        추천 : {get_board_data.post_recommend}
+                                    </li>
 
-                                    </ul>
-                                </div>
-                                <div id="board_content">
-                                    <div dangerouslySetInnerHTML={{ __html: get_board_data.post_content }}></div>
-                                </div>
-                            </main>
-                            <aside>
-                            </aside>
-                        </section>
-                    </div>
-                    <div className="BoardView_footer">
-                        <div>
-                            <Button type="primary" icon={<TableOutlined />}
-                                onClick={() => history.push('/main')}>
-                                목록
-                            </Button>
-                        </div>
-                        <div>
-                            <Button type="primary" icon={<LikeOutlined />} onClick={recommend_Handler}
-                                ant-click-animating-without-extra-node='false'>
-                                {get_recommend_check ? '추천 취소'
-                                    : '추천'}
-                            </Button>
-                        </div>
-                        {get_user_check ?
-                            <div>
-                                <Button type="primary" icon={<EditOutlined />} onClick={updateBoard}>
-                                    수정
-                                </Button>
+                                </ul>
                             </div>
-                            : ''}
-                        {get_user_check ?
-                            <div>
-                                <Button type="danger" icon={<DeleteOutlined />} onClick={showModal}>
-                                    삭제
-                                </Button>
+                            <div id="board_content">
+                                <div dangerouslySetInnerHTML={{ __html: get_board_data.post_content }}></div>
                             </div>
-                            : ''}
+                        </main>
+                        <aside>
+                        </aside>
+                    </section>
+                </div>
+                <div className="BoardView_footer">
+                    <div>
+                        <Button type="primary" icon={<TableOutlined />}
+                            onClick={() => history.push('/main')}>
+                            목록
+                        </Button>
                     </div>
                     <div>
-                        <Modal
-                            title="게시글 삭제"
-                            visible={visible}
-                            onOk={handle_DeleteBoard_Ok}
-                            confirmLoading={confirmLoading}
-                            onCancel={handle_DeleteBoard_Cancel}
-                            okText="삭제"
-                            cancelText="취소"
-                        >
-                            <p>정말 삭제하시겠습니까?</p>
-                        </Modal>
-                        <Modal
-                            title="댓글 삭제"
-                            visible={comment_visible}
-                            onOk={handle_DeleteComment_Ok}
-                            confirmLoading={confirmLoading}
-                            onCancel={handle_DeleteComment_Cancel}
-                            okText="삭제"
-                            cancelText="취소"
-                        >
-                            <p>정말 삭제하시겠습니까?</p>
-                        </Modal>
-                        <Modal
-                            title="답글 삭제"
-                            visible={recomment_visible}
-                            onOk={handle_Delete_ReComment_Ok}
-                            confirmLoading={confirmLoading}
-                            onCancel={handle_Delete_ReComment_Cancel}
-                            okText="삭제"
-                            cancelText="취소"
-                        >
-                            <p>정말 삭제하시겠습니까?</p>
-                        </Modal>
-
+                        <Button type="primary" icon={<LikeOutlined />} onClick={recommend_Handler}
+                            ant-click-animating-without-extra-node='false'>
+                            {get_recommend_check ? '추천 취소'
+                                : '추천'}
+                        </Button>
                     </div>
-                    <div className="board_comment_wrap">
+                    {get_user_check ?
                         <div>
-                            <TextArea rows={4} onChange={Comment_Change_Handler} value={get_comment_content} />
-                        </div>
-                        <div>
-                            <Button type="primary" icon={<PlusOutlined />} onClick={Comment_Insert_Handler}>
-                                댓글 등록
+                            <Button type="primary" icon={<EditOutlined />} onClick={updateBoard}>
+                                수정
                             </Button>
                         </div>
+                        : ''}
+                    {get_user_check ?
                         <div>
-                            {get_Comment_List.map((list, index) => {
+                            <Button type="danger" icon={<DeleteOutlined />} onClick={showModal}>
+                                삭제
+                            </Button>
+                        </div>
+                        : ''}
+                    {get_user_check ?
+                        ''
+                        :
+                        <div>
+                            <Button type="danger" icon={<AlertOutlined />} onClick={() => { set_report_modal_visible(true) }}>
+                                신고
+                            </Button>
+                        </div>}
+                </div>
+                <div>
+                    <Modal
+                        title="게시글 삭제"
+                        visible={visible}
+                        onOk={handle_DeleteBoard_Ok}
+                        confirmLoading={confirmLoading}
+                        onCancel={handle_DeleteBoard_Cancel}
+                        okText="삭제"
+                        cancelText="취소"
+                    >
+                        <p>정말 삭제하시겠습니까?</p>
+                    </Modal>
+                    <Modal
+                        title="댓글 삭제"
+                        visible={comment_visible}
+                        onOk={handle_DeleteComment_Ok}
+                        confirmLoading={confirmLoading}
+                        onCancel={handle_DeleteComment_Cancel}
+                        okText="삭제"
+                        cancelText="취소"
+                    >
+                        <p>정말 삭제하시겠습니까?</p>
+                    </Modal>
+                    <Modal
+                        title="답글 삭제"
+                        visible={recomment_visible}
+                        onOk={handle_Delete_ReComment_Ok}
+                        confirmLoading={confirmLoading}
+                        onCancel={handle_Delete_ReComment_Cancel}
+                        okText="삭제"
+                        cancelText="취소"
+                    >
+                        <p>정말 삭제하시겠습니까?</p>
+                    </Modal>
+                    <Modal
+                        title="게시글 신고"
+                        visible={get_report_modal_visible}
+                        onCancel={() => { set_report_modal_visible(false) }}
+                        okText="신고"
+                        cancelText="취소"
+                    >
+                        <div id="report_wrap">
+                            <div id="report_div">
+                                <span id="label">제목 : </span>
+                                <span>{get_board_data.post_title}</span>
+                            </div>
+                            <div id="report_div">
+                                <span id="label">작성자 : </span>
+                                <span>{get_userName}</span>
+                            </div>
+                            <div id="report_div">
+                                <span id="label">신고사항 : </span>
+                                <span id="item">
+                                    <FormControl sx={{ m: 1, minWidth: 120, width: '100%' }}>
+                                        <InputLabel id="select_label">신고 사항</InputLabel>
+                                        <Select
+                                            labelId="select_label"
+                                            name='report'
+                                            id='report'
+                                            value={get_selected_value}
+                                            label='신고 사항'
+                                            onChange={select_Change_Handler}>
 
-                                let comment_user_check = false;
+                                            <MenuItem value={'AA'}>AA</MenuItem>
+                                            <MenuItem value={'BB'}>BB</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <textarea id="report_textarea" onChange={textArea_Change_Handler}/>
+                        </div>
 
-                                if (list.comment_author === get_userName) {
-                                    comment_user_check = true;
-                                }
-                                else {
-                                    comment_user_check = false;
-                                }
-                                return (
-                                    <div className="comment_wrap" key={index}>
-                                        <div className="comment_top">
-                                            <div className="comment_author">
-                                                {list.comment_author}
-                                            </div>
-                                            <div>
-                                                {list.comment_date}
-                                                <span id='delete_button'>
-                                                    {comment_user_check
-                                                        ? <span><DeleteOutlined onClick={() => showCommentModal(list._id)} /></span>
-                                                        : null}
+                    </Modal>
+
+                </div>
+                <div className="board_comment_wrap">
+                    <div>
+                        <TextArea rows={4} onChange={Comment_Change_Handler} value={get_comment_content} />
+                    </div>
+                    <div>
+                        <Button type="primary" icon={<PlusOutlined />} onClick={Comment_Insert_Handler}>
+                            댓글 등록
+                        </Button>
+                    </div>
+                    <div>
+                        {get_Comment_List.map((list, index) => {
+
+                            let comment_user_check = false;
+
+                            if (list.comment_author === get_userName) {
+                                comment_user_check = true;
+                            }
+                            else {
+                                comment_user_check = false;
+                            }
+                            return (
+                                <div className="comment_wrap" key={index}>
+                                    <div className="comment_top">
+                                        <div className="comment_author">
+                                            {list.comment_author}
+                                        </div>
+                                        <div>
+                                            {list.comment_date}
+                                            <span id='delete_button'>
+                                                {comment_user_check
+                                                    ? <span><DeleteOutlined onClick={() => showCommentModal(list._id)} /></span>
+                                                    : null}
+                                            </span>
+
+                                        </div>
+                                    </div>
+                                    <div className="comment_content">
+                                        {list.comment_content}
+                                    </div>
+                                    <div className="comment_function_wrap">
+                                        <div>
+                                            <Button type="primary" onClick={() => ReComment_Handler(list._id)}>
+                                                답글
+                                            </Button>
+                                        </div>
+                                        <div className='comment_function_list'>
+                                            <Button
+                                                id={list._id + "button"}
+                                                onClick={() => comment_recommend_Handler(list._id)}
+                                                style={list.comment_recommend_user.findIndex((e) =>
+                                                    e.comment_recommend_user === get_userName) !== -1
+                                                    ? {
+                                                        backgroundColor: '#439926',
+                                                        padding: '0 15px',
+                                                        color: 'white',
+                                                        BorderColor: '#439926'
+                                                    }
+                                                    : {
+                                                        backgroundColor: 'white',
+                                                        padding: '0 15px',
+                                                        color: 'black',
+                                                        BorderColor: '#b3b3b3'
+                                                    }}>
+                                                <LikeOutlined />
+                                                <span id={list._id}>
+                                                    {list.comment_recommend}
                                                 </span>
-
-                                            </div>
-                                        </div>
-                                        <div className="comment_content">
-                                            {list.comment_content}
-                                        </div>
-                                        <div className="comment_function_wrap">
-                                            <div>
-                                                <Button type="primary" onClick={() => ReComment_Handler(list._id)}>
-                                                    답글
-                                                </Button>
-                                            </div>
-                                            <div className='comment_function_list'>
-                                                <Button
-                                                    id={list._id + "button"}
-                                                    onClick={() => comment_recommend_Handler(list._id)}
-                                                    style={list.comment_recommend_user.findIndex((e) =>
-                                                        e.comment_recommend_user === get_userName) !== -1
-                                                        ? {
-                                                            backgroundColor: '#439926',
-                                                            padding: '0 15px',
-                                                            color: 'white',
-                                                            BorderColor: '#439926'
-                                                        }
-                                                        : {
-                                                            backgroundColor: 'white',
-                                                            padding: '0 15px',
-                                                            color: 'black',
-                                                            BorderColor: '#b3b3b3'
-                                                        }}>
-                                                    <LikeOutlined />
-                                                    <span id={list._id}>
-                                                        {list.comment_recommend}
-                                                    </span>
-                                                </Button>
-                                            </div>
-
-                                        </div>
-                                        <div>
-                                            {
-                                                get_recomment_open ?
-                                                    get_comment_id === list._id ?
-                                                        <div>
-                                                            <div>
-                                                                <TextArea rows={3} value={get_recomment_content}
-                                                                    onChange={ReComment_Change_Handler} />
-                                                            </div>
-                                                            <div>
-                                                                <Button type="primary" icon={<PlusOutlined />}
-                                                                    onClick={() => ReComment_Insert_Handler(list._id)}>
-                                                                    답글 등록
-                                                                </Button>
-                                                            </div>
-                                                        </div>
-                                                        : null
-                                                    : null
-                                            }
-                                        </div>
-                                        <div>
-                                            {list.comment_recomment.map((recomment, index) => {
-
-                                                let recomment_user_check = false;
-
-                                                if (recomment.recomment_author === get_userName) {
-                                                    recomment_user_check = true;
-                                                }
-                                                else {
-                                                    recomment_user_check = false;
-                                                }
-
-                                                return (
-                                                    <div key={index}>
-                                                        <div className='recomment_wrap'>
-                                                            <div className='recomment_top'>
-                                                                <div className="recomment_author">
-                                                                    <RightOutlined />
-                                                                    {recomment.recomment_author}
-                                                                </div>
-                                                                <div>
-                                                                    {recomment.recomment_date}
-                                                                    <span>
-                                                                        {recomment_user_check
-                                                                            ? <span id='delete_button'>
-                                                                                <DeleteOutlined onClick={
-                                                                                    () => showReCommentModal(list._id, recomment._id)} />
-                                                                            </span>
-                                                                            : null}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                            <div className='recomment_info'>
-                                                                {recomment.recomment_content}
-                                                            </div>
-                                                            <div className='recomment_function'>
-
-                                                                <Button
-                                                                    id={recomment._id + "button"}
-                                                                    onClick={() => ReComment_recommend_Handler(list._id, recomment._id)}
-                                                                    style={recomment.recomment_recommend_user.findIndex((e) =>
-                                                                        e.recomment_recommend_user === get_userName) !== -1
-                                                                        ? {
-                                                                            backgroundColor: '#439926',
-                                                                            padding: '0 15px',
-                                                                            color: 'white',
-                                                                            BorderColor: '#439926'
-                                                                        }
-                                                                        : {
-                                                                            backgroundColor: 'white',
-                                                                            padding: '0 15px',
-                                                                            color: 'black',
-                                                                            BorderColor: '#b3b3b3'
-                                                                        }}>
-                                                                    <LikeOutlined />
-                                                                    <span id={recomment._id}>
-                                                                        {recomment.recomment_recommend}
-                                                                    </span>
-                                                                </Button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )
-                                            })}
+                                            </Button>
                                         </div>
 
                                     </div>
-                                )
-                            }
-                            )}
-                        </div>
+                                    <div>
+                                        {
+                                            get_recomment_open ?
+                                                get_comment_id === list._id ?
+                                                    <div>
+                                                        <div>
+                                                            <TextArea rows={3} value={get_recomment_content}
+                                                                onChange={ReComment_Change_Handler} />
+                                                        </div>
+                                                        <div>
+                                                            <Button type="primary" icon={<PlusOutlined />}
+                                                                onClick={() => ReComment_Insert_Handler(list._id)}>
+                                                                답글 등록
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                    : null
+                                                : null
+                                        }
+                                    </div>
+                                    <div>
+                                        {list.comment_recomment.map((recomment, index) => {
 
+                                            let recomment_user_check = false;
+
+                                            if (recomment.recomment_author === get_userName) {
+                                                recomment_user_check = true;
+                                            }
+                                            else {
+                                                recomment_user_check = false;
+                                            }
+
+                                            return (
+                                                <div key={index}>
+                                                    <div className='recomment_wrap'>
+                                                        <div className='recomment_top'>
+                                                            <div className="recomment_author">
+                                                                <RightOutlined />
+                                                                {recomment.recomment_author}
+                                                            </div>
+                                                            <div>
+                                                                {recomment.recomment_date}
+                                                                <span>
+                                                                    {recomment_user_check
+                                                                        ? <span id='delete_button'>
+                                                                            <DeleteOutlined onClick={
+                                                                                () => showReCommentModal(list._id, recomment._id)} />
+                                                                        </span>
+                                                                        : null}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div className='recomment_info'>
+                                                            {recomment.recomment_content}
+                                                        </div>
+                                                        <div className='recomment_function'>
+
+                                                            <Button
+                                                                id={recomment._id + "button"}
+                                                                onClick={() => ReComment_recommend_Handler(list._id, recomment._id)}
+                                                                style={recomment.recomment_recommend_user.findIndex((e) =>
+                                                                    e.recomment_recommend_user === get_userName) !== -1
+                                                                    ? {
+                                                                        backgroundColor: '#439926',
+                                                                        padding: '0 15px',
+                                                                        color: 'white',
+                                                                        BorderColor: '#439926'
+                                                                    }
+                                                                    : {
+                                                                        backgroundColor: 'white',
+                                                                        padding: '0 15px',
+                                                                        color: 'black',
+                                                                        BorderColor: '#b3b3b3'
+                                                                    }}>
+                                                                <LikeOutlined />
+                                                                <span id={recomment._id}>
+                                                                    {recomment.recomment_recommend}
+                                                                </span>
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+
+                                </div>
+                            )
+                        }
+                        )}
                     </div>
+
+                </div>
             </div>
         </>
     )

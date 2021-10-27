@@ -241,3 +241,37 @@ img{
 iframe{
     max-width: 100%;
 }
+
+
+#report_wrap{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+#report_wrap #report_div{
+    display: flex;
+    width: 100%;
+    margin-bottom: 7px;
+    align-items: center;
+    padding: 5px;
+    border-bottom: 1px #8b8b8b dotted;
+    font-size: 15px;
+}
+
+#report_wrap div #label{
+    width: 30%;
+}
+
+#report_wrap div #item{
+    width: 70%;
+}
+
+#report_textarea{
+    width: 100%;
+    min-height: 180px;
+    padding: 10px;
+    resize: none;
+    border: 1px solid #c4c4c4;
+}

@@ -242,10 +242,17 @@ const Board = () => {
                                     <li>{DateDisplay(list.post_date)}</li> <li> | </li>
                                     <li>조회 : {list.post_count}</li> <li> | </li>
                                     <li>추천 : {list.post_recommend}</li>  <li> | </li>
-                                    <li onClick={() => {
+                                    <li id={(Math.round(get_attention_count[list.index - 1]?.fin_count /
+                                        get_attention_count[list.index - 1]?.total_count * 100) > 30)?"red":''}
+                                    
+                                    onClick={() => {
                                         Modal_Visible_Handler(3, list.post_fin_list.name);
-                                    }}>관심도 : {Math.round(get_attention_count[list.index - 1]?.fin_count /
-                                        get_attention_count[list.index - 1]?.total_count * 100)} %</li>
+                                    }}>관심도 : {
+                                        get_attention_count[list.index - 1]?.total_count != 0 ?
+                                        (Math.round(get_attention_count[list.index - 1]?.fin_count /
+                                        get_attention_count[list.index - 1]?.total_count * 100))
+                                        : 0
+                                    } %</li>
                                 </ul>
                             </div>
                         )
@@ -293,6 +300,7 @@ const Board = () => {
                             <XAxis dataKey="name" stroke="#8884d8" />
                             <YAxis domain={[0, 100]} />
                             <Tooltip
+                                tickFormatter={(timeStr) => dayjs(timeStr).format("MM/DD")}
                                 labelFormatter={(value) => `날짜: ${value}`}
                                 formatter={(value) => [value + "%", "관심도"]}
                             />

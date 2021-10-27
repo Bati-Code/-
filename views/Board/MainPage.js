@@ -172,7 +172,7 @@ const MainPage = () => {
                                 <Radio.Group defaultValue="a" style={{ width: '100%' }} onChange={Radio_Handler}
                                     value={radio}>
                                     <Radio.Button value="a">전체글</Radio.Button>
-                                    <Radio.Button value="b">개념글</Radio.Button>
+                                    <Radio.Button value="b">인기글</Radio.Button>
                                     <Radio.Button value="c">인기 종목</Radio.Button>
                                 </Radio.Group>
                             </div>
