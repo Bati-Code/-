@@ -38,7 +38,6 @@ const Board_Infinity = () => {
 
     const { count, page, search, menu_select, search_value, radio } = useSelector(state => state.pageStore);
 
-
     const Get_Attention = (boardList) => {
         let fin_code_List = [];
         for (let i = 0; i < boardList.length; i++) {
@@ -50,68 +49,8 @@ const Board_Infinity = () => {
                 'fin_code_list': fin_code_List,
             })
             .then((response) => {
-                console.log(response.data.countBoard);
-                set_attention_count(response.data.countBoard);
-                set_BoardList(boardList);
-            })
-    }
-
-    // const Get_Board_View = () => {
-    //     if (radio != 'b') {
-
-    //         if (search) {
-    //             axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value + '/' + page)
-    //                 .then((response) => {
-
-    //                     const boardList = response.data.docs;
-    //                     set_Board_Total(response.data.totalDocs);
-
-    //                     Get_Attention(boardList);
-
-    //                     boardList.map((list, index) => {
-    //                         list.index = index + 1;
-    //                         list.key = index + 1;
-    //                     });
-
-    //                     console.log("BoardList : A");
-    //                     set_BoardList(boardList);
-    //                 })
-    //         }
-    //         else {
-    //             axios.get(server_config.server_Address + '/board/list/' + page)
-    //                 .then((response) => {
-    //                     const boardList = response.data.docs;
-    //                     set_Board_Total(response.data.totalDocs);
-
-    //                     Get_Attention(boardList);
-
-    //                     boardList.map((list, index) => {
-    //                         list.index = index + 1;
-    //                         list.key = index + 1;
-    //                     });
-
-    //                     console.log("BoardList : B");
-    //                     console.log("B : ", response.data.docs);
-
-    //                 })
-    //         }
-    //     }
-    // }
-
-    const Get_Best_Board_view = () => {
-        axios.get(server_config.server_Address + '/board/list/best/' + page)
-            .then((response) => {
-                const boardList = response.data.docs;
-                set_Board_Total(response.data.totalDocs);
-
-                Get_Attention(boardList);
-                boardList.map((list, index) => {
-                    list.index = index + 1;
-                    list.key = index + 1;
-                });
-
-                console.log("BoardList : C");
-                set_BoardList(boardList);
+                console.log("COUNT : ", response.data.countBoard);
+                set_attention_count(get_attention_count.concat(response.data.countBoard));
             })
     }
 
@@ -128,69 +67,12 @@ const Board_Infinity = () => {
                     list.index = index + 1;
                     list.key = index + 1;
                 });
+                set_BoardList(boardList);
 
                 console.log("BoardList : B");
                 console.log("B : ", response.data.docs);
             })
     }, [])
-
-    useEffect(() => {
-        if (radio !== 'b') {
-            //Get_Board_View();
-        }
-        else {
-            Get_Best_Board_view();
-        }
-
-    }, [radio, page])
-
-    useEffect(() => {
-        // if (count > 0) {
-        //     axios.get(server_config.server_Address + '/board/list/' + page)
-        //         .then((response) => {
-        //             const boardList = response.data.docs;
-        //             set_Board_Total(response.data.totalDocs);
-
-        //             Get_Attention(boardList);
-        //             boardList.map((list, index) => {
-        //                 list.index = index + 1;
-        //                 list.key = index + 1;
-        //             });
-
-        //             console.log("BoardList : D");
-        //             set_BoardList(boardList);
-        //         })
-        // }
-    }, [count])
-
-    useEffect(() => {
-        //Get_Board_View();
-
-        // if (search_value) {
-        //     axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value + '/1')
-        //         .then((response) => {
-        //             const boardList = response.data.docs;
-        //             //console.log(boardList);
-
-        //             set_Board_Total(response.data.totalDocs);
-
-        //             Get_Attention(boardList);
-        //             boardList.map((list, index) => {
-        //                 list.index = index + 1;
-        //                 list.key = index + 1;
-        //             });
-
-        //             console.log("BoardList : E");
-        //             set_BoardList(boardList);
-
-        //         })
-        // }
-
-    }, [search_value, search])
-
-    const PageNation_Handler = (page_value) => {
-        dispatch(Page_Store(page_value));
-    }
 
     const DateDisplay = (list_date) => {
         let date;
@@ -239,10 +121,11 @@ const Board_Infinity = () => {
         await axios.get(server_config.server_Address + '/board/list/' + get_page)
             .then((response) => {
                 console.log("AA");
-                const boardList = response.data.docs;
+                let boardList = response.data.docs;
                 set_Board_Total(response.data.totalDocs);
 
-                //Get_Attention(boardList);
+                Get_Attention(boardList);
+                boardList = get_BoardList.concat(boardList);
 
                 boardList.map((list, index) => {
                     list.index = index + 1;
@@ -252,8 +135,9 @@ const Board_Infinity = () => {
                 console.log("BoardList : B");
                 console.log("B : ", response.data.docs);
 
-                set_BoardList(get_BoardList.concat(boardList));
+                set_BoardList(boardList);
                 set_page(get_page + 1);
+                console.log("BBB : ", boardList);
             })
 
 
@@ -272,12 +156,12 @@ const Board_Infinity = () => {
                             <Skeleton animation="wave"
                                 style={{
                                     marginLeft: "10px",
-                                    width:'50%',
+                                    width: '50%',
                                 }} />
                             <Skeleton animation="wave"
                                 style={{
                                     marginLeft: "10px",
-                                    width:'90%',
+                                    width: '90%',
                                 }} />
                         </div>
                     }
