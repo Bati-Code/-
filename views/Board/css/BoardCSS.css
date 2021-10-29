@@ -101,4 +101,15 @@ body{
     width: 100%;
  }
 
+
+ .ranking{
+     font-size: 25px;
+     margin-left: 15px;
+     color: chocolate;
+     border: 1px solid;
+     border-radius: 1px;
+     width: fit-content;
+     padding: 0 15px 0 15px;
+
+ }
  

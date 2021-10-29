@@ -13,6 +13,7 @@ import { Page_Search, Page_Reset, Page_Radio, Page_Store } from '../../redux/act
 
 import Board from './Board'
 import Top_Fin_list from '../Finance_List/Top_Fin_List';
+import Top_Fin_list2 from '../Finance_List/Top_Fin_List2';
 import './css/BoardCSS.css'
 import { server_config } from '../../server_config';
 
@@ -182,12 +183,14 @@ const MainPage = () => {
                                     <Radio.Button value="a">전체글</Radio.Button>
                                     <Radio.Button value="b">인기글</Radio.Button>
                                     <Radio.Button value="c">인기 종목</Radio.Button>
+                                    <Radio.Button value="d">인기 종목2</Radio.Button>
                                 </Radio.Group>
                             </div>
                             {radio === 'a' ? <Board />
                                 : radio === 'b' ? <Board />
                                     : radio === 'c' ? <Top_Fin_list />
-                                        : null}
+                                        : radio === 'd' ? <Top_Fin_list2 />
+                                            : null}
                         </main>
                         <aside>
                         </aside>

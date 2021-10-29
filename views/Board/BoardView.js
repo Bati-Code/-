@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import { useAlert } from 'react-alert'
 import { server_config } from '../../server_config';
+import { Base64 } from 'js-base64';
 
 
 const BoardView = (res) => {
@@ -22,7 +23,7 @@ const BoardView = (res) => {
     const [get_fin_List_name, set_fin_List_name] = useState('');
     const [get_recommend_check, set_recommend_check] = useState(false);
     const [get_userName, set_userName] = useState('');
-    const [get_selected_value, set_selected_value] = useState('');
+    const [get_report_status, set_report_status] = useState(false);
 
     const [get_comment_content, set_comment_content] = useState('');
     const [get_recomment_content, set_recomment_content] = useState('');
@@ -56,12 +57,6 @@ const BoardView = (res) => {
 
 
     useEffect(() => {
-        // const meta = document.createElement('meta');
-        // meta.name = "viewport";
-        // meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover";
-        // document.getElementsByTagName('head')[0].appendChild(meta);
-
-        //console.log('effect');
         axios.get(server_config.server_Address + "/board/view/" + board_id)
             .then((response) => {
                 //console.log("view data", response.data.userName);
@@ -80,6 +75,21 @@ const BoardView = (res) => {
                 }
                 else {
                     set_recommend_check(false);
+                }
+
+                if (response.data.list.post_author !== response.data.userName) {
+                    axios.post(server_config.server_Address + '/report/search',
+                        {
+                            report_user: response.data.userName,
+                            board_id: board_id
+                        })
+                        .then((response) => {
+                            console.log(response.data);
+                            if (response.data.report_search === 1)
+                                set_report_status(true);
+                            else
+                                set_report_status(false);
+                        })
                 }
 
             })
@@ -358,15 +368,17 @@ const BoardView = (res) => {
     const report_Confirm_Handler = () => {
         console.log(get_report_form_data);
         axios.post(server_config.server_Address + '/report/report',
-        {
-            report_form_data: get_report_form_data,
-            report_user: get_userName,
-            board_id: board_id,
-            bad_user: get_board_data.post_author
-        })
-        .then((response) => {
-            console.log(response.data);
-        })
+            {
+                report_form_data: get_report_form_data,
+                report_user: get_userName,
+                board_id: board_id,
+                bad_user: get_board_data.post_author
+            })
+            .then((response) => {
+                console.log(response.data);
+                set_report_status(true);
+            })
+        set_report_modal_visible(false);
     }
 
     return (
@@ -446,8 +458,14 @@ const BoardView = (res) => {
                         ''
                         :
                         <div>
-                            <Button type="danger" icon={<AlertOutlined />} onClick={() => { set_report_modal_visible(true) }}>
-                                신고
+                            <Button type="danger" icon={<AlertOutlined />}
+                                onClick={() => {
+                                    get_report_status
+                                        ? set_report_modal_visible(false)
+                                        : set_report_modal_visible(true)
+                                }}
+                            >
+                                {get_report_status ? '신고 완료' : '신고'}
                             </Button>
                         </div>}
                 </div>
