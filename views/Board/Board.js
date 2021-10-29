@@ -15,7 +15,6 @@ import utc from 'dayjs/plugin/utc';
 import { XAxis } from 'recharts/lib/cartesian/XAxis';
 import { ResponsiveContainer } from 'recharts/lib/component/ResponsiveContainer';
 
-const { Search } = Input;
 dayjs.extend(utc);
 
 const Board = () => {

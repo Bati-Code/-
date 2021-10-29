@@ -10,6 +10,8 @@ import { useAlert } from 'react-alert'
 
 import { Finance_List_Store } from '../../redux/action/finance_list_action';
 import { Page_Search, Page_Reset, Page_Radio, Page_Store } from '../../redux/action/page_action';
+import { Board_Scroll } from '../../redux/action/board_list_action';
+
 
 import Board from './Board'
 import Top_Fin_list from '../Finance_List/Top_Fin_List';
@@ -136,6 +138,11 @@ const MainPage = () => {
         set_Search_Value(e.target.value);
     }
 
+    const Board_Scroll_Handler = (e) => {
+        if (radio === 'e')
+            dispatch(Board_Scroll(e.target.scrollTop));
+    }
+
     return (
         <>
             <div className="board_wrap">
@@ -190,7 +197,8 @@ const MainPage = () => {
                                     </Radio.Group>
                                 </div>
                             </div>
-                            <div id= "board_list">
+                            <div id="board_list"
+                                onScroll={Board_Scroll_Handler}>
                                 {radio === 'a' ? <Board />
                                     : radio === 'b' ? <Board />
                                         : radio === 'c' ? <Top_Fin_list />

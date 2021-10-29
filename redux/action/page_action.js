@@ -4,6 +4,7 @@ const PAGE_SEARCH = 'pageStore/PAGE_SEARCH';
 const PAGE_RESET = 'pageStore/PAGE_RESET';
 const PAGE_RADIO = 'pageStore/PAGE_RADIO';
 
+
 export const Page_Store = (page_value) => ({ type: PAGE_STORE, payload: page_value });
 export const Page_Search = (menu_value, search_value) =>
     ({ type: PAGE_SEARCH, payload: { menu: menu_value, search: search_value } });
@@ -16,8 +17,7 @@ const initialState = {
     search: false,
     search_value: '',
     count: 0,
-    radio: 'a'
-
+    radio: 'a',
 };
 
 const pageStore = (state = initialState, action) => {
@@ -49,7 +49,6 @@ const pageStore = (state = initialState, action) => {
                 ...state,
                 radio: action.payload
             }
-
         default:
             return { ...state };
     }

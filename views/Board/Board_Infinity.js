@@ -1,6 +1,5 @@
-import { DownOutlined, FilterTwoTone } from '@ant-design/icons';
 import { LineChart, Line, Tooltip, YAxis } from 'recharts';
-import { Button, Dropdown, Input, Menu, Pagination, Modal, Radio } from 'antd';
+import { Modal } from 'antd';
 import "antd/dist/antd.css";
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
@@ -16,8 +15,9 @@ import { XAxis } from 'recharts/lib/cartesian/XAxis';
 import { ResponsiveContainer } from 'recharts/lib/component/ResponsiveContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Skeleton } from '@mui/material';
+import { board_Store } from '../../redux/action/board_list_action';
+import CountUp from 'react-countup';
 
-const { Search } = Input;
 dayjs.extend(utc);
 
 const Board_Infinity = () => {
@@ -31,12 +31,13 @@ const Board_Infinity = () => {
     const [get_chart_data, set_chart_data] = useState('');
 
 
-    const [get_page, set_page] = useState(2);
+    const [get_page, set_page] = useState(1);
 
     const history = useHistory();
     const dispatch = useDispatch();
 
     const { count, page, search, menu_select, search_value, radio } = useSelector(state => state.pageStore);
+    const { board_list, scroll } = useSelector(state => state.boardStore);
 
     const Get_Attention = (boardList) => {
         let fin_code_List = [];
@@ -55,24 +56,102 @@ const Board_Infinity = () => {
     }
 
 
-    useEffect(() => {
-        axios.get(server_config.server_Address + '/board/list/' + page)
-            .then((response) => {
-                const boardList = response.data.docs;
-                set_Board_Total(response.data.totalDocs);
-
-                Get_Attention(boardList);
-
-                boardList.map((list, index) => {
-                    list.index = index + 1;
-                    list.key = index + 1;
-                });
-                set_BoardList(boardList);
-
-                console.log("BoardList : B");
-                console.log("B : ", response.data.docs);
-            })
+    useEffect(async () => {
+        console.log("NORMAL EFFECT ===");
+        if (board_list.length !== 0) {
+            console.log("Get_Board_View Effect B");
+            set_BoardList(board_list);
+            console.log("SCROLL : ", scroll);
+            document.getElementById('board_list').scrollTo(0, scroll);
+        }
+        else {
+            Get_Board_View();
+        }
     }, [])
+
+
+
+    const Get_Board_View = async () => {
+        console.log(radio, " : ", scroll);
+        if (radio === 'e') {
+            console.log("AAAA");
+            document.getElementById('board_list').scrollTo(0, scroll);
+        }
+        if (search) {
+            axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value + '/' + get_page)
+                .then(async (response) => {
+
+                    let boardList = response.data.docs;
+                    set_Board_Total(response.data.totalDocs);
+
+                    let fin_code_List = [];
+                    for (let i = 0; i < boardList.length; i++) {
+                        fin_code_List.push(boardList[i].post_fin_list.code);
+                    }
+
+                    await axios.post(server_config.server_Address + '/board/countBoard',
+                        {
+                            'fin_code_list': fin_code_List,
+                        })
+                        .then((response) => {
+                            console.log("COUNT : ", response.data.countBoard);
+                            boardList.map((list, index) => {
+                                list.count = response.data.countBoard[index];
+                                list.index = index + 1;
+                                list.key = index + 1;
+                            });
+
+                            boardList = get_BoardList.concat(boardList);
+                        })
+
+
+                    console.log("BoardList : Search");
+
+                    set_BoardList(boardList);
+                    dispatch(board_Store(boardList));
+                    set_page(get_page + 1);
+                })
+        }
+        else {
+            axios.get(server_config.server_Address + '/board/list/' + get_page)
+                .then(async (response) => {
+                    let boardList = response.data.docs;
+                    set_Board_Total(response.data.totalDocs);
+
+                    let fin_code_List = [];
+                    for (let i = 0; i < boardList.length; i++) {
+                        fin_code_List.push(boardList[i].post_fin_list.code);
+                    }
+
+                    await axios.post(server_config.server_Address + '/board/countBoard',
+                        {
+                            'fin_code_list': fin_code_List,
+                        })
+                        .then((response) => {
+                            console.log("COUNT : ", response.data.countBoard);
+                            boardList.map((list, index) => {
+                                list.count = response.data.countBoard[index];
+                                list.index = index + 1;
+                                list.key = index + 1;
+                            });
+
+                            boardList = get_BoardList.concat(boardList);
+                        })
+
+                    console.log("BoardList : Default ", boardList);
+
+                    set_BoardList(boardList);
+                    dispatch(board_Store(boardList));
+                    set_page(get_page + 1);
+                })
+        }
+    }
+
+    // useEffect(() => {
+    //     console.log("Search EVENT");
+    //     Get_Board_View();
+
+    // }, [search_value, search])
 
     const DateDisplay = (list_date) => {
         let date;
@@ -117,28 +196,28 @@ const Board_Infinity = () => {
     const next = async () => {
 
         console.log("next");
+        Get_Board_View();
+        // await axios.get(server_config.server_Address + '/board/list/' + get_page)
+        //     .then((response) => {
+        //         console.log("AA");
+        //         let boardList = response.data.docs;
+        //         set_Board_Total(response.data.totalDocs);
 
-        await axios.get(server_config.server_Address + '/board/list/' + get_page)
-            .then((response) => {
-                console.log("AA");
-                let boardList = response.data.docs;
-                set_Board_Total(response.data.totalDocs);
+        //         Get_Attention(boardList);
+        //         boardList = get_BoardList.concat(boardList);
 
-                Get_Attention(boardList);
-                boardList = get_BoardList.concat(boardList);
+        //         boardList.map((list, index) => {
+        //             list.index = index + 1;
+        //             list.key = index + 1;
+        //         });
 
-                boardList.map((list, index) => {
-                    list.index = index + 1;
-                    list.key = index + 1;
-                });
+        //         console.log("BoardList : B");
+        //         console.log("B : ", response.data.docs);
 
-                console.log("BoardList : B");
-                console.log("B : ", response.data.docs);
-
-                set_BoardList(boardList);
-                set_page(get_page + 1);
-                console.log("BBB : ", boardList);
-            })
+        //         set_BoardList(boardList);
+        //         set_page(get_page + 1);
+        //         console.log("BBB : ", boardList);
+        //     })
 
 
     }
@@ -174,7 +253,17 @@ const Board_Infinity = () => {
                 >
 
                     {
-                        get_BoardList.map((list, index) => {
+                        board_list.map((list, index) => {
+
+                            let head = 0;
+
+                            if (list.count.fin_count == 0) {
+                                head = 0;
+                            } else {
+                                head = list.count.fin_count * 100;
+                            }
+                            let attention_now = Math.round(head / list.count.total_count);
+
                             return (
                                 <div className="board_temp_wrap" key={index}>
                                     <div className="board_title"
@@ -199,17 +288,17 @@ const Board_Infinity = () => {
                                         <li>{DateDisplay(list.post_date)}</li> <li> | </li>
                                         <li>조회 : {list.post_count}</li> <li> | </li>
                                         <li>추천 : {list.post_recommend}</li>  <li> | </li>
-                                        <li id={(Math.round(get_attention_count[list.index - 1]?.fin_count /
-                                            get_attention_count[list.index - 1]?.total_count * 100) > 30) ? "red" : ''}
-
+                                        <li id={attention_now > 30 ? "red" : ''}
                                             onClick={() => {
                                                 Modal_Visible_Handler(3, list.post_fin_list.name);
-                                            }}>관심도 : {
-                                                get_attention_count[list.index - 1]?.total_count !== 0 ?
-                                                    (Math.round(get_attention_count[list.index - 1]?.fin_count /
-                                                        get_attention_count[list.index - 1]?.total_count * 100))
-                                                    : 0
-                                            } %</li>
+                                            }}>
+
+
+                                            관심도 : <CountUp
+                                                start={0}
+                                                end={attention_now}
+                                                duration={2} /> %
+                                        </li>
                                     </ul>
                                 </div>
                             )
