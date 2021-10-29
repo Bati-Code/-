@@ -32,7 +32,8 @@ const pageStore = (state = initialState, action) => {
                 ...state,
                 search: true,
                 menu_select: action.payload.menu,
-                search_value: action.payload.search
+                search_value: action.payload.search,
+                page: 1
             };
         case PAGE_RESET:
             return {

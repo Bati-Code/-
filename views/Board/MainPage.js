@@ -16,6 +16,7 @@ import Top_Fin_list from '../Finance_List/Top_Fin_List';
 import Top_Fin_list2 from '../Finance_List/Top_Fin_List2';
 import './css/BoardCSS.css'
 import { server_config } from '../../server_config';
+import Board_Infinity from './Board_Infinity';
 
 const { Search } = Input;
 
@@ -165,38 +166,44 @@ const MainPage = () => {
                         <nav>
                         </nav>
                         <main>
-                            <div>
-                                <div className="board_search_wrap">
-                                    <Dropdown overlay={menu} trigger='click'>
-                                        <Button>
-                                            {get_Menu_Text} <DownOutlined />
-                                        </Button>
-                                    </Dropdown>
-                                    <Search placeholder="검색할 내용을 입력하세요."
-                                        onSearch={onSearch} onChange={Search_Input_Handler}
-                                        value={get_Search_Value} enterButton />
+                            <div className="board_function_wrap">
+                                <div>
+                                    <div className="board_search_wrap">
+                                        <Dropdown overlay={menu} trigger='click'>
+                                            <Button>
+                                                {get_Menu_Text} <DownOutlined />
+                                            </Button>
+                                        </Dropdown>
+                                        <Search placeholder="검색할 내용을 입력하세요."
+                                            onSearch={onSearch} onChange={Search_Input_Handler}
+                                            value={get_Search_Value} enterButton />
+                                    </div>
+                                </div>
+                                <div className="top_Nav_Wrap">
+                                    <Radio.Group defaultValue="a" style={{ width: '100%' }} onChange={Radio_Handler}
+                                        value={radio}>
+                                        <Radio.Button value="a">전체글</Radio.Button>
+                                        <Radio.Button value="b">인기글</Radio.Button>
+                                        <Radio.Button value="c">인기 종목</Radio.Button>
+                                        <Radio.Button value="d">인기 종목2</Radio.Button>
+                                        <Radio.Button value="e">Infinity Scroll</Radio.Button>
+                                    </Radio.Group>
                                 </div>
                             </div>
-                            <div className="top_Nav_Wrap">
-                                <Radio.Group defaultValue="a" style={{ width: '100%' }} onChange={Radio_Handler}
-                                    value={radio}>
-                                    <Radio.Button value="a">전체글</Radio.Button>
-                                    <Radio.Button value="b">인기글</Radio.Button>
-                                    <Radio.Button value="c">인기 종목</Radio.Button>
-                                    <Radio.Button value="d">인기 종목2</Radio.Button>
-                                </Radio.Group>
+                            <div id= "board_list">
+                                {radio === 'a' ? <Board />
+                                    : radio === 'b' ? <Board />
+                                        : radio === 'c' ? <Top_Fin_list />
+                                            : radio === 'd' ? <Top_Fin_list2 />
+                                                : radio === 'e' ? <Board_Infinity />
+                                                    : null}
                             </div>
-                            {radio === 'a' ? <Board />
-                                : radio === 'b' ? <Board />
-                                    : radio === 'c' ? <Top_Fin_list />
-                                        : radio === 'd' ? <Top_Fin_list2 />
-                                            : null}
                         </main>
                         <aside>
                         </aside>
                     </section>
                 </div>
-                {radio === 'c' ? null
+                {radio === 'c' || radio === 'e' ? null
                     :
                     <div className="Board_footer">
                         <div>

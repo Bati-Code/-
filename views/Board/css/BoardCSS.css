@@ -4,12 +4,9 @@ body{
     min-height: 100%;
 }
 
-.root{
+#root{
     width: 100%;
     height: 100%;
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
 }
 
 .MainMenu{
@@ -30,7 +27,7 @@ body{
 
 .board_wrap .board_Header{
     width: 100%;
-    height: fit-content;
+    height: 7%;
     padding: 12px;
     text-align: center;
     font-size: 23px;
@@ -51,15 +48,17 @@ body{
     height: 75px;
  }
 
-.container{
+ .board_wrap .container{
      text-align: center;
      width: 100%;
-     height: 100%;
+     height: 83%;
  }
 
 
- .board_content{
+ .board_wrap .container .board_content{
      display: flex;
+     max-height: 100%;
+     height: 100%;
  }
 
  .board_content nav{
@@ -70,7 +69,18 @@ body{
 
  .board_content main{
      width: 100%;
+     height: 100%;
      align-items: center;
+     display: flex;
+     flex-direction: column;
+ }
+
+ main div{
+     width: 100%;
+ }
+
+ main .board_function_wrap{
+     height: 20%;
  }
 
 
@@ -86,6 +96,10 @@ body{
     font-size: 14px;
 }
 
+.board_content main #board_list{
+    height: 80%;
+    overflow-y: scroll;
+}
 
  .board_content aside{
      background-color: white;
@@ -93,9 +107,10 @@ body{
      flex-shrink: 0;
  }
 
- .Board_footer{
+ .board_wrap .Board_footer{
     padding: 30px 0 30px;
     display: flex;
+    height: 10%;
     flex-direction: row;
     justify-content: space-evenly;
     width: 100%;
