@@ -203,7 +203,7 @@ const MainPage = () => {
                         </aside>
                     </section>
                 </div>
-                {radio === 'c' || radio === 'e' ? null
+                {radio === 'c' ? null
                     :
                     <div className="Board_footer">
                         <div>
