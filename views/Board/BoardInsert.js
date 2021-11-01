@@ -11,8 +11,9 @@ import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import './css/BoardInsertCSS.css';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { Board_Store_Reset, board_Store_Reset } from '../../redux/action/board_list_action';
 import { Editor } from '@tinymce/tinymce-react';
 import { server_config } from '../../server_config';
 
@@ -28,6 +29,7 @@ const BoardInsert = () => {
     const alert = useAlert();
 
     const editorRef = useRef(null);
+    const dispatch = useDispatch();
 
     const { fin_list } = useSelector(state => state.financeList);
 
@@ -105,6 +107,7 @@ const BoardInsert = () => {
                     }
                     else if (request.data.board_insert === 1) {
                         //console.log("업로드 성공");
+                        dispatch(Board_Store_Reset());
                         history.push('/main');
                     }
 

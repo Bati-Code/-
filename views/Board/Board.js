@@ -116,8 +116,10 @@ const Board = () => {
     useEffect(() => {
         if (radio !== 'b') {
             Get_Board_View();
+            console.log("MAIN");
         }
         else {
+            console.log("MAIN");
             Get_Best_Board_view();
         }
 
@@ -143,6 +145,7 @@ const Board = () => {
     }, [count])
 
     useEffect(() => {
+        console.log("MAIN SEARCH");
         Get_Board_View();
 
         // if (search_value) {

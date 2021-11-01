@@ -10,7 +10,7 @@ import { useAlert } from 'react-alert'
 
 import { Finance_List_Store } from '../../redux/action/finance_list_action';
 import { Page_Search, Page_Reset, Page_Radio, Page_Store } from '../../redux/action/page_action';
-import { Board_Scroll } from '../../redux/action/board_list_action';
+import { Board_Infinity_Page, Board_Scroll, Board_Store_Reset } from '../../redux/action/board_list_action';
 
 
 import Board from './Board'
@@ -109,7 +109,9 @@ const MainPage = () => {
         }
         else {
             dispatch(Page_Search(get_Menu_Text, value));
-            dispatch(Page_Radio('a'));
+            dispatch(Board_Store_Reset());
+            dispatch(Board_Infinity_Page(1));
+            //dispatch(Page_Radio('a'));
         }
 
     };
@@ -118,6 +120,7 @@ const MainPage = () => {
     const main_Header_Handler = () => {
         set_Search_Value('');
         dispatch(Page_Reset());
+        dispatch(Board_Store_Reset());
     }
 
     const Radio_Handler = (e) => {
@@ -203,7 +206,7 @@ const MainPage = () => {
                                     : radio === 'b' ? <Board />
                                         : radio === 'c' ? <Top_Fin_list />
                                             : radio === 'd' ? <Top_Fin_list2 />
-                                                : radio === 'e' ? <Board_Infinity />
+                                                : radio === 'e' ? <Board_Infinity/>
                                                     : null}
                             </div>
                         </main>

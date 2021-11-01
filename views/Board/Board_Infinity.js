@@ -5,7 +5,6 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useHistory } from 'react-router-dom';
-import { Page_Search, Page_Store, Page_Reset } from '../../redux/action/page_action';
 import dayjs from 'dayjs';
 import ChatIcon from '@material-ui/icons/Chat';
 import "./css/BoardSearchCSS.css";
@@ -15,12 +14,12 @@ import { XAxis } from 'recharts/lib/cartesian/XAxis';
 import { ResponsiveContainer } from 'recharts/lib/component/ResponsiveContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Skeleton } from '@mui/material';
-import { board_Store } from '../../redux/action/board_list_action';
+import { Board_Infinity_Page, board_Store, Board_Store_Reset } from '../../redux/action/board_list_action';
 import CountUp from 'react-countup';
 
 dayjs.extend(utc);
 
-const Board_Infinity = () => {
+const Board_Infinity = (props) => {
 
     const [get_BoardList, set_BoardList] = useState([]);
     const [get_Board_Total, set_Board_Total] = useState(0);
@@ -37,50 +36,44 @@ const Board_Infinity = () => {
     const dispatch = useDispatch();
 
     const { count, page, search, menu_select, search_value, radio } = useSelector(state => state.pageStore);
-    const { board_list, scroll } = useSelector(state => state.boardStore);
+    const { board_list, scroll, infinity_page } = useSelector(state => state.boardStore);
 
-    const Get_Attention = (boardList) => {
-        let fin_code_List = [];
-        for (let i = 0; i < boardList.length; i++) {
-            fin_code_List.push(boardList[i].post_fin_list.code);
-        }
+    let flag = 0;
 
-        axios.post(server_config.server_Address + '/board/countBoard',
-            {
-                'fin_code_list': fin_code_List,
-            })
-            .then((response) => {
-                console.log("COUNT : ", response.data.countBoard);
-                set_attention_count(get_attention_count.concat(response.data.countBoard));
-            })
-    }
-
-
-    useEffect(async () => {
+    useEffect(() => {
         console.log("NORMAL EFFECT ===");
+        flag = 1;
+
         if (board_list.length !== 0) {
             console.log("Get_Board_View Effect B");
-            set_BoardList(board_list);
-            console.log("SCROLL : ", scroll);
             document.getElementById('board_list').scrollTo(0, scroll);
+            set_BoardList(board_list);
         }
         else {
+            console.log("BB");
             Get_Board_View();
         }
     }, [])
 
+    useEffect(() => {
+        if (flag == 1)
+            return;
+        console.log("Search");
+        Get_Board_View();
 
+    }, [search, search_value])
 
-    const Get_Board_View = async () => {
-        console.log(radio, " : ", scroll);
+    const Get_Board_View = () => {
+        console.log(radio, " : ", scroll, " : ", infinity_page);
         if (radio === 'e') {
             console.log("AAAA");
             document.getElementById('board_list').scrollTo(0, scroll);
         }
         if (search) {
-            axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value + '/' + get_page)
+            axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value + '/' + infinity_page)
                 .then(async (response) => {
-
+                    console.log(board_list);
+                    console.log(search_value, " : ", search, " : ", infinity_page);
                     let boardList = response.data.docs;
                     set_Board_Total(response.data.totalDocs);
 
@@ -101,19 +94,19 @@ const Board_Infinity = () => {
                                 list.key = index + 1;
                             });
 
-                            boardList = get_BoardList.concat(boardList);
+                            boardList = board_list.concat(boardList);
                         })
 
 
-                    console.log("BoardList : Search");
+                    console.log("BoardList : Search", boardList);
 
                     set_BoardList(boardList);
                     dispatch(board_Store(boardList));
-                    set_page(get_page + 1);
+                    dispatch(Board_Infinity_Page(infinity_page + 1));
                 })
         }
         else {
-            axios.get(server_config.server_Address + '/board/list/' + get_page)
+            axios.get(server_config.server_Address + '/board/list/' + infinity_page)
                 .then(async (response) => {
                     let boardList = response.data.docs;
                     set_Board_Total(response.data.totalDocs);
@@ -135,23 +128,18 @@ const Board_Infinity = () => {
                                 list.key = index + 1;
                             });
 
-                            boardList = get_BoardList.concat(boardList);
+                            boardList = board_list.concat(boardList);
                         })
 
                     console.log("BoardList : Default ", boardList);
 
                     set_BoardList(boardList);
                     dispatch(board_Store(boardList));
-                    set_page(get_page + 1);
+                    dispatch(Board_Infinity_Page(infinity_page + 1));
                 })
         }
     }
 
-    // useEffect(() => {
-    //     console.log("Search EVENT");
-    //     Get_Board_View();
-
-    // }, [search_value, search])
 
     const DateDisplay = (list_date) => {
         let date;
@@ -193,33 +181,10 @@ const Board_Infinity = () => {
         }
     }
 
-    const next = async () => {
+    const next = () => {
 
         console.log("next");
         Get_Board_View();
-        // await axios.get(server_config.server_Address + '/board/list/' + get_page)
-        //     .then((response) => {
-        //         console.log("AA");
-        //         let boardList = response.data.docs;
-        //         set_Board_Total(response.data.totalDocs);
-
-        //         Get_Attention(boardList);
-        //         boardList = get_BoardList.concat(boardList);
-
-        //         boardList.map((list, index) => {
-        //             list.index = index + 1;
-        //             list.key = index + 1;
-        //         });
-
-        //         console.log("BoardList : B");
-        //         console.log("B : ", response.data.docs);
-
-        //         set_BoardList(boardList);
-        //         set_page(get_page + 1);
-        //         console.log("BBB : ", boardList);
-        //     })
-
-
     }
 
     return (
@@ -227,7 +192,7 @@ const Board_Infinity = () => {
 
             <div>
                 <InfiniteScroll
-                    dataLength={get_BoardList.length}
+                    dataLength={board_list.length}
                     next={next}
                     hasMore={true}
                     loader={
