@@ -10,6 +10,18 @@
     letter-spacing: -1px;
 } */
 
+.board_Header{
+    width: 100%;
+    height: 7%;
+    padding: 12px;
+    text-align: center;
+    font-size: 23px;
+    color: white;
+    background-color: #2685D0;
+    font-weight: bold;
+    letter-spacing: -1px;
+}
+
 .finance_info_function{
     display:flex;
     justify-content: space-between;
