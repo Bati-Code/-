@@ -32,8 +32,8 @@ const MainPage = () => {
     const dispatch = useDispatch();
     const alert = useAlert();
 
-    const { radio } = useSelector(state => state.pageStore);
-
+    const { radio, search } = useSelector(state => state.pageStore);
+    const { scroll } = useSelector(state => state.boardStore);
 
     useEffect(() => {
         // const meta = document.createElement('meta');
@@ -118,7 +118,10 @@ const MainPage = () => {
 
 
     const main_Header_Handler = () => {
-        set_Search_Value('');
+        if (scroll == 0 && radio == 'e' && search == false){
+            return;
+        }
+            set_Search_Value('');
         dispatch(Page_Reset());
         dispatch(Board_Store_Reset());
     }
@@ -206,7 +209,7 @@ const MainPage = () => {
                                     : radio === 'b' ? <Board />
                                         : radio === 'c' ? <Top_Fin_list />
                                             : radio === 'd' ? <Top_Fin_list2 />
-                                                : radio === 'e' ? <Board_Infinity/>
+                                                : radio === 'e' ? <Board_Infinity />
                                                     : null}
                             </div>
                         </main>

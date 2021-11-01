@@ -30,6 +30,7 @@ const Board_Infinity = (props) => {
     const [get_chart_data, set_chart_data] = useState('');
 
 
+    const [get_more_list, set_more_list] = useState(true);
     const [get_page, set_page] = useState(1);
 
     const history = useHistory();
@@ -77,6 +78,11 @@ const Board_Infinity = (props) => {
                     let boardList = response.data.docs;
                     set_Board_Total(response.data.totalDocs);
 
+                    if (boardList.length == 0) {
+                        set_more_list(false);
+                        return;
+                    }
+
                     let fin_code_List = [];
                     for (let i = 0; i < boardList.length; i++) {
                         fin_code_List.push(boardList[i].post_fin_list.code);
@@ -110,6 +116,12 @@ const Board_Infinity = (props) => {
                 .then(async (response) => {
                     let boardList = response.data.docs;
                     set_Board_Total(response.data.totalDocs);
+                    console.log("LLLLLLLLLLLLLLLL : ", boardList);
+
+                    if (boardList.length == 0) {
+                        set_more_list(false);
+                        return;
+                    }
 
                     let fin_code_List = [];
                     for (let i = 0; i < boardList.length; i++) {
@@ -194,7 +206,7 @@ const Board_Infinity = (props) => {
                 <InfiniteScroll
                     dataLength={board_list.length}
                     next={next}
-                    hasMore={true}
+                    hasMore={get_more_list}
                     loader={
                         <div className="board_temp_wrap">
                             <Skeleton animation="wave"
@@ -212,7 +224,7 @@ const Board_Infinity = (props) => {
                     scrollableTarget="board_list"
                     endMessage={
                         <p style={{ textAlign: "center" }}>
-                            <b>Yay! You have seen it all</b>
+                            <b>You have seen it all {board_list.length}</b>
                         </p>
                     }
                 >

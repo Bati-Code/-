@@ -75,10 +75,6 @@ body{
      flex-direction: column;
  }
 
- main div{
-     width: 100%;
- }
-
  main .board_function_wrap{
      height: 20%;
  }
@@ -98,6 +94,7 @@ body{
 
 .board_content main #board_list{
     height: 80%;
+    width: 100%;
     overflow-y: scroll;
 }
 

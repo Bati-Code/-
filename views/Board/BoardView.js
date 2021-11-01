@@ -8,11 +8,12 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import './css/Board_View_CSS.css';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import { useAlert } from 'react-alert'
 import { server_config } from '../../server_config';
 import { Base64 } from 'js-base64';
+import { Board_Store_Reset } from '../../redux/action/board_list_action';
 
 
 const BoardView = (res) => {
@@ -53,8 +54,8 @@ const BoardView = (res) => {
     const history = useHistory();
     const alert = useAlert();
     const board_id = res.match.params.id;
-    const space = " ";
 
+    const dispatch = useDispatch();
 
     useEffect(() => {
         axios.get(server_config.server_Address + "/board/view/" + board_id)
@@ -153,6 +154,8 @@ const BoardView = (res) => {
                     history.push('/main');
                 }
             })
+
+        dispatch(Board_Store_Reset());
     };
 
     const handle_DeleteBoard_Cancel = () => {

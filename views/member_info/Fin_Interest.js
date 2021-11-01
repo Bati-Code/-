@@ -10,6 +10,7 @@ import axios from 'axios';
 import './css/Fin_InterestCSS.css'
 import { useHistory } from 'react-router-dom';
 import { server_config } from '../../server_config';
+import { Board_Store_Reset } from '../../redux/action/board_list_action';
 
 const Fin_Interest = () => {
     const [get_finance_List_Value, set_finance_List_Value] = useState({});
@@ -69,6 +70,7 @@ const Fin_Interest = () => {
         //console.log(list_code);
         dispatch(Page_Search("종목코드", list_code));
         dispatch(Page_Store(1));
+        dispatch(Board_Store_Reset());
         history.push("/main");
     }
 

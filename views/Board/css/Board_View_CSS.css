@@ -51,8 +51,9 @@ body{
  }
 
 
- .board_content{
+ #board_content{
      display: flex;
+     width: 100%;
  }
 
  .board_content nav{

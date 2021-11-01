@@ -111,6 +111,13 @@ const Board = () => {
 
 
     useEffect(() => {
+
+
+        axios.get(server_config.server_Address + '/report/searchALL')
+        .then((response) => {
+            console.log("Report : ",response.data);
+        })
+
     }, [])
 
     useEffect(() => {
