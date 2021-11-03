@@ -114,9 +114,9 @@ const Board = () => {
 
 
         axios.get(server_config.server_Address + '/report/searchALL')
-        .then((response) => {
-            console.log("Report : ",response.data);
-        })
+            .then((response) => {
+                console.log("Report : ", response.data);
+            })
 
     }, [])
 
@@ -223,46 +223,66 @@ const Board = () => {
 
     return (
         <>
-
             <div>
                 {
                     get_BoardList.map((list, index) => {
+                        console.log(list);
                         return (
                             <div className="board_temp_wrap" key={index}>
-                                <div className="board_title"
-                                    onClick={() => {
-                                        history.push("/board/view/" + list._id);
-                                    }}>
-                                    [{list?.post_fin_list.name}] {list.post_title}
-                                    <span className="board_comment_count">
-                                        <ChatIcon style={
-                                            {
-                                                fontSize: '1.2rem',
-                                                marginRight: '3px',
-                                            }
-                                        } />{list.post_comment.length}
-                                    </span>
+                                <div className="board_num">
+                                    {list.post_num}
                                 </div>
-                                <ul className="board_info">
-                                    <li className="post_author"
+                                <div className="board_main">
+                                    <div className="board_fin_name">
+                                        {list?.post_fin_list.name}
+                                    </div>
+                                    <div className="board_title"
                                         onClick={() => {
-                                            Modal_Visible_Handler(1, list.post_author);
-                                        }}>{list.post_author}</li> <li> | </li>
-                                    <li>{DateDisplay(list.post_date)}</li> <li> | </li>
-                                    <li>조회 : {list.post_count}</li> <li> | </li>
-                                    <li>추천 : {list.post_recommend}</li>  <li> | </li>
-                                    <li id={(Math.round(get_attention_count[list.index - 1]?.fin_count /
-                                        get_attention_count[list.index - 1]?.total_count * 100) > 30)?"red":''}
-                                    
-                                    onClick={() => {
-                                        Modal_Visible_Handler(3, list.post_fin_list.name);
-                                    }}>관심도 : {
-                                        get_attention_count[list.index - 1]?.total_count !== 0 ?
-                                        (Math.round(get_attention_count[list.index - 1]?.fin_count /
-                                        get_attention_count[list.index - 1]?.total_count * 100))
-                                        : 0
-                                    } %</li>
-                                </ul>
+                                            history.push("/board/view/" + list._id);
+                                        }}>
+                                        {list.post_title}
+                                        {
+                                            list.post_comment.length != 0 &&
+                                            <span className="tooltip">
+                                                {list.post_comment.length}
+                                            </span>
+                                        }
+                                        {/* <span className="board_comment_count">
+                                            <ChatIcon style={
+                                                {
+                                                    fontSize: '1.2rem',
+                                                    marginRight: '3px',
+                                                }
+                                            } />{list.post_comment.length}
+                                        </span> */}
+                                    </div>
+                                    <ul className="board_info">
+                                        <li className="post_author"
+                                            onClick={() => {
+                                                Modal_Visible_Handler(1, list.post_author);
+                                            }}>{list.post_author}</li> <li> · </li>
+                                        <li>{DateDisplay(list.post_date)}</li> <li> · </li>
+                                        <li>조회수 {list.post_count}</li>
+                                    </ul>
+                                </div>
+                                <div className="board_like">
+                                    <div id={(Math.round(get_attention_count[list.index - 1]?.fin_count /
+                                        get_attention_count[list.index - 1]?.total_count * 100) > 30) ? "red" : ''}
+                                        onClick={() => {
+                                            Modal_Visible_Handler(3, list.post_fin_list.name);
+                                        }}>
+                                        관심도 {
+                                            get_attention_count[list.index - 1]?.total_count !== 0 ?
+                                                (Math.round(get_attention_count[list.index - 1]?.fin_count /
+                                                    get_attention_count[list.index - 1]?.total_count * 100))
+                                                : 0
+                                        } %
+                                    </div>
+                                    <div>
+                                        좋아요 {list.post_recommend}
+                                    </div>
+
+                                </div>
                             </div>
                         )
                     })

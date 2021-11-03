@@ -57,6 +57,8 @@ const BoardView = (res) => {
 
     const dispatch = useDispatch();
 
+    const { radio } = useSelector(state => state.pageStore);
+
     useEffect(() => {
         axios.get(server_config.server_Address + "/board/view/" + board_id)
             .then((response) => {
@@ -432,7 +434,19 @@ const BoardView = (res) => {
                 <div className="BoardView_footer">
                     <div>
                         <Button type="primary" icon={<TableOutlined />}
-                            onClick={() => history.push('/main')}>
+                            onClick={() => {
+                                if (radio === 'c') {
+                                    console.log(radio);
+                                    history.push(
+                                        {
+                                            pathname: '/fin_info',
+                                            state: { fin_name: window.sessionStorage.getItem("fin_name") }
+                                        })
+                                }
+                                else{
+                                    history.push('/main');
+                                }
+                            }}>
                             목록
                         </Button>
                     </div>

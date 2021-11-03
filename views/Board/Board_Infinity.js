@@ -234,49 +234,55 @@ const Board_Infinity = (props) => {
 
                             let head = 0;
 
-                            if (list.count.fin_count == 0) {
+                            if (list.count?.fin_count == 0) {
                                 head = 0;
                             } else {
-                                head = list.count.fin_count * 100;
+                                head = list?.count.fin_count * 100;
                             }
                             let attention_now = Math.round(head / list.count.total_count);
 
                             return (
                                 <div className="board_temp_wrap" key={index}>
-                                    <div className="board_title"
-                                        onClick={() => {
-                                            history.push("/board/view/" + list._id);
-                                        }}>
-                                        [{list?.post_fin_list.name}] {list.post_title}
-                                        <span className="board_comment_count">
-                                            <ChatIcon style={
-                                                {
-                                                    fontSize: '1.2rem',
-                                                    marginRight: '3px',
-                                                }
-                                            } />{list.post_comment.length}
-                                        </span>
+                                    <div className="board_num">
+                                        {list.post_num}
                                     </div>
-                                    <ul className="board_info">
-                                        <li className="post_author"
+                                    <div className="board_main">
+                                        <div className="board_fin_name">
+                                            {list?.post_fin_list.name}
+                                        </div>
+                                        <div className="board_title"
                                             onClick={() => {
-                                                Modal_Visible_Handler(1, list.post_author);
-                                            }}>{list.post_author}</li> <li> | </li>
-                                        <li>{DateDisplay(list.post_date)}</li> <li> | </li>
-                                        <li>조회 : {list.post_count}</li> <li> | </li>
-                                        <li>추천 : {list.post_recommend}</li>  <li> | </li>
-                                        <li id={attention_now > 30 ? "red" : ''}
+                                                history.push("/board/view/" + list._id);
+                                            }}>
+                                            {list.post_title}
+                                            <span className="tooltip">
+                                                {list.post_comment.length}
+                                            </span>
+                                        </div>
+                                        <ul className="board_info">
+                                            <li className="post_author"
+                                                onClick={() => {
+                                                    Modal_Visible_Handler(1, list.post_author);
+                                                }}>{list.post_author}</li> <li> · </li>
+                                            <li>{DateDisplay(list.post_date)}</li> <li> · </li>
+                                            <li>조회수 {list.post_count}</li>
+                                        </ul>
+                                    </div>
+                                    <div className="board_like">
+                                        <div id={attention_now > 30 ? "red" : ''}
                                             onClick={() => {
                                                 Modal_Visible_Handler(3, list.post_fin_list.name);
                                             }}>
-
-
-                                            관심도 : <CountUp
+                                            관심도 <CountUp
                                                 start={0}
                                                 end={attention_now}
                                                 duration={2} /> %
-                                        </li>
-                                    </ul>
+                                        </div>
+                                        <div>
+                                            좋아요 {list.post_recommend}
+                                        </div>
+
+                                    </div>
                                 </div>
                             )
                         })
@@ -293,26 +299,34 @@ const Board_Infinity = (props) => {
                         console.log(list);
                         return (
                             <div className="board_temp_wrap" key={index}>
-                                <div className="board_title"
-                                    onClick={() => {
-                                        Modal_Visible_Handler(0, '');
-                                        history.push("/board/view/" + list._id);
-                                    }}>
-                                    [{list?.post_fin_list.name}] {list.post_title}
-                                    <span className="board_comment_count">
-                                        <ChatIcon style={
-                                            {
-                                                fontSize: '1.2rem',
-                                                marginRight: '3px',
-                                            }
-                                        } />{list.post_comment.length}
-                                    </span>
+                                <div className="board_num">
+                                    {list.post_num}
                                 </div>
-                                <ul className="board_info">
-                                    <li>{DateDisplay(list.post_date)}</li> <li> | </li>
-                                    <li>조회 : {list.post_count}</li> <li> | </li>
-                                    <li>추천 : {list.post_recommend}</li>
-                                </ul>
+                                <div className="board_main">
+                                    <div className="board_fin_name">
+                                        {list?.post_fin_list.name}
+                                    </div>
+                                    <div className="board_title"
+                                        onClick={() => {
+                                            Modal_Visible_Handler(0, '');
+                                            history.push("/board/view/" + list._id);
+                                        }}>
+                                        [{list?.post_fin_list.name}] {list.post_title}
+                                        <span className="board_comment_count">
+                                            <ChatIcon style={
+                                                {
+                                                    fontSize: '1.2rem',
+                                                    marginRight: '3px',
+                                                }
+                                            } />{list.post_comment.length}
+                                        </span>
+                                    </div>
+                                    <ul className="board_info">
+                                        <li>{DateDisplay(list.post_date)}</li> <li> | </li>
+                                        <li>조회 : {list.post_count}</li> <li> | </li>
+                                        <li>추천 : {list.post_recommend}</li>
+                                    </ul>
+                                </div>
                             </div>
                         );
                     })}

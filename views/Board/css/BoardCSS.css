@@ -1,3 +1,4 @@
+
 body{
     width: 100%;
     height: 100%;
@@ -122,6 +123,50 @@ body{
      border-radius: 1px;
      width: fit-content;
      padding: 0 15px 0 15px;
-
  }
+
+ .board_title .tooltip{
+    background-color: #ffffff;
+    border: #6600FF solid 2px;
+    border-radius: 5px;
+    color: #6600FF;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: left;
+    height: auto;
+    margin-top: 6.8px;
+    padding: 0 7.3px;
+    position: relative;
+    width: fit-content;
+    margin-left: 10px;
+    z-index: 100;
+ }
+
+ .tooltip::before {
+    border-color: #6600FF transparent;
+    border-style: solid;
+    border-width: 6px 4px 0 4px;
+    content: '';
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -1.9px;
+    width: 0;
+    z-index: 0;
+  }
+
+ .tooltip::after {
+    border-color: #ffffff transparent;
+    border-style: solid;
+    border-width: 3px 2.5px 0 2.5px;
+    content: '';
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -1px;
+    width: 0;
+    z-index: 1;
+  }
  

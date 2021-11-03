@@ -1,3 +1,7 @@
+#root{
+    --main_color: rgb(236, 106, 23);
+}
+
 .board_search_wrap{
     display: flex;
     flex-direction: row;
@@ -7,10 +11,33 @@
 }
 
 .board_temp_wrap{
+    display: flex;
     margin-bottom: 10px;
     min-height: 60px;
     text-align: left;
-    border-bottom: 1px solid #DBDBDB;
+    border-bottom: 1px solid #dbdbdb;
+}
+
+.board_temp_wrap .board_num{
+    width: 14.2%;
+    text-align: center;
+    margin: auto;
+}
+
+.board_temp_wrap .board_main{
+    width: 60.8%;
+}
+
+.board_temp_wrap .board_like{
+    width: 25%;
+    font-size: 12px;
+    padding-right: 10px;
+    align-self: center;
+    color: #444444;
+}
+
+.board_temp_wrap .board_main .board_fin_name{
+    color: var(--main_color);
 }
 
 .board_temp_wrap .board_title{
@@ -18,10 +45,11 @@
     font-size: 17px;
     white-space: nowrap;
     text-overflow: ellipsis;
-    padding: 5px;
     padding-bottom: 0px;
-    line-height: 1.5;
+    color: #444444;
+    line-height: 2.2em;
     overflow: hidden;
+    top: 110%;
 }
 
 
@@ -33,17 +61,19 @@
 .board_temp_wrap .board_info{
     overflow: hidden;
     font-size: 12px;
-    padding: 5px;
+    padding: 0px;
     white-space: nowrap;
     text-overflow: ellipsis;
     word-wrap: break-word;
     word-break: break-all;
 }
 
+
 .board_info{
     list-style: none;
     white-space: nowrap;
     text-overflow: ellipsis;
+    color: #888888;
     overflow: hidden;
 }
 .board_info li{
@@ -52,11 +82,6 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-}
-
-ul .post_author{
-    width: 15%;
-    text-align: center;
 }
 
 #red{
