@@ -76,8 +76,54 @@ body{
      flex-direction: column;
  }
 
+main .tabBar{
+    width: 100%;
+}
+
+.MuiTab-textColorPrimary.Mui-selected{
+    color: black !important;
+}
+
  main .board_function_wrap{
-     height: 20%;
+     display: flex;
+     width: 100%;
+     height: 8%;
+     background-color: #fafafb;
+     justify-content: space-between;
+     align-items: center;
+ }
+
+ main .board_function_wrap .item1, .item2, .item3{
+     height: fit-content;
+     font-size: 18px;
+ }
+
+ main .board_function_wrap .item1{
+     width: 30%;
+ }
+
+ main .board_function_wrap .item1 .ant-btn{
+    border-radius: 200px;
+    width: fit-content;
+}
+
+main .board_function_wrap .item2{
+    width: 80%;
+}
+
+main .board_function_wrap .item2 img{
+    max-width: 7%;
+ }
+
+ main .board_function_wrap .item3{
+    width: 30%;
+    margin-top:11px;
+    margin-right: 5px;
+    text-align: right;
+}
+
+ main .board_function_wrap .item3 .item_icon{
+     height: 50%;
  }
 
 
@@ -94,7 +140,7 @@ body{
 }
 
 .board_content main #board_list{
-    height: 80%;
+    height: 90%;
     width: 100%;
     overflow-y: scroll;
 }
@@ -169,4 +215,10 @@ body{
     width: 0;
     z-index: 1;
   }
+
+  .ant-radio-button-wrapper{
+      border: 0 !important;
+      border-left: 0;
+  }
+
  

@@ -82,13 +82,6 @@ const Fin_Interest = () => {
     return (
         <>
             <div className="board_wrap">
-                <div className="board_Header">
-                    <div>
-                        <div onClick={Header_Handler}>
-                                주식토론 게시판
-                        </div>
-                    </div>
-                </div>
                 <div className="container">
                     <section className="board_content">
                         <nav>

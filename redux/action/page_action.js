@@ -17,7 +17,7 @@ const initialState = {
     search: false,
     search_value: '',
     count: 0,
-    radio: 'a',
+    radio: '최신순',
 };
 
 const pageStore = (state = initialState, action) => {

@@ -1,32 +1,37 @@
-import { DownOutlined, FormOutlined, UserOutlined, FilterTwoTone } from '@ant-design/icons';
+import { DownOutlined, FormOutlined, UserOutlined, FilterTwoTone, SearchOutlined } from '@ant-design/icons';
 import axios from 'axios'
-import { Button, Dropdown, Input, Menu, Radio, Drawer } from 'antd';
+import { Button, Dropdown, Input, Menu, Radio, Drawer, Space } from 'antd';
 import MenuIcon from '@material-ui/icons/Menu';
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 
-import { useAlert } from 'react-alert'
+import SearchIcon from '@mui/icons-material/Search';
 
+import { useAlert } from 'react-alert'
 import { Finance_List_Store } from '../../redux/action/finance_list_action';
 import { Page_Search, Page_Reset, Page_Radio, Page_Store } from '../../redux/action/page_action';
 import { Board_Infinity_Page, Board_Scroll, Board_Store_Reset } from '../../redux/action/board_list_action';
 
+import expand_icon from '../../public/images/expand_icon.png'
 
 import Board from './Board'
 import Top_Fin_list from '../Finance_List/Top_Fin_List';
 import Top_Fin_list2 from '../Finance_List/Top_Fin_List2';
+import Fin_Interest from '../member_info/Fin_Interest'
 import './css/BoardCSS.css'
 import { server_config } from '../../server_config';
 import Board_Infinity from './Board_Infinity';
+import { Tab, Tabs, Paper } from '@material-ui/core';
 
 const { Search } = Input;
 
 const MainPage = () => {
     const [get_Menu_Text, set_Menu_Text] = useState('제목');
     const [get_Search_Value, set_Search_Value] = useState('');
-    const [get_Radio_Option, set_Radio_Option] = useState('a');
-    const [get_Drawer_Visible, set_Drawer_Visible] = useState(false);
+    const [get_Tab, set_Tab] = useState(2);
+    const [get_Menu_Drawer_Visible, set_Menu_Drawer_Visible] = useState(false);
+    const [get_Select_Drawer_Visible, set_Select_Drawer_Visible] = useState(false);
 
     const history = useHistory();
     const dispatch = useDispatch();
@@ -55,6 +60,12 @@ const MainPage = () => {
 
                 dispatch(Finance_List_Store(response.data.datalist));
             })
+
+
+        axios.get(server_config.server_Address + '/board/desc/attention')
+        .then((response) => {
+            console.log("Attention : ", response.data);
+        })
 
     }, [])
 
@@ -118,26 +129,38 @@ const MainPage = () => {
 
 
     const main_Header_Handler = () => {
-        if (scroll == 0 && radio == 'e' && search == false){
+        if (scroll == 0 && radio == 'e' && search == false) {
             return;
         }
-            set_Search_Value('');
+        set_Search_Value('');
         dispatch(Page_Reset());
         dispatch(Board_Store_Reset());
     }
 
     const Radio_Handler = (e) => {
         //dispatch(Page_Store(1));
+        console.log("AAA : ", e.target);
         dispatch(Page_Radio(e.target.value));
+        Select_Drawer_Close_Handler();
     }
 
 
-    const drawer_Open_Handler = () => {
-        set_Drawer_Visible(true);
+    const Menu_Drawer_Open_Handler = (e) => {
+        console.log(e);
+        set_Menu_Drawer_Visible(true);
     }
 
-    const drawer_Close_Handler = () => {
-        set_Drawer_Visible(false);
+    const Menu_Drawer_Close_Handler = () => {
+        set_Menu_Drawer_Visible(false);
+    }
+
+    const Select_Drawer_Open_Handler = (e) => {
+        console.log(e);
+        set_Select_Drawer_Visible(true);
+    }
+
+    const Select_Drawer_Close_Handler = () => {
+        set_Select_Drawer_Visible(false);
     }
 
     const Search_Input_Handler = (e) => {
@@ -147,6 +170,11 @@ const MainPage = () => {
     const Board_Scroll_Handler = (e) => {
         if (radio === 'e')
             dispatch(Board_Scroll(e.target.scrollTop));
+    }
+
+    const Change_Tab_Handler = (event, newValue) => {
+        set_Tab(newValue);
+        console.log(newValue);
     }
 
     return (
@@ -159,15 +187,33 @@ const MainPage = () => {
                                 title="메뉴"
                                 placement='left'
                                 closable={false}
-                                onClose={drawer_Close_Handler}
-                                visible={get_Drawer_Visible}
-                                key='main'
+                                onClose={Menu_Drawer_Close_Handler}
+                                visible={get_Menu_Drawer_Visible}
+                                key='menu'
                             >
                                 <p onClick={() => history.push('/fin_interest')}>관심 종목</p>
                             </Drawer>
+                            <Drawer
+                                placement='bottom'
+                                closable={false}
+                                onClose={Select_Drawer_Close_Handler}
+                                visible={get_Select_Drawer_Visible}
+                                key='select'
+                            >
+                                <Radio.Group defaultValue="최신순" style={{ width: '100%' }} onChange={Radio_Handler}
+                                    value={radio}>
+                                    <Space direction="vertical" style={{ width: '100%' }}>
+                                        <Radio.Button value="최신순" >최신순</Radio.Button>
+                                        <Radio.Button value="종목관심도순">종목관심도순</Radio.Button>
+                                        <Radio.Button value="인기순">인기순</Radio.Button>
+                                        <Radio.Button value="조회순">조회순</Radio.Button>
+                                        <Radio.Button value="e">Infinity Scroll</Radio.Button>
+                                    </Space>
+                                </Radio.Group>
+                            </Drawer>
                         </div>
                         <div className="MainMenu">
-                            <MenuIcon onClick={drawer_Open_Handler} />
+                            <MenuIcon onClick={Menu_Drawer_Open_Handler} />
                         </div>
                         <div onClick={main_Header_Handler}>
                             주식토론 게시판
@@ -179,8 +225,38 @@ const MainPage = () => {
                         <nav>
                         </nav>
                         <main>
+                            <div className="tabBar">
+                                <Paper square style={{ width: '100%' }}>
+                                    <Tabs
+                                        value={get_Tab}
+                                        TabIndicatorProps={{ style: { background: 'black' } }}
+                                        onChange={Change_Tab_Handler}
+                                        aria-label="disabled tabs example"
+                                        variant="fullWidth"
+                                    >
+                                        <Tab label="오늘 인기 종목" />
+                                        <Tab label="나의 관심 종목" />
+                                        <Tab label="전체글 보기" />
+                                    </Tabs>
+                                </Paper>
+                            </div>
                             <div className="board_function_wrap">
-                                <div>
+                                <div className="item1">
+                                    <Button onClick={Insert_Session_Handler}>
+                                        글쓰기
+                                    </Button>
+                                </div>
+                                <div className="item2" onClick={Select_Drawer_Open_Handler}>
+                                    {radio}
+                                    <span className="item_icon">
+                                        <img src={expand_icon} />
+                                    </span>
+                                </div>
+                                <div className="item3">
+                                    <SearchIcon />
+                                    {/* <img src={search_icon} /> */}
+                                </div>
+                                {/* <div>
                                     <div className="board_search_wrap">
                                         <Dropdown overlay={menu} trigger='click'>
                                             <Button>
@@ -191,26 +267,29 @@ const MainPage = () => {
                                             onSearch={onSearch} onChange={Search_Input_Handler}
                                             value={get_Search_Value} enterButton />
                                     </div>
-                                </div>
-                                <div className="top_Nav_Wrap">
+                                </div> */}
+                                {/* <div className="top_Nav_Wrap">
                                     <Radio.Group defaultValue="a" style={{ width: '100%' }} onChange={Radio_Handler}
-                                        value={radio}>
-                                        <Radio.Button value="a">전체글</Radio.Button>
+                                        value={radio} >
+                                        <Radio.Button value="a" >전체글</Radio.Button>
                                         <Radio.Button value="b">인기글</Radio.Button>
                                         <Radio.Button value="c">인기 종목</Radio.Button>
                                         <Radio.Button value="d">인기 종목2</Radio.Button>
                                         <Radio.Button value="e">Infinity Scroll</Radio.Button>
                                     </Radio.Group>
-                                </div>
+                                </div> */}
                             </div>
                             <div id="board_list"
                                 onScroll={Board_Scroll_Handler}>
-                                {radio === 'a' ? <Board />
-                                    : radio === 'b' ? <Board />
-                                        : radio === 'c' ? <Top_Fin_list />
-                                            : radio === 'd' ? <Top_Fin_list2 />
-                                                : radio === 'e' ? <Board_Infinity />
-                                                    : null}
+                                {
+                                    get_Tab === 0 ? <Top_Fin_list2 />
+                                        : get_Tab === 1 ? <Fin_Interest />
+                                            : get_Tab === 2 && radio === '최신순' ? <Board_Infinity />
+                                                : get_Tab === 2 && radio === '종목관심도순' ? <Board_Infinity />
+                                                    : get_Tab === 2 && radio === '인기순' ? <Top_Fin_list />
+                                                        : get_Tab === 2 && radio === '조회순' ? <Top_Fin_list2 />
+                                                            : get_Tab === 2 && radio === 'e' ? <Board_Infinity />
+                                                                : null}
                             </div>
                         </main>
                         <aside>

@@ -43,13 +43,13 @@
 .board_temp_wrap .board_title{
     font-weight: 620;
     font-size: 17px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     padding-bottom: 0px;
     color: #444444;
-    line-height: 2.2em;
-    overflow: hidden;
+    line-height: 1.2em;
     top: 110%;
+    overflow-wrap: break-word;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 

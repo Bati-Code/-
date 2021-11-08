@@ -64,6 +64,20 @@ const Board_Infinity = (props) => {
 
     }, [search, search_value])
 
+    useEffect(() => {
+        switch (radio) {
+            case "종목관심도순":
+                axios.get(server_config.server_Address + '/board/desc/attention')
+                .then((response) => {
+                    console.log(response.data);
+                })
+                break;
+
+            default:
+                break;
+        }
+    }, [radio])
+
     const Get_Board_View = () => {
         console.log(radio, " : ", scroll, " : ", infinity_page);
         if (radio === 'e') {
@@ -255,9 +269,12 @@ const Board_Infinity = (props) => {
                                                 history.push("/board/view/" + list._id);
                                             }}>
                                             {list.post_title}
-                                            <span className="tooltip">
-                                                {list.post_comment.length}
-                                            </span>
+                                            {
+                                                list.post_comment.length != 0 &&
+                                                <span className="tooltip">
+                                                    {list.post_comment.length}
+                                                </span>
+                                            }
                                         </div>
                                         <ul className="board_info">
                                             <li className="post_author"

@@ -121,6 +121,7 @@ const Board = () => {
     }, [])
 
     useEffect(() => {
+
         if (radio !== 'b') {
             Get_Board_View();
             console.log("MAIN");
