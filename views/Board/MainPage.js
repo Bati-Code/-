@@ -140,6 +140,7 @@ const MainPage = () => {
     const Radio_Handler = (e) => {
         //dispatch(Page_Store(1));
         console.log("AAA : ", e.target);
+        dispatch(Board_Store_Reset());
         dispatch(Page_Radio(e.target.value));
         Select_Drawer_Close_Handler();
     }

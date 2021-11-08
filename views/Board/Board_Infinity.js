@@ -54,7 +54,7 @@ const Board_Infinity = (props) => {
             console.log("BB");
             Get_Board_View();
         }
-    }, [])
+    }, [radio])
 
     useEffect(() => {
         if (flag == 1)
@@ -65,17 +65,6 @@ const Board_Infinity = (props) => {
     }, [search, search_value])
 
     useEffect(() => {
-        switch (radio) {
-            case "종목관심도순":
-                axios.get(server_config.server_Address + '/board/desc/attention')
-                .then((response) => {
-                    console.log(response.data);
-                })
-                break;
-
-            default:
-                break;
-        }
     }, [radio])
 
     const Get_Board_View = () => {
@@ -92,78 +81,75 @@ const Board_Infinity = (props) => {
                     let boardList = response.data.docs;
                     set_Board_Total(response.data.totalDocs);
 
-                    if (boardList.length == 0) {
-                        set_more_list(false);
-                        return;
-                    }
-
-                    let fin_code_List = [];
-                    for (let i = 0; i < boardList.length; i++) {
-                        fin_code_List.push(boardList[i].post_fin_list.code);
-                    }
-
-                    await axios.post(server_config.server_Address + '/board/countBoard',
-                        {
-                            'fin_code_list': fin_code_List,
-                        })
-                        .then((response) => {
-                            console.log("COUNT : ", response.data.countBoard);
-                            boardList.map((list, index) => {
-                                list.count = response.data.countBoard[index];
-                                list.index = index + 1;
-                                list.key = index + 1;
-                            });
-
-                            boardList = board_list.concat(boardList);
-                        })
-
-
-                    console.log("BoardList : Search", boardList);
-
-                    set_BoardList(boardList);
-                    dispatch(board_Store(boardList));
-                    dispatch(Board_Infinity_Page(infinity_page + 1));
+                    await Get_Board_View_Process(boardList);
                 })
         }
         else {
-            axios.get(server_config.server_Address + '/board/list/' + infinity_page)
-                .then(async (response) => {
-                    let boardList = response.data.docs;
-                    set_Board_Total(response.data.totalDocs);
-                    console.log("LLLLLLLLLLLLLLLL : ", boardList);
 
-                    if (boardList.length == 0) {
-                        set_more_list(false);
-                        return;
-                    }
+            console.log("Radio : ", radio);
+            if (radio == "최신순") {
+                console.log("일치");
+                axios.get(server_config.server_Address + '/board/list/' + infinity_page)
+                    .then(async (response) => {
+                        let boardList = response.data.docs;
+                        set_Board_Total(response.data.totalDocs);
+                        console.log("LLLLLLLLLLLLLLLL : ", boardList);
 
-                    let fin_code_List = [];
-                    for (let i = 0; i < boardList.length; i++) {
-                        fin_code_List.push(boardList[i].post_fin_list.code);
-                    }
+                        await Get_Board_View_Process(boardList);
+                    })
 
-                    await axios.post(server_config.server_Address + '/board/countBoard',
-                        {
-                            'fin_code_list': fin_code_List,
-                        })
-                        .then((response) => {
-                            console.log("COUNT : ", response.data.countBoard);
-                            boardList.map((list, index) => {
-                                list.count = response.data.countBoard[index];
-                                list.index = index + 1;
-                                list.key = index + 1;
-                            });
+            } else if (radio == "종목관심도순") {
+                console.log("일치2");
+                axios.get(server_config.server_Address + '/board/desc/attention/' + infinity_page)
+                    .then(async (response) => {
+                        console.log(response.data);
+                        let boardList = response.data.boards.docs;
+                        let board_Array = [];
 
-                            boardList = board_list.concat(boardList);
-                        })
+                        for (let i = 0; i < boardList.length; i++) {
+                            board_Array.push(boardList[i].boards_object);
+                        }
 
-                    console.log("BoardList : Default ", boardList);
+                        await Get_Board_View_Process(board_Array);
+                    })
+            }
 
-                    set_BoardList(boardList);
-                    dispatch(board_Store(boardList));
-                    dispatch(Board_Infinity_Page(infinity_page + 1));
-                })
         }
+    }
+
+    const Get_Board_View_Process = async (boardList) => {
+        if (boardList.length == 0) {
+            set_more_list(false);
+            console.log("Finish");
+            return;
+        }
+
+        let fin_code_List = [];
+        for (let i = 0; i < boardList.length; i++) {
+            fin_code_List.push(boardList[i].post_fin_list.code);
+        }
+
+        await axios.post(server_config.server_Address + '/board/countBoard',
+            {
+                'fin_code_list': fin_code_List,
+            })
+            .then((response) => {
+                console.log("COUNT : ", response.data.countBoard);
+                boardList.map((list, index) => {
+                    list.count = response.data.countBoard[index];
+                    list.index = index + 1;
+                    list.key = index + 1;
+                });
+
+                boardList = board_list.concat(boardList);
+            })
+
+
+        console.log("BoardList : Search", boardList);
+
+        set_BoardList(boardList);
+        dispatch(board_Store(boardList));
+        dispatch(Board_Infinity_Page(infinity_page + 1));
     }
 
 
@@ -215,7 +201,7 @@ const Board_Infinity = (props) => {
 
     return (
         <>
-
+            {board_list.length}
             <div>
                 <InfiniteScroll
                     dataLength={board_list.length}
