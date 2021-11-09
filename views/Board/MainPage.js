@@ -1,6 +1,6 @@
 import { DownOutlined, FormOutlined, UserOutlined, FilterTwoTone, SearchOutlined } from '@ant-design/icons';
 import axios from 'axios'
-import { Button, Dropdown, Input, Menu, Radio, Drawer, Space } from 'antd';
+import { Button, Dropdown, Input, Menu, Radio, Drawer, Space, DatePicker } from 'antd';
 import MenuIcon from '@material-ui/icons/Menu';
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -10,7 +10,7 @@ import SearchIcon from '@mui/icons-material/Search';
 
 import { useAlert } from 'react-alert'
 import { Finance_List_Store } from '../../redux/action/finance_list_action';
-import { Page_Search, Page_Reset, Page_Radio, Page_Store } from '../../redux/action/page_action';
+import { Page_Search, Page_Reset, Page_Radio, Page_Store, Page_Search_Date } from '../../redux/action/page_action';
 import { Board_Infinity_Page, Board_Scroll, Board_Store_Reset } from '../../redux/action/board_list_action';
 
 import expand_icon from '../../public/images/expand_icon.png'
@@ -19,19 +19,29 @@ import Board from './Board'
 import Top_Fin_list from '../Finance_List/Top_Fin_List';
 import Top_Fin_list2 from '../Finance_List/Top_Fin_List2';
 import Fin_Interest from '../member_info/Fin_Interest'
-import './css/BoardCSS.css'
+import './css/BoardCSS.css';
+
+import Logo from '../../public/images/hitalk_logo.png';
+
 import { server_config } from '../../server_config';
 import Board_Infinity from './Board_Infinity';
 import { Tab, Tabs, Paper } from '@material-ui/core';
 
+import 'moment/locale/ko';
+import locale from 'antd/es/date-picker/locale/ko_KR'
+
 const { Search } = Input;
+const { RangePicker } = DatePicker;
 
 const MainPage = () => {
     const [get_Menu_Text, set_Menu_Text] = useState('제목');
     const [get_Search_Value, set_Search_Value] = useState('');
+    const [get_Search_Date, set_Search_Date] = useState([]);
     const [get_Tab, set_Tab] = useState(2);
     const [get_Menu_Drawer_Visible, set_Menu_Drawer_Visible] = useState(false);
     const [get_Select_Drawer_Visible, set_Select_Drawer_Visible] = useState(false);
+
+    const [get_Click, set_Click] = useState(false);
 
     const history = useHistory();
     const dispatch = useDispatch();
@@ -39,6 +49,7 @@ const MainPage = () => {
 
     const { radio, search } = useSelector(state => state.pageStore);
     const { scroll } = useSelector(state => state.boardStore);
+
 
     useEffect(() => {
         // const meta = document.createElement('meta');
@@ -61,12 +72,6 @@ const MainPage = () => {
                 dispatch(Finance_List_Store(response.data.datalist));
             })
 
-
-        axios.get(server_config.server_Address + '/board/desc/attention')
-        .then((response) => {
-            console.log("Attention : ", response.data);
-        })
-
     }, [])
 
     const Menu_Handler = (e) => {
@@ -76,6 +81,26 @@ const MainPage = () => {
     }
 
     const menu = (
+        <Menu onClick={Menu_Handler}>
+            <Menu.Item key="제목" icon={<FilterTwoTone />}>
+                제목
+            </Menu.Item>
+            <Menu.Item key="작성자" icon={<FilterTwoTone />}>
+                작성자
+            </Menu.Item>
+            <Menu.Item key="내용" icon={<FilterTwoTone />}>
+                내용
+            </Menu.Item>
+            <Menu.Item key="종목명" icon={<FilterTwoTone />}>
+                종목명
+            </Menu.Item>
+            <Menu.Item key="종목코드" icon={<FilterTwoTone />}>
+                종목코드
+            </Menu.Item>
+        </Menu>
+    );
+
+    const year_menu = (
         <Menu onClick={Menu_Handler}>
             <Menu.Item key="제목" icon={<FilterTwoTone />}>
                 제목
@@ -129,10 +154,11 @@ const MainPage = () => {
 
 
     const main_Header_Handler = () => {
-        if (scroll == 0 && radio == 'e' && search == false) {
+        if (scroll == 0 && get_Tab == 2 && search == false) {
             return;
         }
         set_Search_Value('');
+        set_Click(false);
         dispatch(Page_Reset());
         dispatch(Board_Store_Reset());
     }
@@ -169,7 +195,7 @@ const MainPage = () => {
     }
 
     const Board_Scroll_Handler = (e) => {
-        if (radio === 'e')
+        if (get_Tab === 2)
             dispatch(Board_Scroll(e.target.scrollTop));
     }
 
@@ -178,48 +204,59 @@ const MainPage = () => {
         console.log(newValue);
     }
 
+    const Range_Picker_Change_Handler = (dates, dateStrings) => {
+        console.log(dates, " : ", dateStrings);
+        dispatch(Page_Search_Date(dateStrings));
+    }
+
+    const Search_Button_Click_Handler = () => {
+        console.log("Click");
+        set_Click(true);
+    }
+
     return (
         <>
             <div className="board_wrap">
-                <div className="board_Header">
+                <div className="board_Header" onClick={main_Header_Handler}>
                     <div>
-                        <div>
-                            <Drawer
-                                title="메뉴"
-                                placement='left'
-                                closable={false}
-                                onClose={Menu_Drawer_Close_Handler}
-                                visible={get_Menu_Drawer_Visible}
-                                key='menu'
-                            >
-                                <p onClick={() => history.push('/fin_interest')}>관심 종목</p>
-                            </Drawer>
-                            <Drawer
-                                placement='bottom'
-                                closable={false}
-                                onClose={Select_Drawer_Close_Handler}
-                                visible={get_Select_Drawer_Visible}
-                                key='select'
-                            >
-                                <Radio.Group defaultValue="최신순" style={{ width: '100%' }} onChange={Radio_Handler}
-                                    value={radio}>
-                                    <Space direction="vertical" style={{ width: '100%' }}>
-                                        <Radio.Button value="최신순" >최신순</Radio.Button>
-                                        <Radio.Button value="종목관심도순">종목관심도순</Radio.Button>
-                                        <Radio.Button value="인기순">인기순</Radio.Button>
-                                        <Radio.Button value="조회순">조회순</Radio.Button>
-                                        <Radio.Button value="e">Infinity Scroll</Radio.Button>
-                                    </Space>
-                                </Radio.Group>
-                            </Drawer>
-                        </div>
-                        <div className="MainMenu">
-                            <MenuIcon onClick={Menu_Drawer_Open_Handler} />
-                        </div>
-                        <div onClick={main_Header_Handler}>
-                            주식토론 게시판
-                        </div>
+                        <Drawer
+                            title="메뉴"
+                            placement='left'
+                            closable={false}
+                            onClose={Menu_Drawer_Close_Handler}
+                            visible={get_Menu_Drawer_Visible}
+                            key='menu'
+                        >
+                            <p onClick={() => history.push('/fin_interest')}>관심 종목</p>
+                        </Drawer>
+                        <Drawer
+                            placement='bottom'
+                            closable={false}
+                            onClose={Select_Drawer_Close_Handler}
+                            visible={get_Select_Drawer_Visible}
+                            key='select'
+                        >
+                            <Radio.Group defaultValue="최신순" style={{ width: '100%', height: '100%' }} onChange={Radio_Handler}
+                                value={radio}>
+                                <Space
+                                    direction="vertical"
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        justifyContent: 'space-evenly'
+                                    }}>
+                                    <Radio.Button value="최신순" >최신순</Radio.Button>
+                                    <Radio.Button value="종목관심도순">종목관심도순</Radio.Button>
+                                    <Radio.Button value="인기순">인기순</Radio.Button>
+                                    <Radio.Button value="조회순">조회순</Radio.Button>
+                                </Space>
+                            </Radio.Group>
+                        </Drawer>
                     </div>
+                    <div className="MainMenu">
+                        <MenuIcon onClick={Menu_Drawer_Open_Handler} />
+                    </div>
+                    <img src={Logo} />
                 </div>
                 <div className="container">
                     <section className="board_content">
@@ -241,56 +278,58 @@ const MainPage = () => {
                                     </Tabs>
                                 </Paper>
                             </div>
-                            <div className="board_function_wrap">
-                                <div className="item1">
-                                    <Button onClick={Insert_Session_Handler}>
-                                        글쓰기
-                                    </Button>
-                                </div>
-                                <div className="item2" onClick={Select_Drawer_Open_Handler}>
-                                    {radio}
-                                    <span className="item_icon">
-                                        <img src={expand_icon} />
-                                    </span>
-                                </div>
-                                <div className="item3">
-                                    <SearchIcon />
-                                    {/* <img src={search_icon} /> */}
-                                </div>
-                                {/* <div>
-                                    <div className="board_search_wrap">
-                                        <Dropdown overlay={menu} trigger='click'>
-                                            <Button>
-                                                {get_Menu_Text} <DownOutlined />
-                                            </Button>
-                                        </Dropdown>
-                                        <Search placeholder="검색할 내용을 입력하세요."
-                                            onSearch={onSearch} onChange={Search_Input_Handler}
-                                            value={get_Search_Value} enterButton />
-                                    </div>
-                                </div> */}
-                                {/* <div className="top_Nav_Wrap">
-                                    <Radio.Group defaultValue="a" style={{ width: '100%' }} onChange={Radio_Handler}
-                                        value={radio} >
-                                        <Radio.Button value="a" >전체글</Radio.Button>
-                                        <Radio.Button value="b">인기글</Radio.Button>
-                                        <Radio.Button value="c">인기 종목</Radio.Button>
-                                        <Radio.Button value="d">인기 종목2</Radio.Button>
-                                        <Radio.Button value="e">Infinity Scroll</Radio.Button>
-                                    </Radio.Group>
-                                </div> */}
-                            </div>
+                            {
+                                get_Click ?
+                                    (
+                                        <div className="search_wrap flex column">
+                                            <div className="search_menu width100 flex">
+                                                <div className="width100">
+                                                    <RangePicker locale={locale} onChange={Range_Picker_Change_Handler}/>
+                                                </div>
+                                                <div className="width50">
+                                                    <Dropdown overlay={menu} trigger='click'>
+                                                        <Button>
+                                                            {get_Menu_Text} <DownOutlined />
+                                                        </Button>
+                                                    </Dropdown>
+                                                </div>
+                                            </div>
+                                            <div className="search_input width100">
+                                                <Search placeholder="검색어 입력"
+                                                    onSearch={onSearch} onChange={Search_Input_Handler}
+                                                    value={get_Search_Value} enterButton />
+                                            </div>
+
+                                        </div>
+                                    ) :
+                                    (
+                                        <div className="board_function_wrap">
+                                            <div className="item1">
+                                                <Button onClick={Insert_Session_Handler}>
+                                                    글쓰기
+                                                </Button>
+                                            </div>
+                                            <div className="item2" onClick={Select_Drawer_Open_Handler}>
+                                                {radio}
+                                                <span className="item_icon">
+                                                    <img src={expand_icon} />
+                                                </span>
+                                            </div>
+                                            <div className="item3" onClick={Search_Button_Click_Handler}>
+                                                <SearchIcon />
+                                            </div>
+                                        </div>
+                                    )
+
+
+                            }
                             <div id="board_list"
                                 onScroll={Board_Scroll_Handler}>
                                 {
                                     get_Tab === 0 ? <Top_Fin_list2 />
                                         : get_Tab === 1 ? <Fin_Interest />
-                                            : get_Tab === 2 && radio === '최신순' ? <Board_Infinity />
-                                                : get_Tab === 2 && radio === '종목관심도순' ? <Board_Infinity />
-                                                    : get_Tab === 2 && radio === '인기순' ? <Top_Fin_list />
-                                                        : get_Tab === 2 && radio === '조회순' ? <Top_Fin_list2 />
-                                                            : get_Tab === 2 && radio === 'e' ? <Board_Infinity />
-                                                                : null}
+                                            : get_Tab === 2 ? < Board_Infinity />
+                                                : null}
                             </div>
                         </main>
                         <aside>

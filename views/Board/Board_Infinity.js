@@ -21,8 +21,6 @@ dayjs.extend(utc);
 
 const Board_Infinity = (props) => {
 
-    const [get_BoardList, set_BoardList] = useState([]);
-    const [get_Board_Total, set_Board_Total] = useState(0);
     const [get_Modal_Visible, set_Modal_Visible] = useState(false);
     const [get_Chart_Modal_Visible, set_Chart_Modal_Visible] = useState(false);
     const [get_Modal_Board_List, set_Modal_Board_List] = useState([]);
@@ -48,10 +46,10 @@ const Board_Infinity = (props) => {
         if (board_list.length !== 0) {
             console.log("Get_Board_View Effect B");
             document.getElementById('board_list').scrollTo(0, scroll);
-            set_BoardList(board_list);
         }
         else {
             console.log("BB");
+            set_more_list(true);
             Get_Board_View();
         }
     }, [radio])
@@ -79,7 +77,6 @@ const Board_Infinity = (props) => {
                     console.log(board_list);
                     console.log(search_value, " : ", search, " : ", infinity_page);
                     let boardList = response.data.docs;
-                    set_Board_Total(response.data.totalDocs);
 
                     await Get_Board_View_Process(boardList);
                 })
@@ -88,18 +85,15 @@ const Board_Infinity = (props) => {
 
             console.log("Radio : ", radio);
             if (radio == "최신순") {
-                console.log("일치");
                 axios.get(server_config.server_Address + '/board/list/' + infinity_page)
                     .then(async (response) => {
                         let boardList = response.data.docs;
-                        set_Board_Total(response.data.totalDocs);
                         console.log("LLLLLLLLLLLLLLLL : ", boardList);
 
                         await Get_Board_View_Process(boardList);
                     })
 
             } else if (radio == "종목관심도순") {
-                console.log("일치2");
                 axios.get(server_config.server_Address + '/board/desc/attention/' + infinity_page)
                     .then(async (response) => {
                         console.log(response.data);
@@ -112,12 +106,29 @@ const Board_Infinity = (props) => {
 
                         await Get_Board_View_Process(board_Array);
                     })
+            } else if (radio == "인기순") {
+                axios.get(server_config.server_Address + '/board/desc/like/' + infinity_page)
+                    .then(async (response) => {
+                        console.log(response.data);
+                        let boardList = response.data.docs;
+
+                        await Get_Board_View_Process(boardList);
+                    })
+            } else if (radio == "조회순") {
+                axios.get(server_config.server_Address + '/board/desc/view/' + infinity_page)
+                    .then(async (response) => {
+                        console.log(response.data);
+                        let boardList = response.data.docs;
+
+                        await Get_Board_View_Process(boardList);
+                    })
             }
 
         }
     }
 
     const Get_Board_View_Process = async (boardList) => {
+
         if (boardList.length == 0) {
             set_more_list(false);
             console.log("Finish");
@@ -147,7 +158,6 @@ const Board_Infinity = (props) => {
 
         console.log("BoardList : Search", boardList);
 
-        set_BoardList(boardList);
         dispatch(board_Store(boardList));
         dispatch(Board_Infinity_Page(infinity_page + 1));
     }
@@ -201,7 +211,6 @@ const Board_Infinity = (props) => {
 
     return (
         <>
-            {board_list.length}
             <div>
                 <InfiniteScroll
                     dataLength={board_list.length}
@@ -237,7 +246,7 @@ const Board_Infinity = (props) => {
                             if (list.count?.fin_count == 0) {
                                 head = 0;
                             } else {
-                                head = list?.count.fin_count * 100;
+                                head = list?.count?.fin_count * 100;
                             }
                             let attention_now = Math.round(head / list.count.total_count);
 

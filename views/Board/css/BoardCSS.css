@@ -29,11 +29,11 @@ body{
 .board_wrap .board_Header{
     width: 100%;
     height: 7%;
-    padding: 12px;
+    padding: 7px;
     text-align: center;
     font-size: 23px;
-    color:white;
-    background-color: #2685D0;
+    color:rgb(0, 0, 0);
+    background-color: #ffffff;
     font-weight: bold;
     letter-spacing: -1px;
  }
@@ -78,6 +78,10 @@ body{
 
 main .tabBar{
     width: 100%;
+}
+
+main .tabBar .MuiPaper-elevation1{
+    box-shadow: 0 0 0;
 }
 
 .MuiTab-textColorPrimary.Mui-selected{
@@ -221,4 +225,70 @@ main .board_function_wrap .item2 img{
       border-left: 0;
   }
 
+  .search_wrap{
+      width: 100%;
+  }
+
+  .search_menu .ant-btn{
+    width:100%;
+    background-color: #fafafb;
+    border-color: #ffffff;
+  }
+
+  .search_menu .ant-picker{
+    background-color: #fafafb;
+    border-color: #fafafb;
+  }
+
+  .search_menu .ant-picker input{
+      font-size: 13px;
+  }
+
+  .search_menu .ant-picker-active-bar{
+      background-color:black;
+  }
+ 
+
+  .ant-picker-panels{
+      flex-direction: column;
+  }
+
+  .search_input .ant-btn-primary{
+    width: 100%;
+    background-color: #fafafb;
+    border-color: #fafafb;
+    color: black;
+    box-shadow: 0 0px 0;
+  }
+
+  .search_input .ant-input{
+    background-color: #fafafb;
+    border-color: #fafafb;
+    padding: 6px 11px;
+  }
+
+  .search_input .ant-input:hover, .ant-input:focus, .ant-input-search{
+    border-color: #fafafb;
+  }
+
+  .search_input input:focus{
+      outline: none;
+  }
+
+  .flex{
+      display: flex;
+      flex-direction: row;
+  }
+
+  .flex.column{
+      flex-direction: column;
+  }
+
+  .width100{
+      width: 100%;
+  }
+
+  .width50{
+      width: 50%;
+  }
  

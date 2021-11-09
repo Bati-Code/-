@@ -8,6 +8,7 @@ import Reducer from "./redux/store/combine_reducer";
 
 import { transitions, positions, Provider as AlertProvider } from 'react-alert';
 import './public/css/alertCSS.css';
+import './views/Board/css/AppCss.css'
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const devTools =
