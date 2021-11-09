@@ -20,7 +20,7 @@ const initialState = {
     search_value: '',
     count: 0,
     radio: '최신순',
-    date: []
+    date: [0, 0]
 };
 
 const pageStore = (state = initialState, action) => {

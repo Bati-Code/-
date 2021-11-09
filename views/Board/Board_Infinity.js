@@ -34,7 +34,7 @@ const Board_Infinity = (props) => {
     const history = useHistory();
     const dispatch = useDispatch();
 
-    const { count, page, search, menu_select, search_value, radio } = useSelector(state => state.pageStore);
+    const { count, page, search, menu_select, search_value, radio, date } = useSelector(state => state.pageStore);
     const { board_list, scroll, infinity_page } = useSelector(state => state.boardStore);
 
     let flag = 0;
@@ -72,14 +72,64 @@ const Board_Infinity = (props) => {
             document.getElementById('board_list').scrollTo(0, scroll);
         }
         if (search) {
-            axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value + '/' + infinity_page)
-                .then(async (response) => {
-                    console.log(board_list);
-                    console.log(search_value, " : ", search, " : ", infinity_page);
-                    let boardList = response.data.docs;
 
-                    await Get_Board_View_Process(boardList);
-                })
+            switch (radio) {
+                case '최신순':
+                    console.log("AAAAAAAAAA");
+                    axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value +
+                        '/' + date[0] + '/' + date[1] + '/' + infinity_page)
+                        .then(async (response) => {
+                            console.log(board_list);
+                            console.log(search_value, " : ", search, " : ", infinity_page);
+                            let boardList = response.data.docs;
+
+                            await Get_Board_View_Process(boardList);
+                        })
+                    break;
+                case '종목관심도순':
+                    axios.get(server_config.server_Address + '/board/desc/attention/search/' + menu_select +
+                        '/' + search_value + '/' + infinity_page)
+                        .then(async (response) => {
+                          
+                            let boardList = response.data.boards.docs;
+                            let board_Array = [];
+
+                            for (let i = 0; i < boardList.length; i++) {
+                                board_Array.push(boardList[i].boards_object);
+                            }
+
+                            await Get_Board_View_Process(board_Array);
+                        })
+                    break;
+                case '인기순':
+                    axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value +
+                        '/' + date[0] + '/' + date[1] + '/' + infinity_page)
+                        .then(async (response) => {
+                            console.log(board_list);
+                            console.log(search_value, " : ", search, " : ", infinity_page);
+                            let boardList = response.data.docs;
+
+                            await Get_Board_View_Process(boardList);
+                        })
+                    break;
+                case '조회순':
+                    axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value +
+                        '/' + date[0] + '/' + date[1] + '/' + infinity_page)
+                        .then(async (response) => {
+                            console.log(board_list);
+                            console.log(search_value, " : ", search, " : ", infinity_page);
+                            let boardList = response.data.docs;
+
+                            await Get_Board_View_Process(boardList);
+                        })
+                    break;
+
+                default:
+                    console.log("default");
+                    break;
+            }
+            console.log(date);
+
         }
         else {
 
@@ -308,7 +358,6 @@ const Board_Infinity = (props) => {
                 <Modal title="작성자 최근 게시글" visible={get_Modal_Visible}
                     footer={null} onCancel={() => { Modal_Visible_Handler(0, '') }}>
                     {get_Modal_Board_List.map((list, index) => {
-                        console.log(list);
                         return (
                             <div className="board_temp_wrap" key={index}>
                                 <div className="board_num">

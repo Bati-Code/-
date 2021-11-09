@@ -27,8 +27,8 @@ import { server_config } from '../../server_config';
 import Board_Infinity from './Board_Infinity';
 import { Tab, Tabs, Paper } from '@material-ui/core';
 
-import 'moment/locale/ko';
 import locale from 'antd/es/date-picker/locale/ko_KR'
+import moment from 'moment';
 
 const { Search } = Input;
 const { RangePicker } = DatePicker;
@@ -42,6 +42,9 @@ const MainPage = () => {
     const [get_Select_Drawer_Visible, set_Select_Drawer_Visible] = useState(false);
 
     const [get_Click, set_Click] = useState(false);
+    const [get_Range_Picker_Value, set_Range_Picker_Value] = useState({});
+    const [get_Range_Picker_disable, set_Range_Picker_disable] = useState(false);
+
 
     const history = useHistory();
     const dispatch = useDispatch();
@@ -73,6 +76,22 @@ const MainPage = () => {
             })
 
     }, [])
+
+    useEffect(() => {
+
+        switch (radio) {
+            case '종목관심도순':
+                const date = Set_Date_Init();
+                console.log("D : ", date);
+                set_Range_Picker_Value(date);
+                
+                break;
+        
+            default:
+                break;
+        }
+
+    }, [radio])
 
     const Menu_Handler = (e) => {
         //console.log(e);
@@ -138,7 +157,6 @@ const MainPage = () => {
     }
 
     const onSearch = (value) => {
-        //console.log(get_Menu_Text, value);
         if (!value) {
             alert.show('검색할 내용을 입력하세요.');
             return;
@@ -164,7 +182,6 @@ const MainPage = () => {
     }
 
     const Radio_Handler = (e) => {
-        //dispatch(Page_Store(1));
         console.log("AAA : ", e.target);
         dispatch(Board_Store_Reset());
         dispatch(Page_Radio(e.target.value));
@@ -212,6 +229,35 @@ const MainPage = () => {
     const Search_Button_Click_Handler = () => {
         console.log("Click");
         set_Click(true);
+    }
+
+    const Set_Date_Init = () => {
+        let now_date = moment();
+        let start_date = moment();
+        let end_date = moment();
+
+        const set_init = (date, hour) => {
+            date.set('hour', hour);
+            date.set('minute', 0);
+            date.set('second', 0);
+        }
+
+        set_init(start_date, 8);
+        set_init(end_date, 8);
+
+        if (now_date.get('hour') >= 8) {
+            end_date.add(1, 'days');
+            start_date = start_date.format('YYYY-MM-DD');
+            end_date = end_date.format('YYYY-MM-DD');
+            console.log("S : ", start_date, " E : ", end_date);
+        } else {
+            start_date.add(-1, 'days');
+            start_date = start_date.format('YYYY-MM-DD');
+            end_date = end_date.format('YYYY-MM-DD');
+            console.log("S : ", start_date, " E : ", end_date);
+        }
+
+        return { 'start_date': start_date, 'end_date': end_date };
     }
 
     return (
@@ -284,7 +330,24 @@ const MainPage = () => {
                                         <div className="search_wrap flex column">
                                             <div className="search_menu width100 flex">
                                                 <div className="width100">
-                                                    <RangePicker locale={locale} onChange={Range_Picker_Change_Handler}/>
+                                                    {
+                                                        radio == '종목관심도순' ?
+                                                            <RangePicker
+                                                                locale={locale}
+                                                                onChange={Range_Picker_Change_Handler}
+                                                                defaultValue={
+                                                                    [
+                                                                        moment(get_Range_Picker_Value.start_date, 'YYYY-MM-DD'),
+                                                                        moment(get_Range_Picker_Value.end_date, 'YYYY-MM-DD'),
+                                                                    ]
+                                                                }
+                                                                format='YYYY-MM-DD'
+                                                                disabled/>
+                                                            : <RangePicker
+                                                                locale={locale}
+                                                                onChange={Range_Picker_Change_Handler}
+                                                                />
+                                                    }
                                                 </div>
                                                 <div className="width50">
                                                     <Dropdown overlay={menu} trigger='click'>
