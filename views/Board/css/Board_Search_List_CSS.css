@@ -1,0 +1,21 @@
+.search_log_Wrap{
+    margin-top: 20px;
+    color: #888888;
+}
+
+.search_log_Wrap .search_value{
+    width: 80%;
+    text-align: left;
+    padding-left: 25px;
+}
+
+.search_log_Wrap .search_value span{
+    margin-right: 15px;
+}
+.search_log_Wrap .search_value .search_delete{
+    color: #505050;
+}
+
+.search_log_Wrap .search_date{
+    width: 20%;
+}

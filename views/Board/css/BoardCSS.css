@@ -240,6 +240,10 @@ main .board_function_wrap .item2 img{
     border-color: #fafafb;
   }
 
+  .search_menu .ant-picker-focused{
+      box-shadow: none;
+  }
+
   .search_menu .ant-picker input{
       font-size: 13px;
   }
@@ -248,6 +252,9 @@ main .board_function_wrap .item2 img{
       background-color:black;
   }
  
+  .search_menu button{
+      --antd-wave-shadow-color: none;
+  }
 
   .ant-picker-panels{
       flex-direction: column;
@@ -264,10 +271,12 @@ main .board_function_wrap .item2 img{
   .search_input .ant-input{
     background-color: #fafafb;
     border-color: #fafafb;
+    color: #444444;
     padding: 6px 11px;
+    box-shadow: none;
   }
 
-  .search_input .ant-input:hover, .ant-input:focus, .ant-input-search{
+  .search_input .ant-input:hover, .search_input .ant-input:focus, .search_input .ant-input-search{
     border-color: #fafafb;
   }
 

@@ -25,12 +25,12 @@ body{
 
 .board_view_wrap .board_view_Header{
     width: 100%;
-    height: fit-content;
-    padding: 12px;
+    height: 7%;
+    padding: 7px;
     text-align: center;
     font-size: 23px;
-    color:white;
-    background-color: #2685D0;
+    color:rgb(0, 0, 0);
+    background-color: #ffffff;
     font-weight: bold;
     letter-spacing: -1px;
  }

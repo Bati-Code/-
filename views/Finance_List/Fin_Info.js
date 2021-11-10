@@ -29,7 +29,6 @@ const Fin_Info = () => {
                 finance_name: session_fin_name,
             })
             .then((response) => {
-                //console.log("Get_Finance_data", response.data);
                 set_Finance_Info(response.data);
 
                 const header = window.sessionStorage.getItem('user_Token');

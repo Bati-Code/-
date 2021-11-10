@@ -7,7 +7,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import './css/Board_View_CSS.css';
+
 import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import { useAlert } from 'react-alert'
@@ -15,6 +15,8 @@ import { server_config } from '../../server_config';
 import { Base64 } from 'js-base64';
 import { Board_Store_Reset } from '../../redux/action/board_list_action';
 
+import Logo from '../../public/images/hitalk_logo.png';
+import './css/Board_View_CSS.css';
 
 const BoardView = (res) => {
     const [get_board_data, set_board_data] = useState({});
@@ -34,6 +36,8 @@ const BoardView = (res) => {
     const [get_comment_id, set_comment_id] = useState('');
     const [get_recomment_for_comment_id, set_recomment_for_comment_id] = useState('');
     const [get_recomment_id, set_recomment_id] = useState('');
+
+    const [get_Finance_Info, set_Finance_Info] = useState('');
 
     //모달
     const [visible, setVisible] = useState(false);
@@ -386,11 +390,82 @@ const BoardView = (res) => {
         set_report_modal_visible(false);
     }
 
+    const DateDisplay = (list_date) => {
+        let date;
+        if (dayjs().format('YYYYMMDD') == dayjs(list_date).format('YYYYMMDD')) {
+            date = dayjs(list_date).utc(9).format('HH:mm');
+        } else {
+            date = dayjs(list_date).utc(9).format('MM-DD HH:mm');
+        }
+
+        return (date)
+    }
+
+    //투표
+    const Up_Count_Handler = () => {
+        axios.post(server_config.server_Address + '/finance/up',
+            {
+                finance_name: fin_name,
+            })
+            .then((response) => {
+                //console.log(response.data);
+                Get_Finance_Data();
+            })
+    }
+
+    const Down_Count_Handler = () => {
+        axios.post(server_config.server_Address + '/finance/down',
+            {
+                finance_name: fin_name,
+            })
+            .then((response) => {
+                //console.log(response.data);
+                Get_Finance_Data();
+            })
+    }
+    
+    const Get_Finance_Data = () => {
+        axios.post(server_config.server_Address + '/finance/info',
+            {
+                finance_name: session_fin_name,
+            })
+            .then((response) => {
+                set_Finance_Info(response.data);
+
+                const header = window.sessionStorage.getItem('user_Token');
+                const array = header.split(".");
+                const userName = JSON.parse(Base64.decode(array[1])).userName;
+
+                const up_Count_User_Array = response.data.finance_Up_Count_User;
+                const down_Count_User_Array = response.data.finance_Down_Count_User;
+
+                const up_user_Index = up_Count_User_Array.findIndex((e) => e === userName);
+                const down_user_Index = down_Count_User_Array.findIndex((e) => e === userName);
+
+                //console.log(up_user_Index);
+
+                if (up_user_Index !== -1) {
+                    document.getElementById('up_count').style.border = "5px double #C42F72";
+                }
+                else {
+                    document.getElementById('up_count').style.border = "4px solid #F53B8E";
+                }
+
+                if (down_user_Index !== -1) {
+                    document.getElementById('down_count').style.border = "5px double #1AA2BA";
+                }
+                else {
+                    document.getElementById('down_count').style.border = "5px solid #1FBFDB";
+                }
+
+            })
+    }
+
     return (
         <>
             <div className="board_view_wrap">
                 <div className="board_view_Header" onClick={() => history.push('/main')}>
-                    주식토론 게시판
+                    <img src={Logo} />
                 </div>
                 <div className="board_view_container">
                     <section className="board_content">
@@ -401,27 +476,62 @@ const BoardView = (res) => {
                             <div id="board_info_wrap">
                                 <div>
                                     <div id="board_info_title">
-                                        [{get_fin_List_name}] {get_board_data.post_title}
+                                        {get_board_data.post_title}
                                     </div>
                                 </div>
                                 <ul id="board_info">
                                     <li id="board_info_data">
                                         {get_board_data.post_author}
                                     </li>
-                                    <li>  |  </li>
+                                    <li>  · </li>
                                     <li id="board_info_data">
-                                        {dayjs(get_board_data.post_date).format('MM-DD HH:mm')}
+                                        {DateDisplay(get_board_data.post_date)}
                                     </li>
-                                    <li>  |  </li>
+                                    <li>  ·  </li>
                                     <li id="board_info_data">
-                                        조회 : {get_board_data.post_count}
+                                        조회수 {get_board_data.post_count}
                                     </li>
-                                    <li>  |  </li>
                                     <li id="board_info_recommend">
                                         추천 : {get_board_data.post_recommend}
                                     </li>
-
                                 </ul>
+                                <div>
+                                    종목명 : {get_fin_List_name}({get_board_data?.post_fin_list?.code})
+                                </div>
+
+                                <div className="voteWrap">
+                                    <div className="label">
+                                        상승
+                                        <br />
+                                        ({get_Finance_Info.finance_Up_Count})
+                                    </div>
+                                    <div className="up_count" id='up_count'
+                                        onClick={Up_Count_Handler}
+                                        style={{
+                                            width: `${get_Finance_Info.finance_Up_Count
+                                                / (get_Finance_Info.finance_Up_Count + get_Finance_Info.finance_Down_Count) * 80}%`
+                                        }}>
+                                        {Math.round(get_Finance_Info.finance_Up_Count
+                                            / (get_Finance_Info.finance_Up_Count + get_Finance_Info.finance_Down_Count) * 100)}%
+
+                                    </div>
+                                    <div className="down_count" id='down_count'
+                                        onClick={Down_Count_Handler}
+                                        style={{
+                                            width: `${get_Finance_Info.finance_Down_Count
+                                                / (get_Finance_Info.finance_Up_Count + get_Finance_Info.finance_Down_Count) * 80}%`
+                                        }}>
+                                        {100 - Math.round(get_Finance_Info.finance_Up_Count
+                                            / (get_Finance_Info.finance_Up_Count + get_Finance_Info.finance_Down_Count) * 100)}%
+
+                                    </div>
+                                    <div className="label">
+                                        하락
+                                        <br />
+                                        ({get_Finance_Info.finance_Down_Count})
+                                    </div>
+                                </div>
+
                             </div>
                             <div id="board_content">
                                 <div dangerouslySetInnerHTML={{ __html: get_board_data.post_content }}></div>
@@ -443,7 +553,7 @@ const BoardView = (res) => {
                                             state: { fin_name: window.sessionStorage.getItem("fin_name") }
                                         })
                                 }
-                                else{
+                                else {
                                     history.push('/main');
                                 }
                             }}>

@@ -16,6 +16,7 @@ import { Board_Infinity_Page, Board_Scroll, Board_Store_Reset } from '../../redu
 import expand_icon from '../../public/images/expand_icon.png'
 
 import Board from './Board'
+import Board_Search_List from './Board_Search_List';
 import Top_Fin_list from '../Finance_List/Top_Fin_List';
 import Top_Fin_list2 from '../Finance_List/Top_Fin_List2';
 import Fin_Interest from '../member_info/Fin_Interest'
@@ -50,7 +51,7 @@ const MainPage = () => {
     const dispatch = useDispatch();
     const alert = useAlert();
 
-    const { radio, search } = useSelector(state => state.pageStore);
+    const { radio, search, menu_select, search_value } = useSelector(state => state.pageStore);
     const { scroll } = useSelector(state => state.boardStore);
 
 
@@ -84,9 +85,9 @@ const MainPage = () => {
                 const date = Set_Date_Init();
                 console.log("D : ", date);
                 set_Range_Picker_Value(date);
-                
+
                 break;
-        
+
             default:
                 break;
         }
@@ -162,9 +163,22 @@ const MainPage = () => {
             return;
         }
         else {
-            dispatch(Page_Search(get_Menu_Text, value));
-            dispatch(Board_Store_Reset());
-            dispatch(Board_Infinity_Page(1));
+            if (menu_select != get_Menu_Text || search_value != value) {
+                axios.post(server_config.server_Address + '/search_log/save',
+                    {
+                        'Search_Type': get_Menu_Text,
+                        'Search_Value': value
+                    })
+                    .then((response) => {
+                        console.log(response.data);
+                    })
+
+                dispatch(Page_Search(get_Menu_Text, value));
+                dispatch(Board_Store_Reset());
+                dispatch(Board_Infinity_Page(1));
+
+                set_Click(false);
+            }
             //dispatch(Page_Radio('a'));
         }
 
@@ -342,11 +356,11 @@ const MainPage = () => {
                                                                     ]
                                                                 }
                                                                 format='YYYY-MM-DD'
-                                                                disabled/>
+                                                                disabled />
                                                             : <RangePicker
                                                                 locale={locale}
                                                                 onChange={Range_Picker_Change_Handler}
-                                                                />
+                                                            />
                                                     }
                                                 </div>
                                                 <div className="width50">
@@ -389,10 +403,13 @@ const MainPage = () => {
                             <div id="board_list"
                                 onScroll={Board_Scroll_Handler}>
                                 {
-                                    get_Tab === 0 ? <Top_Fin_list2 />
-                                        : get_Tab === 1 ? <Fin_Interest />
-                                            : get_Tab === 2 ? < Board_Infinity />
-                                                : null}
+                                    get_Click === false ?
+                                        get_Tab === 0 ? <Top_Fin_list2 />
+                                            : get_Tab === 1 ? <Fin_Interest />
+                                                : get_Tab === 2 ? < Board_Infinity />
+                                                    : null
+                                        : <Board_Search_List />
+                                }
                             </div>
                         </main>
                         <aside>

@@ -102,7 +102,7 @@ const Board_Infinity = (props) => {
                         })
                     break;
                 case '인기순':
-                    axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value +
+                    axios.get(server_config.server_Address + '/board/desc/like/search/' + menu_select + '/' + search_value +
                         '/' + date[0] + '/' + date[1] + '/' + infinity_page)
                         .then(async (response) => {
                             console.log(board_list);
@@ -113,7 +113,7 @@ const Board_Infinity = (props) => {
                         })
                     break;
                 case '조회순':
-                    axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value +
+                    axios.get(server_config.server_Address + '/board/desc/view/search/' + menu_select + '/' + search_value +
                         '/' + date[0] + '/' + date[1] + '/' + infinity_page)
                         .then(async (response) => {
                             console.log(board_list);
