@@ -298,7 +298,7 @@ const Board_Infinity = (props) => {
                             } else {
                                 head = list?.count?.fin_count * 100;
                             }
-                            let attention_now = Math.round(head / list.count.total_count);
+                            let attention_now = Math.round(head / list.count?.total_count);
 
                             return (
                                 <div className="board_temp_wrap" key={index}>
@@ -312,6 +312,7 @@ const Board_Infinity = (props) => {
                                         <div className="board_title"
                                             onClick={() => {
                                                 history.push("/board/view/" + list._id);
+                                                window.sessionStorage.setItem('fin_name', list?.post_fin_list.name);
                                             }}>
                                             {list.post_title}
                                             {

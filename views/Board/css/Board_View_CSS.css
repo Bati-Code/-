@@ -12,6 +12,10 @@ body{
     flex-direction: column;
 }
 
+.board_content{
+    height: 100%;
+}
+
 .board_view_wrap{
     background-color: white;
     display: flex;
@@ -65,6 +69,7 @@ body{
  .board_content main{
      width: 100%;
      align-items: center;
+     overflow-y: scroll;
  }
 
 main #board_info_wrap{
@@ -73,16 +78,25 @@ main #board_info_wrap{
      margin-top: 5px;
  }
 
+ main #board_info_wrap .back_button{
+     text-align: left;
+     width: max-content;
+     margin-left: 15px;
+     margin-bottom: 10px;
+ }
+
  main #board_info{
     display: flex;    
     flex-direction: row;
     width:100%;
-    font-size: 12px;
+    font-size: 13px;
     padding: 4px 0 2px 14px;
     list-style: none;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    border-bottom:  solid 1px #DBDBDB;
+    color: #888888;
  }
 
  main #board_info #board_info_data{
@@ -109,9 +123,8 @@ main #board_info_wrap{
  
  main #board_content{
     clear: both;
-    border-top:  solid 1px #DBDBDB;
     border-bottom:  solid 1px #DBDBDB;
-    min-height: 500px;
+    min-height: 400px;
     padding: 10px;
     word-break: break-all;
     word-wrap: break-word;

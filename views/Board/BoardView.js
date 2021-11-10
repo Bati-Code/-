@@ -2,7 +2,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom';
 import { Modal, Button, Input, Skeleton } from 'antd'
-import { LikeOutlined, TableOutlined, EditOutlined, DeleteOutlined, PlusOutlined, RightOutlined, AlertOutlined } from '@ant-design/icons';
+import { LikeOutlined, TableOutlined, EditOutlined, DeleteOutlined,
+     PlusOutlined, RightOutlined, AlertOutlined, LeftOutlined } from '@ant-design/icons';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -58,12 +59,15 @@ const BoardView = (res) => {
     const history = useHistory();
     const alert = useAlert();
     const board_id = res.match.params.id;
+    const fin_name = window.sessionStorage.getItem('fin_name');
 
     const dispatch = useDispatch();
-
     const { radio } = useSelector(state => state.pageStore);
 
     useEffect(() => {
+
+        Get_Finance_Data(fin_name);
+
         axios.get(server_config.server_Address + "/board/view/" + board_id)
             .then((response) => {
                 //console.log("view data", response.data.userName);
@@ -235,9 +239,6 @@ const BoardView = (res) => {
     const handle_Delete_ReComment_Cancel = () => {
         set_recomment_Visible(false);
     };
-
-
-
 
     const Comment_Change_Handler = (e) => {
         set_comment_content(e.target.value);
@@ -423,11 +424,11 @@ const BoardView = (res) => {
                 Get_Finance_Data();
             })
     }
-    
+
     const Get_Finance_Data = () => {
         axios.post(server_config.server_Address + '/finance/info',
             {
-                finance_name: session_fin_name,
+                finance_name: fin_name,
             })
             .then((response) => {
                 set_Finance_Info(response.data);
@@ -445,17 +446,17 @@ const BoardView = (res) => {
                 //console.log(up_user_Index);
 
                 if (up_user_Index !== -1) {
-                    document.getElementById('up_count').style.border = "5px double #C42F72";
+                    document.getElementById('up_count').style.border = "5px double #b95312";
                 }
                 else {
-                    document.getElementById('up_count').style.border = "4px solid #F53B8E";
+                    document.getElementById('up_count').style.border = "4px solid #b95312";
                 }
 
                 if (down_user_Index !== -1) {
-                    document.getElementById('down_count').style.border = "5px double #1AA2BA";
+                    document.getElementById('down_count').style.border = "5px double #303b55";
                 }
                 else {
-                    document.getElementById('down_count').style.border = "5px solid #1FBFDB";
+                    document.getElementById('down_count').style.border = "5px solid #303b55";
                 }
 
             })
@@ -474,6 +475,9 @@ const BoardView = (res) => {
 
                         <main>
                             <div id="board_info_wrap">
+                                <div className="back_button" onClick={()=>{history.push('/main');}}>
+                                    <LeftOutlined />
+                                </div>
                                 <div>
                                     <div id="board_info_title">
                                         {get_board_data.post_title}
