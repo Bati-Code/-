@@ -38,7 +38,7 @@
 }
 
 .board_temp_wrap .board_main .board_fin_name{
-    color: var(--main_color);
+    color: rgb(236, 106, 23);
 }
 
 .board_temp_wrap .board_title{

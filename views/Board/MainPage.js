@@ -1,4 +1,4 @@
-import { DownOutlined, FormOutlined, UserOutlined, FilterTwoTone, SearchOutlined, CloseOutlined} from '@ant-design/icons';
+import { DownOutlined, FormOutlined, UserOutlined, FilterTwoTone, SearchOutlined, CloseOutlined } from '@ant-design/icons';
 import axios from 'axios'
 import { Button, Dropdown, Input, Menu, Radio, Drawer, Space, DatePicker } from 'antd';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -229,6 +229,7 @@ const MainPage = () => {
     }
 
     const Change_Tab_Handler = (event, newValue) => {
+        dispatch(Page_Search_UI(false));
         set_Tab(newValue);
         console.log(newValue);
     }
@@ -337,7 +338,8 @@ const MainPage = () => {
                                 </Paper>
                             </div>
                             {
-                                search_ui ?
+                                get_Tab == 2 &&
+                                    search_ui ?
                                     (
                                         <div className="search_wrap flex column">
                                             <div className="search_menu width100 flex">
@@ -376,31 +378,41 @@ const MainPage = () => {
                                                         value={get_Search_Value} enterButton />
                                                 </div>
                                                 <div className="search_cancel width15"
-                                                 onClick={()=>{dispatch(Page_Search_UI(false));}}>
+                                                    onClick={() => { dispatch(Page_Search_UI(false)); }}>
                                                     <CloseOutlined />
                                                 </div>
                                             </div>
 
                                         </div>
-                                    ) :
-                                    (
-                                        <div className="board_function_wrap">
-                                            <div className="item1">
-                                                <Button onClick={Insert_Session_Handler}>
-                                                    글쓰기
-                                                </Button>
-                                            </div>
-                                            <div className="item2" onClick={Select_Drawer_Open_Handler}>
-                                                {radio}
-                                                <span className="item_icon">
-                                                    <img src={expand_icon} />
-                                                </span>
-                                            </div>
-                                            <div className="item3" onClick={Search_Button_Click_Handler}>
-                                                <SearchIcon />
-                                            </div>
-                                        </div>
                                     )
+                                    : get_Tab == 2
+                                        ? (
+                                            <div className="board_function_wrap">
+                                                <div className="item1">
+                                                    <Button onClick={Insert_Session_Handler}>
+                                                        글쓰기
+                                                    </Button>
+                                                </div>
+                                                <div className="item2" onClick={Select_Drawer_Open_Handler}>
+                                                    {radio}
+                                                    <span className="item_icon">
+                                                        <img src={expand_icon} />
+                                                    </span>
+                                                </div>
+                                                <div className="item3" onClick={Search_Button_Click_Handler}>
+                                                    <SearchIcon />
+                                                </div>
+                                            </div>
+                                        )
+                                        : (
+                                            <div className="board_function_wrap">
+                                                <div className="item1">
+                                                    <Button onClick={Insert_Session_Handler}>
+                                                        글쓰기
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        )
 
 
                             }

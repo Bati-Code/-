@@ -25,6 +25,7 @@ const Board_Infinity = (props) => {
     const [get_Chart_Modal_Visible, set_Chart_Modal_Visible] = useState(false);
     const [get_Modal_Board_List, set_Modal_Board_List] = useState([]);
     const [get_attention_count, set_attention_count] = useState([]);
+    const [get_Post_Author, set_Post_Author] = useState('');
     const [get_chart_data, set_chart_data] = useState('');
 
 
@@ -225,6 +226,7 @@ const Board_Infinity = (props) => {
     }
 
     const Modal_Visible_Handler = (flag, data) => {
+        set_Post_Author(data);
         if (flag == 1) {
             set_Modal_Visible(true);
             axios.get(server_config.server_Address + '/board/search/author/' + data)
@@ -356,9 +358,19 @@ const Board_Infinity = (props) => {
                 </InfiniteScroll>
             </div>
             <div>
-                <Modal title="작성자 최근 게시글" visible={get_Modal_Visible}
+                <Modal title={get_Post_Author + "님의 최근 게시글"} visible={get_Modal_Visible}
                     footer={null} onCancel={() => { Modal_Visible_Handler(0, '') }}>
                     {get_Modal_Board_List.map((list, index) => {
+
+                        let head = 0;
+
+                        if (list.count?.fin_count == 0) {
+                            head = 0;
+                        } else {
+                            head = list?.count?.fin_count * 100;
+                        }
+                        let attention_now = Math.round(head / list.count?.total_count);
+
                         return (
                             <div className="board_temp_wrap" key={index}>
                                 <div className="board_num">
@@ -370,24 +382,40 @@ const Board_Infinity = (props) => {
                                     </div>
                                     <div className="board_title"
                                         onClick={() => {
-                                            Modal_Visible_Handler(0, '');
                                             history.push("/board/view/" + list._id);
+                                            window.sessionStorage.setItem('fin_name', list?.post_fin_list.name);
                                         }}>
-                                        [{list?.post_fin_list.name}] {list.post_title}
-                                        <span className="board_comment_count">
-                                            <ChatIcon style={
-                                                {
-                                                    fontSize: '1.2rem',
-                                                    marginRight: '3px',
-                                                }
-                                            } />{list.post_comment.length}
-                                        </span>
+                                        <span>{list.post_title}</span>
+                                        {
+                                            list.post_comment.length != 0 &&
+                                            <div className="tooltip">
+                                                {list.post_comment.length}
+                                            </div>
+                                        }
                                     </div>
                                     <ul className="board_info">
-                                        <li>{DateDisplay(list.post_date)}</li> <li> | </li>
-                                        <li>조회 : {list.post_count}</li> <li> | </li>
-                                        <li>추천 : {list.post_recommend}</li>
+                                        <li className="post_author"
+                                            onClick={() => {
+                                                Modal_Visible_Handler(1, list.post_author);
+                                            }}>{list.post_author}</li> <li> · </li>
+                                        <li>{DateDisplay(list.post_date)}</li> <li> · </li>
+                                        <li>조회수 {list.post_count}</li>
                                     </ul>
+                                </div>
+                                <div className="board_like">
+                                    <div id={attention_now > 30 ? "red" : ''}
+                                        onClick={() => {
+                                            Modal_Visible_Handler(3, list.post_fin_list.name);
+                                        }}>
+                                        관심도 <CountUp
+                                            start={0}
+                                            end={attention_now}
+                                            duration={2} /> %
+                                    </div>
+                                    <div>
+                                        좋아요 {list.post_recommend}
+                                    </div>
+
                                 </div>
                             </div>
                         );
