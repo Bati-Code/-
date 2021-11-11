@@ -90,7 +90,7 @@ const Board_Infinity = (props) => {
                     axios.get(server_config.server_Address + '/board/desc/attention/search/' + menu_select +
                         '/' + search_value + '/' + infinity_page)
                         .then(async (response) => {
-                          
+
                             let boardList = response.data.boards.docs;
                             let board_Array = [];
 
@@ -314,12 +314,12 @@ const Board_Infinity = (props) => {
                                                 history.push("/board/view/" + list._id);
                                                 window.sessionStorage.setItem('fin_name', list?.post_fin_list.name);
                                             }}>
-                                            {list.post_title}
+                                            <span>{list.post_title}</span>
                                             {
                                                 list.post_comment.length != 0 &&
-                                                <span className="tooltip">
+                                                <div className="tooltip">
                                                     {list.post_comment.length}
-                                                </span>
+                                                </div>
                                             }
                                         </div>
                                         <ul className="board_info">

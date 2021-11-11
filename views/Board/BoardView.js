@@ -1,13 +1,20 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom';
-import { Modal, Button, Input, Skeleton } from 'antd'
-import { LikeOutlined, TableOutlined, EditOutlined, DeleteOutlined,
-     PlusOutlined, RightOutlined, AlertOutlined, LeftOutlined } from '@ant-design/icons';
+import { Modal, Button, Input, Drawer } from 'antd'
+import {
+    LikeOutlined, TableOutlined, EditOutlined, DeleteOutlined,
+    PlusOutlined, RightOutlined, AlertOutlined, LeftOutlined,
+    CloseOutlined
+} from '@ant-design/icons';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+
+import ReactTooltip from 'react-tooltip';
 
 import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
@@ -33,6 +40,7 @@ const BoardView = (res) => {
     const [get_recomment_content, set_recomment_content] = useState('');
 
     const [get_recomment_open, set_recomment_open] = useState(false);
+    const [get_Comment_Drawer_Visible, set_Comment_Drawer_Visible] = useState(false);
 
     const [get_comment_id, set_comment_id] = useState('');
     const [get_recomment_for_comment_id, set_recomment_for_comment_id] = useState('');
@@ -109,7 +117,7 @@ const BoardView = (res) => {
     }, [])
 
     useEffect(() => {
-        document.getElementById('board_info_recommend').innerText = "추천 : " + get_board_recommend;
+        document.getElementById('board_info_recommend').innerText = get_board_recommend;
     }, [get_board_recommend])
 
     const recommend_Handler = () => {
@@ -241,6 +249,7 @@ const BoardView = (res) => {
     };
 
     const Comment_Change_Handler = (e) => {
+        console.log(e.target.value);
         set_comment_content(e.target.value);
     }
 
@@ -264,16 +273,24 @@ const BoardView = (res) => {
                 set_comment_content('');
                 if (response.data.comment_check_result === 0) {
                     alert.show("댓글 등록에 실패하였습니다.");
+                    return;
                 }
-
+                Comment_Drawer_Close_Handler();
                 axios.get(server_config.server_Address + "/board/view/update/" + board_id)
                     .then((response) => {
                         set_Comment_List(response.data.list.post_comment);
                     })
+                window.scrollTo(0, document.body.scrollHeight);
             })
-
-
     }
+
+    const Comment_Drawer_Open_Handler = () => {
+        set_Comment_Drawer_Visible(true);
+    }
+    const Comment_Drawer_Close_Handler = () => {
+        set_Comment_Drawer_Visible(false);
+    }
+
 
     //댓글 추천
     const comment_recommend_Handler = (comment_id) => {
@@ -475,7 +492,7 @@ const BoardView = (res) => {
 
                         <main>
                             <div id="board_info_wrap">
-                                <div className="back_button" onClick={()=>{history.push('/main');}}>
+                                <div className="back_button" onClick={() => { history.push('/main'); }}>
                                     <LeftOutlined />
                                 </div>
                                 <div>
@@ -483,34 +500,50 @@ const BoardView = (res) => {
                                         {get_board_data.post_title}
                                     </div>
                                 </div>
-                                <ul id="board_info">
-                                    <li id="board_info_data">
-                                        {get_board_data.post_author}
-                                    </li>
-                                    <li>  · </li>
-                                    <li id="board_info_data">
-                                        {DateDisplay(get_board_data.post_date)}
-                                    </li>
-                                    <li>  ·  </li>
-                                    <li id="board_info_data">
-                                        조회수 {get_board_data.post_count}
-                                    </li>
-                                    <li id="board_info_recommend">
+                                <div className="board_info_line flex">
+                                    <ul id="board_info">
+                                        <li id="board_info_data">
+                                            {get_board_data.post_author}
+                                        </li>
+                                        <li>  · </li>
+                                        <li id="board_info_data">
+                                            {DateDisplay(get_board_data.post_date)}
+                                        </li>
+                                        <li>  ·  </li>
+                                        <li id="board_info_data">
+                                            조회수 {get_board_data.post_count}
+                                        </li>
+                                        {/* <li id="board_info_recommend">
                                         추천 : {get_board_data.post_recommend}
-                                    </li>
-                                </ul>
-                                <div>
+                                    </li> */}
+                                    </ul>
+                                    {
+                                        get_board_data?.post_comment?.length != 0 &&
+                                        <div className="tooltip">
+                                            {get_board_data?.post_comment?.length}
+                                        </div>
+                                    }
+                                </div>
+                                <div className="vote_title">
                                     종목명 : {get_fin_List_name}({get_board_data?.post_fin_list?.code})
                                 </div>
 
                                 <div className="voteWrap">
                                     <div className="label">
-                                        상승
                                         <br />
-                                        ({get_Finance_Info.finance_Up_Count})
                                     </div>
+                                    <ReactTooltip
+                                        className="up_tooltip"
+                                        id="up_tooltip"
+                                        getContent={dataTip => dataTip + " : " + get_Finance_Info.finance_Up_Count} />
+                                    <ReactTooltip
+                                        className="down_tooltip"
+                                        id="down_tooltip"
+                                        getContent={dataTip => dataTip + " : " + get_Finance_Info.finance_Down_Count} />
                                     <div className="up_count" id='up_count'
                                         onClick={Up_Count_Handler}
+                                        data-for="up_tooltip"
+                                        data-tip="상승"
                                         style={{
                                             width: `${get_Finance_Info.finance_Up_Count
                                                 / (get_Finance_Info.finance_Up_Count + get_Finance_Info.finance_Down_Count) * 80}%`
@@ -520,6 +553,8 @@ const BoardView = (res) => {
 
                                     </div>
                                     <div className="down_count" id='down_count'
+                                        data-for="down_tooltip"
+                                        data-tip="하강"
                                         onClick={Down_Count_Handler}
                                         style={{
                                             width: `${get_Finance_Info.finance_Down_Count
@@ -530,9 +565,7 @@ const BoardView = (res) => {
 
                                     </div>
                                     <div className="label">
-                                        하락
                                         <br />
-                                        ({get_Finance_Info.finance_Down_Count})
                                     </div>
                                 </div>
 
@@ -540,65 +573,51 @@ const BoardView = (res) => {
                             <div id="board_content">
                                 <div dangerouslySetInnerHTML={{ __html: get_board_data.post_content }}></div>
                             </div>
+                            <div className="board_function flex width100">
+                                <div className="flex">
+                                    <span className="like_function" onClick={recommend_Handler}>
+                                        {get_recommend_check
+                                            ? <FavoriteIcon />
+                                            : <FavoriteBorderIcon />}
+                                    </span>
+                                    <span className="like_text" id="board_info_recommend">{get_board_data.post_recommend}</span>
+                                </div>
+                                <div className="del_rep_button flex">
+                                    {get_user_check ?
+                                        <div>
+                                            <Button type="primary" icon={<EditOutlined />} onClick={updateBoard}>
+                                                수정
+                                            </Button>
+                                        </div>
+                                        : ''}
+                                    {get_user_check ?
+                                        <div>
+                                            <Button type="danger" icon={<DeleteOutlined />} onClick={showModal}>
+                                                삭제
+                                            </Button>
+                                        </div>
+                                        : ''}
+                                    {get_user_check ?
+                                        ''
+                                        :
+                                        <div>
+                                            <Button type="danger" icon={<AlertOutlined />}
+                                                onClick={() => {
+                                                    get_report_status
+                                                        ? set_report_modal_visible(false)
+                                                        : set_report_modal_visible(true)
+                                                }}
+                                            >
+                                                {get_report_status ? '신고 완료' : '신고'}
+                                            </Button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
                         </main>
                         <aside>
                         </aside>
                     </section>
-                </div>
-                <div className="BoardView_footer">
-                    <div>
-                        <Button type="primary" icon={<TableOutlined />}
-                            onClick={() => {
-                                if (radio === 'c') {
-                                    console.log(radio);
-                                    history.push(
-                                        {
-                                            pathname: '/fin_info',
-                                            state: { fin_name: window.sessionStorage.getItem("fin_name") }
-                                        })
-                                }
-                                else {
-                                    history.push('/main');
-                                }
-                            }}>
-                            목록
-                        </Button>
-                    </div>
-                    <div>
-                        <Button type="primary" icon={<LikeOutlined />} onClick={recommend_Handler}
-                            ant-click-animating-without-extra-node='false'>
-                            {get_recommend_check ? '추천 취소'
-                                : '추천'}
-                        </Button>
-                    </div>
-                    {get_user_check ?
-                        <div>
-                            <Button type="primary" icon={<EditOutlined />} onClick={updateBoard}>
-                                수정
-                            </Button>
-                        </div>
-                        : ''}
-                    {get_user_check ?
-                        <div>
-                            <Button type="danger" icon={<DeleteOutlined />} onClick={showModal}>
-                                삭제
-                            </Button>
-                        </div>
-                        : ''}
-                    {get_user_check ?
-                        ''
-                        :
-                        <div>
-                            <Button type="danger" icon={<AlertOutlined />}
-                                onClick={() => {
-                                    get_report_status
-                                        ? set_report_modal_visible(false)
-                                        : set_report_modal_visible(true)
-                                }}
-                            >
-                                {get_report_status ? '신고 완료' : '신고'}
-                            </Button>
-                        </div>}
                 </div>
                 <div>
                     <Modal
@@ -679,13 +698,41 @@ const BoardView = (res) => {
 
                 </div>
                 <div className="board_comment_wrap">
-                    <div>
+                    {/* textarea 댓글 */}
+                    {/* <div>
                         <TextArea rows={4} onChange={Comment_Change_Handler} value={get_comment_content} />
-                    </div>
-                    <div>
-                        <Button type="primary" icon={<PlusOutlined />} onClick={Comment_Insert_Handler}>
+                    </div> */}
+                    <div className="board_comment_button">
+                        <Button type="primary" icon={<PlusOutlined />} onClick={Comment_Drawer_Open_Handler}>
                             댓글 등록
                         </Button>
+                    </div>
+                    <Drawer
+                        placement='bottom'
+                        closable={false}
+                        onClose={Comment_Drawer_Close_Handler}
+                        visible={get_Comment_Drawer_Visible}
+                        key='comment'
+                        height="29%"
+                    >
+                        <div className="comment_form_title flex">
+                            <div>
+                                댓글쓰기
+                            </div>
+                            <div onClick={Comment_Drawer_Close_Handler}><CloseOutlined /></div>
+                        </div>
+                        <div>
+                            <TextArea rows={4} onChange={Comment_Change_Handler} value={get_comment_content}
+                                autoSize={{ minRows: 4, maxRows: 4 }} />
+                        </div>
+                        <div className="comment_form_submit_button" onClick={Comment_Insert_Handler}>
+                            등록
+                        </div>
+                    </Drawer>
+                    <div>
+                        <span className="comment_color">{get_board_data?.post_comment?.length}</span>
+                        <span>개의 댓글</span>
+
                     </div>
                     <div>
                         {get_Comment_List.map((list, index) => {
@@ -702,10 +749,13 @@ const BoardView = (res) => {
                                 <div className="comment_wrap" key={index}>
                                     <div className="comment_top">
                                         <div className="comment_author">
-                                            {list.comment_author}
+                                            <span className="darkGray">{list.comment_author} </span>
+                                            <span className="lightGray">
+                                                {dayjs(list.comment_date).format('MM-DD HH:mm')}
+                                            </span>
+
                                         </div>
                                         <div>
-                                            {list.comment_date}
                                             <span id='delete_button'>
                                                 {comment_user_check
                                                     ? <span><DeleteOutlined onClick={() => showCommentModal(list._id)} /></span>

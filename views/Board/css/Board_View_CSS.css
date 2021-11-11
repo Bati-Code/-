@@ -78,6 +78,13 @@ main #board_info_wrap{
      margin-top: 5px;
  }
 
+ main #board_info_wrap .board_info_line{
+    border-bottom:  solid 1px #DBDBDB;
+    color: #888888;
+    font-size: 13px;
+    align-items: center;
+ }
+
  main #board_info_wrap .back_button{
      text-align: left;
      width: max-content;
@@ -89,14 +96,13 @@ main #board_info_wrap{
     display: flex;    
     flex-direction: row;
     width:100%;
-    font-size: 13px;
-    padding: 4px 0 2px 14px;
+    padding: 4px 0 0 14px;
     list-style: none;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    border-bottom:  solid 1px #DBDBDB;
-    color: #888888;
+    margin-bottom: 0px;
+    padding-bottom: 10px;
  }
 
  main #board_info #board_info_data{
@@ -120,10 +126,13 @@ main #board_info_wrap{
      padding-left: 14px;
      font-weight: 500;
  }
+
+ main #board_info_wrap .vote_title{
+     margin-top: 10px;
+ }
  
  main #board_content{
     clear: both;
-    border-bottom:  solid 1px #DBDBDB;
     min-height: 400px;
     padding: 10px;
     word-break: break-all;
@@ -138,6 +147,38 @@ main #board_info_wrap{
      flex-shrink: 0;
  }
 
+ main .board_function{
+     justify-content: space-between;
+     border-bottom:  solid 1px #DBDBDB;
+     padding: 0 14px;
+ }
+
+ .board_function .like_function{
+     color: #F7435E;
+     margin-right: 5px;
+     margin-bottom: 10px;
+ }
+
+ .board_function .like_text{
+     font-size: 17px;
+ }
+
+ .board_function .del_rep_button .ant-btn-danger{
+     color:#F7435E;
+     background-color: white;
+     border: none;
+     text-shadow: none;
+     box-shadow: none;
+ }
+
+ .board_function .del_rep_button .ant-btn-primary{
+    color:#6a5345;
+    background-color: white;
+    border: none;
+    text-shadow: none;
+    box-shadow: none;
+ }
+
  .BoardView_footer{
      padding: 30px 0 30px;
      display: flex;
@@ -149,12 +190,34 @@ main #board_info_wrap{
  .board_comment_wrap{
      width:100%;
      padding: 0 15px 15px 15px;
+     margin-top: 15px;
  }
 
  .board_comment_wrap .ant-btn-primary{
     width: 100%;
-    background-color: #0F5C96;
-    border-color: #0F5C96
+    background-color: #00765E;
+    border-color: #00765E;
+ }
+
+ .board_comment_wrap .board_comment_button{
+     margin-bottom: 10px;
+ }
+
+ .board_comment_wrap .comment_color{
+     color: #7F5498;
+     font-weight: 500;
+ }
+
+ .comment_form_title{
+     font-size: 18px;
+     margin-bottom: 15px;
+     justify-content: space-between;
+ }
+
+ .comment_form_submit_button{
+     float: right;
+     padding: 10px 0 10px 10px;
+     color: #ec6a17;
  }
 
  .comment_wrap{
@@ -246,6 +309,7 @@ main #board_info_wrap{
 
 #delete_button{
     margin-left: 5px;
+    color: #F7435E;
 }
 
 img{
@@ -288,4 +352,12 @@ iframe{
     padding: 10px;
     resize: none;
     border: 1px solid #c4c4c4;
+}
+
+.up_tooltip{
+    background-color: #F7435E !important;
+}
+
+.down_tooltip{
+    background-color: cornflowerblue !important;
 }

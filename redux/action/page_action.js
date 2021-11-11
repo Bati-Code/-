@@ -1,6 +1,7 @@
 
 const PAGE_STORE = 'pageStore/PAGE_STORE';
 const PAGE_SEARCH = 'pageStore/PAGE_SEARCH';
+const PAGE_SEARCH_UI = 'pageStore/PAGE_SEARCH_UI';
 const PAGE_SEARCH_DATE = 'pageStore/PAGE_SEARCH_DATE';
 const PAGE_RESET = 'pageStore/PAGE_RESET';
 const PAGE_RADIO = 'pageStore/PAGE_RADIO';
@@ -9,6 +10,7 @@ const PAGE_RADIO = 'pageStore/PAGE_RADIO';
 export const Page_Store = (page_value) => ({ type: PAGE_STORE, payload: page_value });
 export const Page_Search = (menu_value, search_value) =>
     ({ type: PAGE_SEARCH, payload: { menu: menu_value, search: search_value } });
+export const Page_Search_UI = (ui_value) => ({ type: PAGE_SEARCH_UI, payload: ui_value});
 export const Page_Search_Date = (date_value) => ({ type: PAGE_SEARCH_DATE, payload: date_value});
 export const Page_Reset = () => ({ type: PAGE_RESET });
 export const Page_Radio = (radio_value) => ({ type: PAGE_RADIO, payload: radio_value });
@@ -17,6 +19,7 @@ const initialState = {
     page: 1,
     menu_select: '제목',
     search: false,
+    search_ui: false,
     search_value: '',
     count: 0,
     radio: '최신순',
@@ -38,6 +41,11 @@ const pageStore = (state = initialState, action) => {
                 search_value: action.payload.search,
                 page: 1
             };
+        case PAGE_SEARCH_UI:
+            return {
+                ...state,
+                search_ui: action.payload
+            }
         case PAGE_SEARCH_DATE:
             return {
                 ...state,

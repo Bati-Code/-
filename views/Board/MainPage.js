@@ -1,4 +1,4 @@
-import { DownOutlined, FormOutlined, UserOutlined, FilterTwoTone, SearchOutlined } from '@ant-design/icons';
+import { DownOutlined, FormOutlined, UserOutlined, FilterTwoTone, SearchOutlined, CloseOutlined} from '@ant-design/icons';
 import axios from 'axios'
 import { Button, Dropdown, Input, Menu, Radio, Drawer, Space, DatePicker } from 'antd';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -10,7 +10,7 @@ import SearchIcon from '@mui/icons-material/Search';
 
 import { useAlert } from 'react-alert'
 import { Finance_List_Store } from '../../redux/action/finance_list_action';
-import { Page_Search, Page_Reset, Page_Radio, Page_Store, Page_Search_Date } from '../../redux/action/page_action';
+import { Page_Search, Page_Reset, Page_Radio, Page_Store, Page_Search_Date, Page_Search_UI } from '../../redux/action/page_action';
 import { Board_Infinity_Page, Board_Scroll, Board_Store_Reset } from '../../redux/action/board_list_action';
 
 import expand_icon from '../../public/images/expand_icon.png'
@@ -42,7 +42,6 @@ const MainPage = () => {
     const [get_Menu_Drawer_Visible, set_Menu_Drawer_Visible] = useState(false);
     const [get_Select_Drawer_Visible, set_Select_Drawer_Visible] = useState(false);
 
-    const [get_Click, set_Click] = useState(false);
     const [get_Range_Picker_Value, set_Range_Picker_Value] = useState({});
     const [get_Range_Picker_disable, set_Range_Picker_disable] = useState(false);
 
@@ -51,7 +50,7 @@ const MainPage = () => {
     const dispatch = useDispatch();
     const alert = useAlert();
 
-    const { radio, search, menu_select, search_value } = useSelector(state => state.pageStore);
+    const { radio, search, menu_select, search_value, search_ui } = useSelector(state => state.pageStore);
     const { scroll } = useSelector(state => state.boardStore);
 
 
@@ -176,8 +175,7 @@ const MainPage = () => {
                 dispatch(Page_Search(get_Menu_Text, value));
                 dispatch(Board_Store_Reset());
                 dispatch(Board_Infinity_Page(1));
-
-                set_Click(false);
+                dispatch(Page_Search_UI(false));
             }
             //dispatch(Page_Radio('a'));
         }
@@ -190,7 +188,7 @@ const MainPage = () => {
             return;
         }
         set_Search_Value('');
-        set_Click(false);
+        dispatch(Page_Search_UI(false));
         dispatch(Page_Reset());
         dispatch(Board_Store_Reset());
     }
@@ -242,7 +240,7 @@ const MainPage = () => {
 
     const Search_Button_Click_Handler = () => {
         console.log("Click");
-        set_Click(true);
+        dispatch(Page_Search_UI(true));
     }
 
     const Set_Date_Init = () => {
@@ -339,7 +337,7 @@ const MainPage = () => {
                                 </Paper>
                             </div>
                             {
-                                get_Click ?
+                                search_ui ?
                                     (
                                         <div className="search_wrap flex column">
                                             <div className="search_menu width100 flex">
@@ -371,10 +369,16 @@ const MainPage = () => {
                                                     </Dropdown>
                                                 </div>
                                             </div>
-                                            <div className="search_input width100">
-                                                <Search placeholder="검색어 입력"
-                                                    onSearch={onSearch} onChange={Search_Input_Handler}
-                                                    value={get_Search_Value} enterButton />
+                                            <div className="search_input flex width100">
+                                                <div className="width85">
+                                                    <Search placeholder="검색어 입력"
+                                                        onSearch={onSearch} onChange={Search_Input_Handler}
+                                                        value={get_Search_Value} enterButton />
+                                                </div>
+                                                <div className="search_cancel width15"
+                                                 onClick={()=>{dispatch(Page_Search_UI(false));}}>
+                                                    <CloseOutlined />
+                                                </div>
                                             </div>
 
                                         </div>
@@ -403,7 +407,7 @@ const MainPage = () => {
                             <div id="board_list"
                                 onScroll={Board_Scroll_Handler}>
                                 {
-                                    get_Click === false ?
+                                    search_ui === false ?
                                         get_Tab === 0 ? <Top_Fin_list2 />
                                             : get_Tab === 1 ? <Fin_Interest />
                                                 : get_Tab === 2 ? < Board_Infinity />

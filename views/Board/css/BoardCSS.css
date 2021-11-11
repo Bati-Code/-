@@ -175,20 +175,26 @@ main .board_function_wrap .item2 img{
      padding: 0 15px 0 15px;
  }
 
- .board_title .tooltip{
+ .board_title{
+     display: flex;
+     align-items: center;
+ }
+
+ .tooltip{
     background-color: #ffffff;
     border: #6600FF solid 2px;
     border-radius: 5px;
     color: #6600FF;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
     text-align: left;
-    height: auto;
-    margin-top: 6.8px;
-    padding: 0 7.3px;
+    padding: 0 5.3px;
+    height: 50%;
     position: relative;
     width: fit-content;
+    line-height: 114%;
     margin-left: 10px;
+    margin-right: 10px;
     z-index: 100;
  }
 
@@ -260,6 +266,10 @@ main .board_function_wrap .item2 img{
       flex-direction: column;
   }
 
+  .search_input{
+    background-color: #fafafb;
+  }
+
   .search_input .ant-btn-primary{
     width: 100%;
     background-color: #fafafb;
@@ -284,6 +294,12 @@ main .board_function_wrap .item2 img{
       outline: none;
   }
 
+  .search_input .search_cancel{
+      text-align: center;
+      background-color: #fafafb;
+      margin: auto;
+  }
+
   .flex{
       display: flex;
       flex-direction: row;
@@ -296,8 +312,27 @@ main .board_function_wrap .item2 img{
   .width100{
       width: 100%;
   }
-
+  .width85{
+    width: 85%;
+}
+  .width80{
+      width: 80%;
+  }
   .width50{
       width: 50%;
   }
+  .width20{
+      width: 20%;
+  }
+  .width15{
+    width: 15%;
+}
+
+.lightGray{
+    color: #888888;
+}
+
+.darkGray{
+    color: #505050;
+}
  
