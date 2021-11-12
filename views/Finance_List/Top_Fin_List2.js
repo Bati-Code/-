@@ -50,7 +50,6 @@ const Top_Fin_list = () => {
         let array = [];
 
         if (boardList.length == 0) {
-            set_more_list(false);
             console.log("Finish");
             return;
         }
@@ -97,7 +96,7 @@ const Top_Fin_list = () => {
             axios.get(server_config.server_Address + '/board/search/author/' + data)
                 .then((response) => {
                     console.log(response.data);
-                    set_Modal_Board_List(response.data);
+                    Get_Board_Modal_Process(response.data);
                 });
         }
         else if (flag == 0) {
@@ -118,6 +117,35 @@ const Top_Fin_list = () => {
         else if (flag == 4) {
             set_Chart_Modal_Visible(false);
         }
+    }
+
+    const Get_Board_Modal_Process = async (boardList) => {
+
+        if (boardList.length == 0) {
+            set_more_list(false);
+            console.log("Finish");
+            return;
+        }
+
+        let fin_code_List = [];
+        for (let i = 0; i < boardList.length; i++) {
+            fin_code_List.push(boardList[i].post_fin_list.code);
+        }
+
+        await axios.post(server_config.server_Address + '/board/countBoard',
+            {
+                'fin_code_list': fin_code_List,
+            })
+            .then((response) => {
+                console.log("COUNT : ", response.data.countBoard);
+                boardList.map((list, index) => {
+                    list.count = response.data.countBoard[index];
+                    list.index = index + 1;
+                    list.key = index + 1;
+                });
+            })
+
+            set_Modal_Board_List(boardList);
     }
 
 
@@ -178,7 +206,7 @@ const Top_Fin_list = () => {
                             // </div>
                             <div className="board_temp_wrap" key={index}>
                                 <div className="board_num">
-                                    {list.post_num}
+                                    {index+1}
                                 </div>
                                 <div className="board_main">
                                     <div className="board_fin_name">

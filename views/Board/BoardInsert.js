@@ -16,6 +16,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Board_Store_Reset, board_Store_Reset } from '../../redux/action/board_list_action';
 import { Editor } from '@tinymce/tinymce-react';
 import { server_config } from '../../server_config';
+import ReactTooltip from 'react-tooltip';
+import { Checkbox, FormControlLabel, FormGroup } from '@material-ui/core';
+import { Page_Tab } from '../../redux/action/page_action';
 
 const BoardInsert = () => {
 
@@ -23,7 +26,9 @@ const BoardInsert = () => {
     const [get_BoardTitle, set_BoardTitle] = useState('');
     const [get_finance_List, set_finance_List] = useState([{}]);
     const [get_finance_List_Value, set_finance_List_Value] = useState('');
+    const [get_fin_vote, set_fin_vote] = useState([]);
     const [get_loading, set_loading] = useState(false);
+    const [get_checked, set_checked] = useState(false);
 
     const history = useHistory();
     const alert = useAlert();
@@ -81,11 +86,11 @@ const BoardInsert = () => {
 
     }
 
-    const BoardInsert_Handler = () => {
+    const BoardInsert_Handler = async () => {
 
         if (get_BoardData && get_BoardTitle && get_finance_List_Value) {
 
-            axios.post(server_config.server_Address + '/board/insert',
+            await axios.post(server_config.server_Address + '/board/insert',
                 {
                     board_title: get_BoardTitle,
                     board_Data: get_BoardData,
@@ -94,7 +99,6 @@ const BoardInsert = () => {
                 {
                     headers: { 'authorization': sessionStorage.getItem('user_Token') },
                 }
-
             )
                 .then((request) => {
                     if (request.data.board_insert === 0) {
@@ -112,6 +116,18 @@ const BoardInsert = () => {
                     }
 
                 })
+
+            if (get_checked) {
+                await axios.post(server_config.server_Address + '/fin_interest/insert',
+                    {
+                        fin_interest_data: get_finance_List_Value,
+                    },
+                )
+                    .then((response) => {
+                        console.log("관심종목 등록 성공", response.data);
+                        dispatch(Page_Tab(2));
+                    })
+            }
         }
         else {
             alert.show("정보를 모두 입력하시기 바랍니다.");
@@ -119,29 +135,130 @@ const BoardInsert = () => {
     }
 
 
-    const AutoComplete_Change_Handler = (event, newValue) => {
+    const AutoComplete_Change_Handler = async (event, newValue) => {
         set_finance_List_Value(newValue);
-        //console.log(newValue);
+        console.log(newValue);
+        Get_Vote_View(newValue);
+    }
+
+    const Get_Vote_View = async (value) => {
+        await axios.post(server_config.server_Address + '/finance/info',
+            {
+                finance_name: value.name,
+            })
+            .then((response) => {
+                console.log("DATA : ", response.data);
+                set_fin_vote(response.data);
+            })
+    }
+
+    //투표
+    const Up_Count_Handler = (fin_name) => {
+        axios.post(server_config.server_Address + '/finance/up',
+            {
+                finance_name: fin_name,
+            })
+            .then((response) => {
+                //console.log(response.data);
+                Get_Vote_View(get_finance_List_Value);
+            })
+    }
+
+    const Down_Count_Handler = (fin_name) => {
+        axios.post(server_config.server_Address + '/finance/down',
+            {
+                finance_name: fin_name,
+            })
+            .then((response) => {
+                Get_Vote_View(get_finance_List_Value);
+                //console.log(response.data);
+            })
+    }
+
+    const Interest_Fin_Handler = (e) => {
+        console.log(e.target.checked);
+        set_checked(e.target.checked);
     }
 
     return (
         <>
             <div className='board_insert_wrap'>
-                <div className='board_insert_finance_list'>
-                    <Autocomplete
-                        id="highlights-demo"
-                        disableListWrap
-                        style={{ width: '100%' }}
-                        options={fin_list}
-                        onChange={AutoComplete_Change_Handler}
-                        getOptionLabel={(option) => option.name + "  |  " + option.code}
-                        renderInput={(params) => (
-                            <TextField {...params} label="종목" variant="outlined" margin="normal" />
-                        )} />
+                <div className='board_insert_button_wrap'>
+                    <div style={{ fontSize: '17px' }} onClick={() => { history.push('/main') }}>
+                        <CloseOutlined />
+                    </div>
+                    <div>
+                        <Button className="insert_button" onClick={BoardInsert_Handler} icon={<FormOutlined />}>
+                            글 작성
+                        </Button>
+                    </div>
                 </div>
                 <div id='title'>
                     <input name="tite" id="title_input"
                         type="text" placeholder="제목을 입력해주세요." onChange={BoardTitle_Handler}></input>
+                </div>
+                <div className='board_insert_finance_list flex aligncenter'>
+                    <div className="width65">
+                        <Autocomplete
+                            id="highlights-demo"
+                            disableListWrap
+                            style={{ width: '100%' }}
+                            options={fin_list}
+                            onChange={AutoComplete_Change_Handler}
+                            getOptionLabel={(option) => option.name + "(" + option.code + ")"}
+                            renderInput={(params) => (
+                                <TextField {...params} label="종목" variant="standard" margin="normal" />
+                            )} />
+                    </div>
+                    <div className="width45">
+                        <FormGroup>
+                            <FormControlLabel style={{ marginRight: '0px' }} labelPlacement="start"
+                                control={<Checkbox
+                                    checked={get_checked}
+                                    onChange={Interest_Fin_Handler} />} label="관심종목등록" />
+                        </FormGroup>
+                    </div>
+                </div>
+                <div>
+                    {get_fin_vote.length != 0 &&
+                        <div className="voteWrap_insert">
+                            <ReactTooltip
+                                className="up_tooltip"
+                                id="up_tooltip"
+                                getContent={dataTip => dataTip + " : " + get_fin_vote.finance_Up_Count} />
+                            <ReactTooltip
+                                className="down_tooltip"
+                                id="down_tooltip"
+                                getContent={dataTip => dataTip + " : " + get_fin_vote.finance_Down_Count} />
+                            <div className="up_count_insert" id='up_count'
+                                onClick={() => Up_Count_Handler(get_fin_vote.finance_name)}
+                                data-for="up_tooltip"
+                                data-tip="상승"
+                                style={{
+                                    width: `${get_fin_vote?.finance_Up_Count
+                                        / (get_fin_vote?.finance_Up_Count + get_fin_vote?.finance_Down_Count) * 100}%`
+                                }}>
+                                {Math.round(get_fin_vote?.finance_Up_Count
+                                    / (get_fin_vote?.finance_Up_Count + get_fin_vote?.finance_Down_Count) * 100)}%
+
+                            </div>
+                            <div className="down_count_insert" id='down_count'
+                                data-for="down_tooltip"
+                                data-tip="하강"
+                                onClick={() => Down_Count_Handler(get_fin_vote.finance_name)}
+                                style={{
+                                    width: `${get_fin_vote?.finance_Down_Count
+                                        / (get_fin_vote?.finance_Up_Count + get_fin_vote?.finance_Down_Count) * 100}%`
+                                }}>
+                                {100 - Math.round(get_fin_vote?.finance_Up_Count
+                                    / (get_fin_vote?.finance_Up_Count + get_fin_vote?.finance_Down_Count) * 100)}%
+
+                            </div>
+                            <div className="label">
+                                <br />
+                            </div>
+                        </div>
+                    }
                 </div>
                 <Spin spinning={get_loading}>
                     <div id='editor'>
@@ -195,18 +312,6 @@ const BoardInsert = () => {
                 <div>
                     <input type="file" accept="image/*" onChange={onChange_Handler}
                         style={{ display: 'none' }} ref={editorRef} multiple></input>
-                </div>
-                <div className='board_insert_button_wrap'>
-                    <div>
-                        <Button type="primary" onClick={BoardInsert_Handler} icon={<FormOutlined />}>
-                            글 작성
-                        </Button>
-                    </div>
-                    <div>
-                        <Button type="danger" onClick={() => { history.push('/main') }} icon={<CloseOutlined />}>
-                            취소
-                        </Button>
-                    </div>
                 </div>
             </div>
         </>

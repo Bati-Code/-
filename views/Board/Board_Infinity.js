@@ -213,6 +213,35 @@ const Board_Infinity = (props) => {
         dispatch(Board_Infinity_Page(infinity_page + 1));
     }
 
+    const Get_Board_Modal_Process = async (boardList) => {
+
+        if (boardList.length == 0) {
+            set_more_list(false);
+            console.log("Finish");
+            return;
+        }
+
+        let fin_code_List = [];
+        for (let i = 0; i < boardList.length; i++) {
+            fin_code_List.push(boardList[i].post_fin_list.code);
+        }
+
+        await axios.post(server_config.server_Address + '/board/countBoard',
+            {
+                'fin_code_list': fin_code_List,
+            })
+            .then((response) => {
+                console.log("COUNT : ", response.data.countBoard);
+                boardList.map((list, index) => {
+                    list.count = response.data.countBoard[index];
+                    list.index = index + 1;
+                    list.key = index + 1;
+                });
+            })
+
+            set_Modal_Board_List(boardList);
+    }
+
 
     const DateDisplay = (list_date) => {
         let date;
@@ -232,7 +261,7 @@ const Board_Infinity = (props) => {
             axios.get(server_config.server_Address + '/board/search/author/' + data)
                 .then((response) => {
                     console.log(response.data);
-                    set_Modal_Board_List(response.data);
+                    Get_Board_Modal_Process(response.data);
                 });
         }
         else if (flag == 0) {
@@ -361,6 +390,8 @@ const Board_Infinity = (props) => {
                 <Modal title={get_Post_Author + "님의 최근 게시글"} visible={get_Modal_Visible}
                     footer={null} onCancel={() => { Modal_Visible_Handler(0, '') }}>
                     {get_Modal_Board_List.map((list, index) => {
+
+                        console.log(list);
 
                         let head = 0;
 

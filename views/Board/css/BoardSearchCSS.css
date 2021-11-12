@@ -39,6 +39,7 @@
 
 .board_temp_wrap .board_main .board_fin_name{
     color: rgb(236, 106, 23);
+    font-weight: 500;
 }
 
 .board_temp_wrap .board_title{

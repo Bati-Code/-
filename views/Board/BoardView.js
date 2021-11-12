@@ -654,12 +654,14 @@ const BoardView = (res) => {
                         <p>정말 삭제하시겠습니까?</p>
                     </Modal>
                     <Modal
-                        title="게시글 신고"
+                        wrapClassName="reportModal"
+                        title="게시글 신고하기"
                         visible={get_report_modal_visible}
                         onCancel={() => { set_report_modal_visible(false) }}
                         okText="신고"
                         onOk={report_Confirm_Handler}
                         cancelText="취소"
+                        bodyStyle={{ backgroundColor: '#f6f6f6' }}
                     >
                         <div id="report_wrap">
                             <div id="report_div">
@@ -671,16 +673,15 @@ const BoardView = (res) => {
                                 <span>{get_userName}</span>
                             </div>
                             <div id="report_div">
-                                <span id="label">신고사항 : </span>
                                 <span id="item">
-                                    <FormControl sx={{ m: 1, minWidth: 120, width: '100%' }}>
-                                        <InputLabel id="select_label">신고 사항</InputLabel>
+                                    <FormControl sx={{ m: 1, minWidth: 120, width: '100%', backgroundColor: 'white' }}>
+                                        <InputLabel id="select_label">신고 항목</InputLabel>
                                         <Select
                                             labelId="select_label"
                                             name='selected_value'
                                             id='report'
                                             value={get_report_form_data.selected_value}
-                                            label='신고 사항'
+                                            label='신고 항목 선택'
                                             onChange={textArea_Change_Handler}>
                                             <MenuItem value={'AA'}>AA</MenuItem>
                                             <MenuItem value={'BB'}>BB</MenuItem>

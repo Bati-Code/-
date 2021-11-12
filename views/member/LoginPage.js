@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { server_config } from "../../server_config";
 import "./css/LoginCSS.css";
@@ -8,6 +8,12 @@ import "./css/LoginCSS.css";
 const LoginPage = () => {
 
     const history = useHistory();
+
+    useEffect(() => {
+
+        console.log(window.location.pathname);
+
+    }, [])
 
     const loginHandler = () => {
         const id = document.getElementById("inputBox_ID").value;
@@ -30,7 +36,7 @@ const LoginPage = () => {
                 if (response.data.code === 200) {
                     //console.log("login");
                     //console.log(response.data.result.data);
-                    axios.post(server_config.server_Address +'/login',  //192.168.0.45
+                    axios.post(server_config.server_Address + '/login',  //192.168.0.45
                         {
                             userName: response.data.result.data.me.username
                         },
@@ -48,6 +54,8 @@ const LoginPage = () => {
             })
     }
 
+    console.log(window.location.pathname);
+
     const EnterHandler = (e) => {
         if (e.key === "Enter") {
             loginHandler();
@@ -60,6 +68,7 @@ const LoginPage = () => {
             <div className="loginHeader">
                 로그인
             </div>
+            {window.location.pathname}
             <div className="container">
                 <section className="content">
                     <nav>

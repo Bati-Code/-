@@ -3,6 +3,7 @@
     flex-direction: column;
     margin: 15px;
     width: 90%;
+    height: 100%;
 }
 
 .interestWrap .ant-btn{
@@ -11,15 +12,65 @@
 }
 
 .interestWrap .interest_List{
+    height: 100%;
     border: 1px solid #DBDBDB;
-    min-height: 500px;
+    min-height: 400px;
     padding: 15px;
 }
 
 .interestWrap .interest_List .interest_List_Item{
     width: 100%;
+    height: 100px;
     display: flex;
     justify-content: space-between;
     margin-bottom: 3px;
     border-bottom: 1px solid #DBDBDB;
+    align-items: center;
+}
+
+.interest_List_info{
+    justify-content: space-between;
+}
+
+.fin_interest_title{
+    color: #ec6a17;
+    font-weight: 500;
+}
+
+.voteWrap_insert{
+    display: table;
+    width: 100%;
+    min-height: 25px;
+    text-align: center;
+    font-weight: 550;
+}
+
+.insert_button{
+    border-color: #ec6a17;
+    color: #ec6a17;
+    border-radius: 100px;
+}
+
+.voteWrap_insert .up_count_insert{
+    display: table-cell;
+    vertical-align: middle;
+    height: 45px;
+    transition: 0.2s;
+    background-color: #ec6a17;
+    min-width: 5%;
+    color: white;
+}
+
+.voteWrap_insert .down_count_insert{
+    display: table-cell;
+    vertical-align: middle;
+    height: 45px;
+    transition: 0.2s;
+    background-color: #1b212f;
+    min-width: 5%;
+    color: white;
+}
+
+.board_insert_finance_list .MuiFormControl-marginNormal{
+    margin-top: 0px;
 }

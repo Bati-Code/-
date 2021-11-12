@@ -334,7 +334,6 @@ iframe{
     margin-bottom: 7px;
     align-items: center;
     padding: 5px;
-    border-bottom: 1px #8b8b8b dotted;
     font-size: 15px;
 }
 
@@ -343,7 +342,7 @@ iframe{
 }
 
 #report_wrap div #item{
-    width: 70%;
+    width: 100%;
 }
 
 #content{
@@ -360,4 +359,8 @@ iframe{
 
 .down_tooltip{
     background-color: cornflowerblue !important;
+}
+
+.reportModal .ant-modal-header{
+    background-color: #f6f6f6;
 }

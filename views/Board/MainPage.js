@@ -10,7 +10,7 @@ import SearchIcon from '@mui/icons-material/Search';
 
 import { useAlert } from 'react-alert'
 import { Finance_List_Store } from '../../redux/action/finance_list_action';
-import { Page_Search, Page_Reset, Page_Radio, Page_Store, Page_Search_Date, Page_Search_UI } from '../../redux/action/page_action';
+import { Page_Search, Page_Reset, Page_Radio, Page_Store, Page_Search_Date, Page_Search_UI, Page_Tab } from '../../redux/action/page_action';
 import { Board_Infinity_Page, Board_Scroll, Board_Store_Reset } from '../../redux/action/board_list_action';
 
 import expand_icon from '../../public/images/expand_icon.png'
@@ -50,7 +50,7 @@ const MainPage = () => {
     const dispatch = useDispatch();
     const alert = useAlert();
 
-    const { radio, search, menu_select, search_value, search_ui } = useSelector(state => state.pageStore);
+    const { radio, search, menu_select, search_value, search_ui, tab } = useSelector(state => state.pageStore);
     const { scroll } = useSelector(state => state.boardStore);
 
 
@@ -184,7 +184,7 @@ const MainPage = () => {
 
 
     const main_Header_Handler = () => {
-        if (scroll == 0 && get_Tab == 2 && search == false) {
+        if (scroll == 0 && tab == 2 && search == false) {
             return;
         }
         set_Search_Value('');
@@ -224,13 +224,13 @@ const MainPage = () => {
     }
 
     const Board_Scroll_Handler = (e) => {
-        if (get_Tab === 2)
+        if (tab === 2)
             dispatch(Board_Scroll(e.target.scrollTop));
     }
 
     const Change_Tab_Handler = (event, newValue) => {
+        dispatch(Page_Tab(newValue));
         dispatch(Page_Search_UI(false));
-        set_Tab(newValue);
         console.log(newValue);
     }
 
@@ -325,7 +325,7 @@ const MainPage = () => {
                             <div className="tabBar">
                                 <Paper square style={{ width: '100%' }}>
                                     <Tabs
-                                        value={get_Tab}
+                                        value={tab}
                                         TabIndicatorProps={{ style: { background: 'black' } }}
                                         onChange={Change_Tab_Handler}
                                         aria-label="disabled tabs example"
@@ -338,7 +338,7 @@ const MainPage = () => {
                                 </Paper>
                             </div>
                             {
-                                get_Tab == 2 &&
+                                tab == 2 &&
                                     search_ui ?
                                     (
                                         <div className="search_wrap flex column">
@@ -385,7 +385,7 @@ const MainPage = () => {
 
                                         </div>
                                     )
-                                    : get_Tab == 2
+                                    : tab == 2
                                         ? (
                                             <div className="board_function_wrap">
                                                 <div className="item1">
@@ -420,9 +420,9 @@ const MainPage = () => {
                                 onScroll={Board_Scroll_Handler}>
                                 {
                                     search_ui === false ?
-                                        get_Tab === 0 ? <Top_Fin_list2 />
-                                            : get_Tab === 1 ? <Fin_Interest />
-                                                : get_Tab === 2 ? < Board_Infinity />
+                                        tab === 0 ? <Top_Fin_list2 />
+                                            : tab === 1 ? <Fin_Interest />
+                                                : tab === 2 ? < Board_Infinity />
                                                     : null
                                         : <Board_Search_List />
                                 }
@@ -432,7 +432,7 @@ const MainPage = () => {
                         </aside>
                     </section>
                 </div>
-                {radio === 'c' ? null
+                {/* {radio === 'c' ? null
                     :
                     <div className="Board_footer">
                         <div>
@@ -446,7 +446,7 @@ const MainPage = () => {
                             </Button>
                         </div>
                     </div>
-                }
+                } */}
             </div>
         </>
     )
