@@ -49,7 +49,7 @@
     color: #444444;
     line-height: 1.2em;
     top: 110%;
-    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
     margin-top: 5px;
     margin-bottom: 5px;
 }

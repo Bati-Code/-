@@ -172,6 +172,7 @@ const MainPage = () => {
                         console.log(response.data);
                     })
 
+                dispatch(Page_Reset());
                 dispatch(Page_Search(get_Menu_Text, value));
                 dispatch(Board_Store_Reset());
                 dispatch(Board_Infinity_Page(1));

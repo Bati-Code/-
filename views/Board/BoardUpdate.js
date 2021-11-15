@@ -5,7 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import './css/BoardInsertCSS.css';
@@ -14,6 +14,8 @@ import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor'
 
 import { Editor } from '@tinymce/tinymce-react';
 import { server_config } from '../../server_config';
+import { board_Store } from '../../redux/action/board_list_action';
+import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 
 
 const BoardUpdate = (res) => {
@@ -23,12 +25,15 @@ const BoardUpdate = (res) => {
     const [get_BoardContent, set_BoardContent] = useState('');
     const [get_finance_List_Value, set_finance_List_Value] = useState({});
     const [get_loading, set_loading] = useState(false);
+    const [get_checked, set_checked] = useState(false);
 
     const history = useHistory();
     const editorRef = useRef(null);
+    const dispatch = useDispatch();
 
     const board_id = res.match.params.id;
     const { fin_list } = useSelector(state => state.financeList);
+    const { board_list, scroll, infinity_page } = useSelector(state => state.boardStore);
 
     useEffect(() => {
         axios.get(server_config.server_Address + '/board/view/' + board_id)
@@ -46,6 +51,11 @@ const BoardUpdate = (res) => {
     const BoardTitle_Handler = (e) => {
         set_BoardTitle(e.target.value);
         //console.log(get_BoardTitle);
+    }
+
+    const Interest_Fin_Handler = (e) => {
+        console.log(e.target.checked);
+        set_checked(e.target.checked);
     }
 
     const BoardUpdate_Handler = () => {
@@ -67,6 +77,10 @@ const BoardUpdate = (res) => {
                 }
                 else if (request.data.update_board_result === 1) {
                     //console.log("업데이트 성공");
+                    const board = board_list[board_list.findIndex((e) => e._id == board_id)];
+                    console.log(board);
+                    board.post_title = get_BoardTitle;
+                    dispatch(board_Store(board_list));
                     history.push('/board/view/' + board_id);
                 }
 
@@ -124,23 +138,43 @@ const BoardUpdate = (res) => {
     return (
         <>
             <div className='board_insert_wrap'>
-                <div className='board_insert_finance_list'>
-                    <Autocomplete
-                        id="fin_list"
-                        style={{ width: '100%' }}
-                        value={get_finance_List_Value}
-                        options={fin_list}
-                        onChange={AutoComplete_Change_Handler}
-                        getOptionLabel={(option) => option.name + "  |  " + option.code}
-                        getOptionSelected={(option, value) => option.name === value.name}
-                        renderInput={(params) => (
-                            <TextField {...params} label="종목" variant="outlined" margin="normal" />
-                        )} />
+                <div className='board_insert_button_wrap'>
+                    <div style={{ fontSize: '17px' }} onClick={() => { history.push('/board/view/' + board_id) }}>
+                        <CloseOutlined />
+                    </div>
+                    <div>
+                        <Button className="insert_button" onClick={BoardUpdate_Handler} icon={<FormOutlined />}>
+                            글 수정
+                        </Button>
+                    </div>
                 </div>
                 <div id='title'>
                     <input name="tite" id="title_input"
                         type="text" placeholder="제목을 입력해주세요."
                         value={get_BoardTitle} onChange={BoardTitle_Handler}></input>
+                </div>
+                <div className='board_insert_finance_list flex aligncenter'>
+                    <div className="width65">
+                        <Autocomplete
+                            id="fin_list"
+                            style={{ width: '100%' }}
+                            value={get_finance_List_Value}
+                            options={fin_list}
+                            onChange={AutoComplete_Change_Handler}
+                            getOptionLabel={(option) => option.name + "(" + option.code + ")"}
+                            getOptionSelected={(option, value) => option.name === value.name}
+                            renderInput={(params) => (
+                                <TextField {...params} label="종목" variant="standard" margin="normal" />
+                            )} />
+                    </div>
+                    <div className="width45">
+                        <FormGroup>
+                            <FormControlLabel style={{ marginRight: '0px' }} labelPlacement="start"
+                                control={<Checkbox
+                                    checked={get_checked}
+                                    onChange={Interest_Fin_Handler} />} label="관심종목등록" />
+                        </FormGroup>
+                    </div>
                 </div>
                 <Spin spinning={get_loading}>
                     <div id='editor'>
@@ -193,7 +227,7 @@ const BoardUpdate = (res) => {
                     <input type="file" accept="image/*" onChange={onChange_Handler}
                         style={{ display: 'none' }} ref={editorRef} multiple></input>
                 </div>
-                <div className='board_insert_button_wrap'>
+                {/* <div className='board_insert_button_wrap'>
                     <div>
                         <Button type="primary" onClick={BoardUpdate_Handler} icon={<FormOutlined />}>
                             글 수정
@@ -204,7 +238,7 @@ const BoardUpdate = (res) => {
                             취소
                         </Button>
                     </div>
-                </div>
+                </div> */}
             </div>
         </>
 

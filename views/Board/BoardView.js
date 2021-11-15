@@ -7,10 +7,6 @@ import {
     PlusOutlined, RightOutlined, AlertOutlined, LeftOutlined,
     CloseOutlined
 } from '@ant-design/icons';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 
@@ -21,10 +17,12 @@ import dayjs from 'dayjs';
 import { useAlert } from 'react-alert'
 import { server_config } from '../../server_config';
 import { Base64 } from 'js-base64';
-import { Board_Store_Reset } from '../../redux/action/board_list_action';
+import { board_Store, Board_Store_Reset } from '../../redux/action/board_list_action';
 
 import Logo from '../../public/images/hitalk_logo.png';
 import './css/Board_View_CSS.css';
+import Board_Report from './Report/Board_Report';
+import BoardComment from './BoardComment';
 
 const BoardView = (res) => {
     const [get_board_data, set_board_data] = useState({});
@@ -52,8 +50,12 @@ const BoardView = (res) => {
     const [visible, setVisible] = useState(false);
     const [comment_visible, set_comment_Visible] = useState(false);
     const [recomment_visible, set_recomment_Visible] = useState(false);
+
     const [get_report_modal_visible, set_report_modal_visible] = useState(false);
+    const [get_comment_report_modal_visible, set_comment_report_modal_visible] = useState(false);
+    const [get_recomment_report_modal_visible, set_recomment_report_modal_visible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
+    const [get_comment_data, set_comment_data] = useState({});
 
     const [get_loading, set_loading] = useState(true);
 
@@ -71,6 +73,9 @@ const BoardView = (res) => {
 
     const dispatch = useDispatch();
     const { radio } = useSelector(state => state.pageStore);
+    const { board_list, scroll, infinity_page } = useSelector(state => state.boardStore);
+
+
 
     useEffect(() => {
 
@@ -80,6 +85,7 @@ const BoardView = (res) => {
             .then((response) => {
                 //console.log("view data", response.data.userName);
                 //console.log(response.data.list.post_recommend_user);
+
                 set_board_data(response.data.list);
                 set_Comment_List(response.data.list.post_comment);
                 set_fin_List_name(response.data.list.post_fin_list.name);
@@ -125,11 +131,19 @@ const BoardView = (res) => {
             .then((request) => {
                 //console.log(request.data);
                 set_board_recommend(request.data.recommend_count);
+
+                const board = board_list[board_list.findIndex((e) => e._id == board_id)];
+                console.log(board);
+
                 if (request.data.recommend_update === 1) {
                     set_recommend_check(true);
+                    board.post_recommend++;
+                    dispatch(board_Store(board_list));
                 }
                 else if (request.data.recommend_update === 100) {
                     set_recommend_check(false);
+                    board.post_recommend--;
+                    dispatch(board_Store(board_list));
                 }
             })
     }
@@ -204,6 +218,10 @@ const BoardView = (res) => {
                         .then((response) => {
                             //console.log(response.data.list.post_comment);
                             set_Comment_List(response.data.list.post_comment);
+                            const board = board_list[board_list.findIndex((e) => e._id == board_id)];
+                            console.log(board);
+                            board.post_comment.pop();
+                            dispatch(board_Store(board_list));
                         })
                 }
             })
@@ -279,6 +297,10 @@ const BoardView = (res) => {
                 axios.get(server_config.server_Address + "/board/view/update/" + board_id)
                     .then((response) => {
                         set_Comment_List(response.data.list.post_comment);
+                        const board = board_list[board_list.findIndex((e) => e._id == board_id)];
+                        console.log(board);
+                        board.post_comment.push(['temp']);
+                        dispatch(board_Store(board_list));
                     })
                 window.scrollTo(0, document.body.scrollHeight);
             })
@@ -392,20 +414,17 @@ const BoardView = (res) => {
         });
     }
 
-    const report_Confirm_Handler = () => {
-        console.log(get_report_form_data);
-        axios.post(server_config.server_Address + '/report/report',
-            {
-                report_form_data: get_report_form_data,
-                report_user: get_userName,
-                board_id: board_id,
-                bad_user: get_board_data.post_author
-            })
-            .then((response) => {
-                console.log(response.data);
-                set_report_status(true);
-            })
-        set_report_modal_visible(false);
+    //report2
+    const report_Comment_Modal_Handler = (list) => {
+        if (list.comment_content) {
+            set_comment_report_modal_visible(true);
+            console.log(list);
+        }
+        else {
+            set_recomment_report_modal_visible(true);
+        }
+
+        set_comment_data(list);
     }
 
     const DateDisplay = (list_date) => {
@@ -518,9 +537,9 @@ const BoardView = (res) => {
                                     </li> */}
                                     </ul>
                                     {
-                                        get_board_data?.post_comment?.length != 0 &&
+                                        get_Comment_List?.length != 0 &&
                                         <div className="tooltip">
-                                            {get_board_data?.post_comment?.length}
+                                            {get_Comment_List?.length}
                                         </div>
                                     }
                                 </div>
@@ -653,50 +672,22 @@ const BoardView = (res) => {
                     >
                         <p>정말 삭제하시겠습니까?</p>
                     </Modal>
-                    <Modal
-                        wrapClassName="reportModal"
-                        title="게시글 신고하기"
-                        visible={get_report_modal_visible}
-                        onCancel={() => { set_report_modal_visible(false) }}
-                        okText="신고"
-                        onOk={report_Confirm_Handler}
-                        cancelText="취소"
-                        bodyStyle={{ backgroundColor: '#f6f6f6' }}
-                    >
-                        <div id="report_wrap">
-                            <div id="report_div">
-                                <span id="label">제목 : </span>
-                                <span>{get_board_data.post_title}</span>
-                            </div>
-                            <div id="report_div">
-                                <span id="label">작성자 : </span>
-                                <span>{get_userName}</span>
-                            </div>
-                            <div id="report_div">
-                                <span id="item">
-                                    <FormControl sx={{ m: 1, minWidth: 120, width: '100%', backgroundColor: 'white' }}>
-                                        <InputLabel id="select_label">신고 항목</InputLabel>
-                                        <Select
-                                            labelId="select_label"
-                                            name='selected_value'
-                                            id='report'
-                                            value={get_report_form_data.selected_value}
-                                            label='신고 항목 선택'
-                                            onChange={textArea_Change_Handler}>
-                                            <MenuItem value={'AA'}>AA</MenuItem>
-                                            <MenuItem value={'BB'}>BB</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </span>
-                            </div>
-                        </div>
-                        <div>
-                            <textarea id="content" name="content"
-                                value={get_report_form_data.content} onChange={textArea_Change_Handler} />
-                        </div>
-
-                    </Modal>
-
+                    <Board_Report
+                        flag='board'
+                        get_visible={get_report_modal_visible}
+                        set_visible={set_report_modal_visible}
+                        set_report_status={set_report_status}
+                        data={get_board_data} />
+                    <Board_Report
+                        flag='comment'
+                        get_visible={get_comment_report_modal_visible}
+                        set_visible={set_comment_report_modal_visible}
+                        data={get_comment_data} />
+                    <Board_Report
+                        flag='recomment'
+                        get_visible={get_recomment_report_modal_visible}
+                        set_visible={set_recomment_report_modal_visible}
+                        data={get_comment_data} />
                 </div>
                 <div className="board_comment_wrap">
                     {/* textarea 댓글 */}
@@ -730,12 +721,19 @@ const BoardView = (res) => {
                             등록
                         </div>
                     </Drawer>
+                    <BoardComment
+                        get_data={get_Comment_List}
+                        set_data={set_Comment_List} 
+                        board_id={board_id}
+                        user_name={get_userName} />
+                    {/*
                     <div>
                         <span className="comment_color">{get_board_data?.post_comment?.length}</span>
                         <span>개의 댓글</span>
 
                     </div>
                     <div>
+
                         {get_Comment_List.map((list, index) => {
 
                             let comment_user_check = false;
@@ -760,7 +758,7 @@ const BoardView = (res) => {
                                             <span id='delete_button'>
                                                 {comment_user_check
                                                     ? <span><DeleteOutlined onClick={() => showCommentModal(list._id)} /></span>
-                                                    : null}
+                                                    : <span><AlertOutlined onClick={() => report_Comment_Modal_Handler(list)} /></span>}
                                             </span>
 
                                         </div>
@@ -848,7 +846,10 @@ const BoardView = (res) => {
                                                                             <DeleteOutlined onClick={
                                                                                 () => showReCommentModal(list._id, recomment._id)} />
                                                                         </span>
-                                                                        : null}
+                                                                        : <span id='delete_button'>
+                                                                            <AlertOutlined onClick={
+                                                                                () => report_Comment_Modal_Handler(recomment)} />
+                                                                        </span>}
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -890,7 +891,7 @@ const BoardView = (res) => {
                             )
                         }
                         )}
-                    </div>
+                    </div> */}
 
                 </div>
             </div>

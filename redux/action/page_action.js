@@ -11,8 +11,8 @@ const PAGE_TAB = 'pageStore/PAGE_TAB';
 export const Page_Store = (page_value) => ({ type: PAGE_STORE, payload: page_value });
 export const Page_Search = (menu_value, search_value) =>
     ({ type: PAGE_SEARCH, payload: { menu: menu_value, search: search_value } });
-export const Page_Search_UI = (ui_value) => ({ type: PAGE_SEARCH_UI, payload: ui_value});
-export const Page_Search_Date = (date_value) => ({ type: PAGE_SEARCH_DATE, payload: date_value});
+export const Page_Search_UI = (ui_value) => ({ type: PAGE_SEARCH_UI, payload: ui_value });
+export const Page_Search_Date = (date_value) => ({ type: PAGE_SEARCH_DATE, payload: date_value });
 export const Page_Reset = () => ({ type: PAGE_RESET });
 export const Page_Radio = (radio_value) => ({ type: PAGE_RADIO, payload: radio_value });
 export const Page_Tab = (tab_value) => ({ type: PAGE_TAB, payload: tab_value });
@@ -56,11 +56,7 @@ const pageStore = (state = initialState, action) => {
             }
         case PAGE_RESET:
             return {
-                ...state,
-                page: 1,
-                menu_select: '제목',
-                search: false,
-                search_value: '',
+                ...initialState,
                 count: state.count + 1
             }
         case PAGE_RADIO:
