@@ -1,34 +1,109 @@
-import { CloseOutlined, PlusOutlined, AlertOutlined, LikeOutlined, RightOutlined, DeleteOutlined  } from '@ant-design/icons';
+import { CloseOutlined, PlusOutlined, AlertOutlined, LikeOutlined, RightOutlined, DeleteOutlined, AlertFilled } from '@ant-design/icons';
 import { Button, Input, Drawer } from 'antd'
 import Modal from 'antd/lib/modal/Modal';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { board_Store } from '../../redux/action/board_list_action';
 import { server_config } from '../../server_config';
+import Board_Report from './Report/Board_Report';
 
 const BoardComment = (props) => {
 
     const [get_recomment_open, set_recomment_open] = useState(false);
     const [get_comment_id, set_comment_id] = useState('');
+    const [get_recomment_for_comment_id, set_recomment_for_comment_id] = useState('');
+    const [get_recomment_id, set_recomment_id] = useState('');
+
+    const [get_report_status, set_report_status] = useState({});
 
     const [get_recomment_content, set_recomment_content] = useState('');
 
     const [comment_visible, set_comment_Visible] = useState(false);
+    const [recomment_visible, set_recomment_Visible] = useState(false);
+    const [get_comment_report_modal_visible, set_comment_report_modal_visible] = useState(false);
+    const [get_recomment_report_modal_visible, set_recomment_report_modal_visible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
+
+    const [get_comment_data, set_comment_data] = useState({});
 
     const { TextArea } = Input;
 
-    const get_Comment_List = props.get_data;
     const get_userName = props.user_name;
 
     const dispatch = useDispatch();
     const { board_list } = useSelector(state => state.boardStore);
 
+    useEffect(() => {
+
+        // let array = [];
+
+        // if (props.get_data.length != 0) {
+        //     for (let i = 0; i < props.get_data.length; i++) {
+        //         array.push(props.get_data[i]._id);
+        //     }
+
+        //     axios.post(server_config.server_Address + "/report/searchArray",
+        //         {
+        //             data: array
+        //         })
+        //         .then((response) => {
+        //             console.log(response.data);
+        //             props.get_data.map((list, index) => {
+        //                 list.report_data = response.data.data[index];
+        //             })
+        //         })
+        // }
+
+        // axios.get(server_config.server_Address + "/user_check")
+        //     .then((response) => {
+
+
+        //     })
+
+        axios.post(server_config.server_Address + "/report/status",
+            {
+                board_id: props.board_id,
+            })
+            .then((response) => {
+
+                console.log("DATA : ", response.data);
+                //set_report_status(response.data);
+                props.set_data(props.get_data.map((list, index) => {
+                    list.report_status = response.data.data[index];
+                }))
+            })
+
+    }, [])
+
+    console.log( "A A A  : ", props.get_data);
+
+
+    useEffect(() => {
+        axios.post(server_config.server_Address + "/report/status",
+            {
+                board_id: props.board_id,
+            })
+            .then((response) => {
+                console.log("DATA : ", response.data);
+                //set_report_status(response.data);
+                props.get_data.map((list, index) => {
+                    list.report_status = response.data.data[index];
+                })
+            })
+
+    }, [get_comment_report_modal_visible, get_recomment_report_modal_visible])
+
     const showCommentModal = (comment_id) => {
         set_comment_Visible(true);
         set_comment_id(comment_id);
+    };
+
+    const showReCommentModal = (comment_id, recomment_id) => {
+        set_recomment_Visible(true);
+        set_recomment_for_comment_id(comment_id);
+        set_recomment_id(recomment_id);
     };
 
     const handle_DeleteComment_Ok = () => {
@@ -52,7 +127,7 @@ const BoardComment = (props) => {
                             props.set_data(response.data.list.post_comment);
                             const board = board_list[board_list.findIndex((e) => e._id == props.board_id)];
                             console.log("BOard", board);
-                            board.post_comment.pop();
+                            board?.post_comment.pop();
                             dispatch(board_Store(board_list));
                         })
                 }
@@ -62,6 +137,40 @@ const BoardComment = (props) => {
     const handle_DeleteComment_Cancel = () => {
         set_comment_Visible(false);
     };
+
+    const comment_recommend_Handler = (comment_id) => {
+        axios.post(server_config.server_Address + '/board/comment/recommend',
+            {
+                board_id: props.board_id,
+                comment_id: comment_id
+            })
+            .then((response) => {
+                //console.log(response.data);
+                document.getElementById(comment_id).innerText = response.data.recommend_count;
+
+                if (response.data.comment_recommend_result === 1) {
+                    document.getElementById(comment_id + 'button').style.backgroundColor = '#439926';
+                    document.getElementById(comment_id + 'button').style.borderColor = '#439926';
+                    document.getElementById(comment_id + 'button').style.color = 'white';
+                } else {
+                    document.getElementById(comment_id + 'button').style.backgroundColor = 'white';
+                    document.getElementById(comment_id + 'button').style.borderColor = '#b3b3b3';
+                    document.getElementById(comment_id + 'button').style.color = 'black';
+                }
+            })
+    }
+
+    const report_Comment_Modal_Handler = (list) => {
+        if (list.comment_content) {
+            set_comment_report_modal_visible(true);
+            console.log(list);
+        }
+        else {
+            set_recomment_report_modal_visible(true);
+        }
+
+        set_comment_data(list);
+    }
 
 
     const ReComment_Handler = (id) => {
@@ -98,10 +207,81 @@ const BoardComment = (props) => {
                         //console.log(response.data.list.post_comment);
                         props.set_data(response.data.list.post_comment);
                     })
-
             })
+    }
+
+    const ReComment_recommend_Handler = (comment_id, recomment_id) => {
+        //console.log(comment_id, recomment_id);
+        axios.post(server_config.server_Address + '/board/recomment/recommend',
+            {
+                board_id: props.board_id,
+                comment_id: comment_id,
+                recomment_id: recomment_id,
+            })
+            .then((response) => {
+                //console.log(response.data);
+                document.getElementById(recomment_id).innerText = response.data.recommend_count;
 
 
+                if (response.data.recomment_recommend_result === 1) {
+                    document.getElementById(recomment_id + 'button').style.backgroundColor = '#439926';
+                    document.getElementById(recomment_id + 'button').style.borderColor = '#439926';
+                    document.getElementById(recomment_id + 'button').style.color = 'white';
+                } else {
+                    document.getElementById(recomment_id + 'button').style.backgroundColor = 'white';
+                    document.getElementById(recomment_id + 'button').style.borderColor = '#b3b3b3';
+                    document.getElementById(recomment_id + 'button').style.color = 'black';
+                }
+            })
+    }
+
+    const handle_Delete_ReComment_Ok = () => {
+        setConfirmLoading(true);
+        axios.delete(server_config.server_Address + "/board/recomment/" +
+            props.board_id + '/' + get_recomment_for_comment_id + '/' + get_recomment_id)
+            .then((response) => {
+                //console.log(response.data);
+                if (response.data.delete_recomment_result === 0) {
+                    //console.log("삭제 오류");
+                    setConfirmLoading(false);
+                }
+                if (response.data.delete_recomment_result === 1) {
+                    //console.log("삭제 성공");
+                    setConfirmLoading(false);
+                    set_recomment_Visible(false);
+
+                    axios.get(server_config.server_Address + "/board/view/update/" + props.board_id)
+                        .then((response) => {
+                            //console.log(response.data.list.post_comment);
+                            props.set_data(response.data.list.post_comment);
+                        })
+                }
+            })
+    };
+
+    const handle_Delete_ReComment_Cancel = () => {
+        set_recomment_Visible(false);
+    };
+
+
+
+    const MakeModal = (props) => {
+
+        return (
+            <div>
+                <Modal
+                    title={props.title}
+                    visible={props.visible}
+                    onOk={props.onOk}
+                    confirmLoading={confirmLoading}
+                    onCancel={props.cancel}
+                    okText="삭제"
+                    cancelText="취소"
+                >
+                    <p>정말 삭제하시겠습니까?</p>
+                </Modal>
+            </div>
+        )
     }
 
     return (
@@ -111,12 +291,14 @@ const BoardComment = (props) => {
                         <TextArea rows={4} onChange={Comment_Change_Handler} value={get_comment_content} />
                     </div> */}
             <div>
-                <span className="comment_color">{get_Comment_List?.length}</span>
+                <span className="comment_color">{props.get_data?.length}</span>
                 <span>개의 댓글</span>
 
             </div>
             <div>
-                {get_Comment_List.map((list, index) => {
+                {props.get_data.map((list, index1) => {
+
+                    console.log("LIST : ", list);
 
                     let comment_user_check = false;
 
@@ -127,7 +309,7 @@ const BoardComment = (props) => {
                         comment_user_check = false;
                     }
                     return (
-                        <div className="comment_wrap" key={index}>
+                        <div className="comment_wrap" key={index1}>
                             <div className="comment_top">
                                 <div className="comment_author">
                                     <span className="darkGray">{list.comment_author} </span>
@@ -140,7 +322,9 @@ const BoardComment = (props) => {
                                     <span id='delete_button'>
                                         {comment_user_check
                                             ? <span><DeleteOutlined onClick={() => showCommentModal(list._id)} /></span>
-                                            : <span><AlertOutlined onClick={() => report_Comment_Modal_Handler(list)} /></span>}
+                                            : list.report_data[index1]._id.comment_object.length == 0 ?
+                                                <span><AlertOutlined onClick={() => report_Comment_Modal_Handler(list)} /></span>
+                                                : <AlertFilled />}
                                     </span>
 
                                 </div>
@@ -201,7 +385,7 @@ const BoardComment = (props) => {
                                 }
                             </div>
                             <div>
-                                {list.comment_recomment.map((recomment, index) => {
+                                {list.comment_recomment.map((recomment, index2) => {
 
                                     let recomment_user_check = false;
 
@@ -213,7 +397,7 @@ const BoardComment = (props) => {
                                     }
 
                                     return (
-                                        <div key={index}>
+                                        <div key={index2}>
                                             <div className='recomment_wrap'>
                                                 <div className='recomment_top'>
                                                     <div className="recomment_author">
@@ -223,15 +407,17 @@ const BoardComment = (props) => {
                                                     <div>
                                                         {recomment.recomment_date}
                                                         <span>
+                                                            {/* {props.get_data.report_data._id.comment_object.length} */}
                                                             {recomment_user_check
                                                                 ? <span id='delete_button'>
                                                                     <DeleteOutlined onClick={
                                                                         () => showReCommentModal(list._id, recomment._id)} />
                                                                 </span>
-                                                                : <span id='delete_button'>
-                                                                    <AlertOutlined onClick={
-                                                                        () => report_Comment_Modal_Handler(recomment)} />
-                                                                </span>}
+                                                                : get_report_status?.data[index1]?.recomment_object[index2]?.data.length == 0 ?
+                                                                    <span id='delete_button'>
+                                                                        <AlertOutlined onClick={
+                                                                            () => report_Comment_Modal_Handler(recomment)} />
+                                                                    </span> : <span id='delete_button'><AlertFilled /></span>}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -272,20 +458,36 @@ const BoardComment = (props) => {
                         </div>
                     )
                 }
-                )}
+                )
+                }
             </div>
             <div>
-                <Modal
+                <MakeModal
                     title="댓글 삭제"
                     visible={comment_visible}
                     onOk={handle_DeleteComment_Ok}
-                    confirmLoading={confirmLoading}
-                    onCancel={handle_DeleteComment_Cancel}
-                    okText="삭제"
-                    cancelText="취소"
-                >
-                    <p>정말 삭제하시겠습니까?</p>
-                </Modal>
+                    cancel={handle_DeleteComment_Cancel}
+                />
+                <MakeModal
+                    title="답글 삭제"
+                    visible={recomment_visible}
+                    onOk={handle_Delete_ReComment_Ok}
+                    cancel={handle_Delete_ReComment_Cancel}
+                />
+                <Board_Report
+                    flag='comment'
+                    get_visible={get_comment_report_modal_visible}
+                    set_visible={set_comment_report_modal_visible}
+                    data={get_comment_data}
+                    status={set_report_status}
+                    board_id={props.board_id} />
+                <Board_Report
+                    flag='recomment'
+                    get_visible={get_recomment_report_modal_visible}
+                    set_visible={set_recomment_report_modal_visible}
+                    data={get_comment_data}
+                    status={set_report_status}
+                    board_id={props.board_id} />
             </div>
 
         </div>

@@ -66,9 +66,10 @@ const Board_Report = (props) => {
                     bad_user: bad_user_data
                 })
                 .then((response) => {
-                    console.log(response.data); 0
+                    console.log(response.data);
                     if (flag == 'board')
                         props.set_report_status(true);
+
                 })
             set_report_form_data({
                 selected_value: '',
@@ -101,8 +102,8 @@ const Board_Report = (props) => {
                 <div id="report_div">
                     <span id="label">제목 : </span>
                     <span>{flag == "board" ? get_board_data.post_title :
-                        flag == "comment" ? get_board_data.comment_content : 
-                        flag == 'recomment' ? get_board_data.recomment_content : null}</span>
+                        flag == "comment" ? get_board_data.comment_content :
+                            flag == 'recomment' ? get_board_data.recomment_content : null}</span>
                 </div>
                 <div id="report_div">
                     <span id="label">작성자 : </span>

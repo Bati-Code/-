@@ -35,34 +35,18 @@ const BoardView = (res) => {
     const [get_report_status, set_report_status] = useState(false);
 
     const [get_comment_content, set_comment_content] = useState('');
-    const [get_recomment_content, set_recomment_content] = useState('');
 
-    const [get_recomment_open, set_recomment_open] = useState(false);
     const [get_Comment_Drawer_Visible, set_Comment_Drawer_Visible] = useState(false);
 
-    const [get_comment_id, set_comment_id] = useState('');
-    const [get_recomment_for_comment_id, set_recomment_for_comment_id] = useState('');
-    const [get_recomment_id, set_recomment_id] = useState('');
 
     const [get_Finance_Info, set_Finance_Info] = useState('');
 
     //모달
     const [visible, setVisible] = useState(false);
-    const [comment_visible, set_comment_Visible] = useState(false);
-    const [recomment_visible, set_recomment_Visible] = useState(false);
 
     const [get_report_modal_visible, set_report_modal_visible] = useState(false);
-    const [get_comment_report_modal_visible, set_comment_report_modal_visible] = useState(false);
-    const [get_recomment_report_modal_visible, set_recomment_report_modal_visible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const [get_comment_data, set_comment_data] = useState({});
 
-    const [get_loading, set_loading] = useState(true);
-
-    const [get_report_form_data, set_report_form_data] = useState({
-        selected_value: '',
-        content: ''
-    });
 
     const { TextArea } = Input;
 
@@ -72,10 +56,7 @@ const BoardView = (res) => {
     const fin_name = window.sessionStorage.getItem('fin_name');
 
     const dispatch = useDispatch();
-    const { radio } = useSelector(state => state.pageStore);
-    const { board_list, scroll, infinity_page } = useSelector(state => state.boardStore);
-
-
+    const { board_list } = useSelector(state => state.boardStore);
 
     useEffect(() => {
 
@@ -86,8 +67,32 @@ const BoardView = (res) => {
                 //console.log("view data", response.data.userName);
                 //console.log(response.data.list.post_recommend_user);
 
+                console.log("A : ", response.data.list.post_comment);
+                let arr = response.data.list.post_comment.slice();
+
+                console.log(arr);
+
+                let array = [];
+
+                if (arr.length != 0) {
+                    for (let i = 0; i < arr.length; i++) {
+                        array.push(arr[i]._id);
+                    }
+
+                    axios.post(server_config.server_Address + "/report/searchArray",
+                        {
+                            data: array
+                        })
+                        .then((response) => {
+                            console.log(response.data);
+                            arr.map((list, index) => {
+                                list.report_data = response.data.data[index];
+                            })
+                        })
+                }
+
                 set_board_data(response.data.list);
-                set_Comment_List(response.data.list.post_comment);
+                set_Comment_List(arr);
                 set_fin_List_name(response.data.list.post_fin_list.name);
                 const recommend_user_list = response.data.list.post_recommend_user;
 
@@ -116,7 +121,16 @@ const BoardView = (res) => {
                                 set_report_status(false);
                         })
                 }
+            })
 
+        axios.get(server_config.server_Address + "/user_check")
+            .then((response) => {
+                if (response.data.userName === get_board_data.post_author
+                    && response.data.user_result === 1) {
+                    //console.log("board view success");
+                    set_user_check(true);
+                }
+                set_userName(response.data.userName);
             })
 
         window.scrollTo(0, 0);
@@ -158,6 +172,8 @@ const BoardView = (res) => {
                 }
                 set_userName(response.data.userName);
             })
+
+
     }, [get_board_data])
 
     const updateBoard = () => {
@@ -194,85 +210,9 @@ const BoardView = (res) => {
         setVisible(false);
     };
 
-    //댓글 모달
-    const showCommentModal = (comment_id) => {
-        set_comment_Visible(true);
-        set_comment_id(comment_id);
-    };
-
-    const handle_DeleteComment_Ok = () => {
-        setConfirmLoading(true);
-        axios.delete(server_config.server_Address + "/board/comment/" + get_comment_id)
-            .then((response) => {
-                //console.log(response.data);
-                if (response.data.delete_comment_result === 0) {
-                    //console.log("삭제 오류");
-                    setConfirmLoading(false);
-                }
-                if (response.data.delete_comment_result === 1) {
-                    //console.log("삭제 성공");
-                    setConfirmLoading(false);
-                    set_comment_Visible(false);
-
-                    axios.get(server_config.server_Address + "/board/view/update/" + board_id)
-                        .then((response) => {
-                            //console.log(response.data.list.post_comment);
-                            set_Comment_List(response.data.list.post_comment);
-                            const board = board_list[board_list.findIndex((e) => e._id == board_id)];
-                            console.log(board);
-                            board.post_comment.pop();
-                            dispatch(board_Store(board_list));
-                        })
-                }
-            })
-    };
-
-    const handle_DeleteComment_Cancel = () => {
-        set_comment_Visible(false);
-    };
-
-    //답글 모달
-    const showReCommentModal = (comment_id, recomment_id) => {
-        set_recomment_Visible(true);
-        set_recomment_for_comment_id(comment_id);
-        set_recomment_id(recomment_id);
-    };
-
-    const handle_Delete_ReComment_Ok = () => {
-        setConfirmLoading(true);
-        axios.delete(server_config.server_Address + "/board/recomment/" +
-            get_board_data._id + '/' + get_recomment_for_comment_id + '/' + get_recomment_id)
-            .then((response) => {
-                //console.log(response.data);
-                if (response.data.delete_recomment_result === 0) {
-                    //console.log("삭제 오류");
-                    setConfirmLoading(false);
-                }
-                if (response.data.delete_recomment_result === 1) {
-                    //console.log("삭제 성공");
-                    setConfirmLoading(false);
-                    set_recomment_Visible(false);
-
-                    axios.get(server_config.server_Address + "/board/view/update/" + board_id)
-                        .then((response) => {
-                            //console.log(response.data.list.post_comment);
-                            set_Comment_List(response.data.list.post_comment);
-                        })
-                }
-            })
-    };
-
-    const handle_Delete_ReComment_Cancel = () => {
-        set_recomment_Visible(false);
-    };
-
     const Comment_Change_Handler = (e) => {
         console.log(e.target.value);
         set_comment_content(e.target.value);
-    }
-
-    const ReComment_Change_Handler = (e) => {
-        set_recomment_content(e.target.value);
     }
 
     //댓글
@@ -311,120 +251,6 @@ const BoardView = (res) => {
     }
     const Comment_Drawer_Close_Handler = () => {
         set_Comment_Drawer_Visible(false);
-    }
-
-
-    //댓글 추천
-    const comment_recommend_Handler = (comment_id) => {
-        axios.post(server_config.server_Address + '/board/comment/recommend',
-            {
-                board_id: board_id,
-                comment_id: comment_id
-            })
-            .then((response) => {
-                //console.log(response.data);
-                document.getElementById(comment_id).innerText = response.data.recommend_count;
-
-                if (response.data.comment_recommend_result === 1) {
-                    document.getElementById(comment_id + 'button').style.backgroundColor = '#439926';
-                    document.getElementById(comment_id + 'button').style.borderColor = '#439926';
-                    document.getElementById(comment_id + 'button').style.color = 'white';
-                } else {
-                    document.getElementById(comment_id + 'button').style.backgroundColor = 'white';
-                    document.getElementById(comment_id + 'button').style.borderColor = '#b3b3b3';
-                    document.getElementById(comment_id + 'button').style.color = 'black';
-                }
-
-
-
-            })
-
-    }
-
-    //답글
-    const ReComment_Handler = (id) => {
-        set_recomment_open(!get_recomment_open);
-        set_comment_id(id);
-        //console.log("e", id);
-    }
-
-    const ReComment_Insert_Handler = (comment_id) => {
-
-        axios.post(server_config.server_Address + '/board/recomment',
-            {
-                board_id: board_id,
-                comment_id: comment_id,
-                recomment_content: get_recomment_content,
-            },
-            {
-                headers: { 'authorization': sessionStorage.getItem('user_Token') }
-            })
-            .then((response) => {
-                //console.log(response.data);
-                set_recomment_content('');
-                set_recomment_open(false);
-                if (response.data.recomment_check_result === 0) {
-                    alert.show("답글 등록에 실패하였습니다.");
-                }
-
-                axios.get(server_config.server_Address + "/board/view/update/" + board_id)
-                    .then((response) => {
-                        //console.log(response.data.list.post_comment);
-                        set_Comment_List(response.data.list.post_comment);
-                    })
-
-            })
-
-
-    }
-
-    //답글 추천
-    const ReComment_recommend_Handler = (comment_id, recomment_id) => {
-        //console.log(comment_id, recomment_id);
-        axios.post(server_config.server_Address + '/board/recomment/recommend',
-            {
-                board_id: board_id,
-                comment_id: comment_id,
-                recomment_id: recomment_id,
-            })
-            .then((response) => {
-                //console.log(response.data);
-                document.getElementById(recomment_id).innerText = response.data.recommend_count;
-
-
-                if (response.data.recomment_recommend_result === 1) {
-                    document.getElementById(recomment_id + 'button').style.backgroundColor = '#439926';
-                    document.getElementById(recomment_id + 'button').style.borderColor = '#439926';
-                    document.getElementById(recomment_id + 'button').style.color = 'white';
-                } else {
-                    document.getElementById(recomment_id + 'button').style.backgroundColor = 'white';
-                    document.getElementById(recomment_id + 'button').style.borderColor = '#b3b3b3';
-                    document.getElementById(recomment_id + 'button').style.color = 'black';
-                }
-            })
-    }
-
-    const textArea_Change_Handler = (e) => {
-        console.log(e.target.value);
-        console.log(e.target.name);
-
-        set_report_form_data({
-            ...get_report_form_data,
-            [e.target.name]: e.target.value
-        });
-    }
-
-    //report2
-    const report_Comment_Modal_Handler = (list) => {
-        if (list.comment_content) {
-            set_comment_report_modal_visible(true);
-            console.log(list);
-        }
-        else {
-            set_recomment_report_modal_visible(true);
-        }
-
-        set_comment_data(list);
     }
 
     const DateDisplay = (list_date) => {
@@ -650,44 +476,12 @@ const BoardView = (res) => {
                     >
                         <p>정말 삭제하시겠습니까?</p>
                     </Modal>
-                    <Modal
-                        title="댓글 삭제"
-                        visible={comment_visible}
-                        onOk={handle_DeleteComment_Ok}
-                        confirmLoading={confirmLoading}
-                        onCancel={handle_DeleteComment_Cancel}
-                        okText="삭제"
-                        cancelText="취소"
-                    >
-                        <p>정말 삭제하시겠습니까?</p>
-                    </Modal>
-                    <Modal
-                        title="답글 삭제"
-                        visible={recomment_visible}
-                        onOk={handle_Delete_ReComment_Ok}
-                        confirmLoading={confirmLoading}
-                        onCancel={handle_Delete_ReComment_Cancel}
-                        okText="삭제"
-                        cancelText="취소"
-                    >
-                        <p>정말 삭제하시겠습니까?</p>
-                    </Modal>
                     <Board_Report
                         flag='board'
                         get_visible={get_report_modal_visible}
                         set_visible={set_report_modal_visible}
                         set_report_status={set_report_status}
                         data={get_board_data} />
-                    <Board_Report
-                        flag='comment'
-                        get_visible={get_comment_report_modal_visible}
-                        set_visible={set_comment_report_modal_visible}
-                        data={get_comment_data} />
-                    <Board_Report
-                        flag='recomment'
-                        get_visible={get_recomment_report_modal_visible}
-                        set_visible={set_recomment_report_modal_visible}
-                        data={get_comment_data} />
                 </div>
                 <div className="board_comment_wrap">
                     {/* textarea 댓글 */}
@@ -723,176 +517,9 @@ const BoardView = (res) => {
                     </Drawer>
                     <BoardComment
                         get_data={get_Comment_List}
-                        set_data={set_Comment_List} 
+                        set_data={set_Comment_List}
                         board_id={board_id}
                         user_name={get_userName} />
-                    {/*
-                    <div>
-                        <span className="comment_color">{get_board_data?.post_comment?.length}</span>
-                        <span>개의 댓글</span>
-
-                    </div>
-                    <div>
-
-                        {get_Comment_List.map((list, index) => {
-
-                            let comment_user_check = false;
-
-                            if (list.comment_author === get_userName) {
-                                comment_user_check = true;
-                            }
-                            else {
-                                comment_user_check = false;
-                            }
-                            return (
-                                <div className="comment_wrap" key={index}>
-                                    <div className="comment_top">
-                                        <div className="comment_author">
-                                            <span className="darkGray">{list.comment_author} </span>
-                                            <span className="lightGray">
-                                                {dayjs(list.comment_date).format('MM-DD HH:mm')}
-                                            </span>
-
-                                        </div>
-                                        <div>
-                                            <span id='delete_button'>
-                                                {comment_user_check
-                                                    ? <span><DeleteOutlined onClick={() => showCommentModal(list._id)} /></span>
-                                                    : <span><AlertOutlined onClick={() => report_Comment_Modal_Handler(list)} /></span>}
-                                            </span>
-
-                                        </div>
-                                    </div>
-                                    <div className="comment_content">
-                                        {list.comment_content}
-                                    </div>
-                                    <div className="comment_function_wrap">
-                                        <div>
-                                            <Button type="primary" onClick={() => ReComment_Handler(list._id)}>
-                                                답글
-                                            </Button>
-                                        </div>
-                                        <div className='comment_function_list'>
-                                            <Button
-                                                id={list._id + "button"}
-                                                onClick={() => comment_recommend_Handler(list._id)}
-                                                style={list.comment_recommend_user.findIndex((e) =>
-                                                    e.comment_recommend_user === get_userName) !== -1
-                                                    ? {
-                                                        backgroundColor: '#439926',
-                                                        padding: '0 15px',
-                                                        color: 'white',
-                                                        BorderColor: '#439926'
-                                                    }
-                                                    : {
-                                                        backgroundColor: 'white',
-                                                        padding: '0 15px',
-                                                        color: 'black',
-                                                        BorderColor: '#b3b3b3'
-                                                    }}>
-                                                <LikeOutlined />
-                                                <span id={list._id}>
-                                                    {list.comment_recommend}
-                                                </span>
-                                            </Button>
-                                        </div>
-
-                                    </div>
-                                    <div>
-                                        {
-                                            get_recomment_open ?
-                                                get_comment_id === list._id ?
-                                                    <div>
-                                                        <div>
-                                                            <TextArea rows={3} value={get_recomment_content}
-                                                                onChange={ReComment_Change_Handler} />
-                                                        </div>
-                                                        <div>
-                                                            <Button type="primary" icon={<PlusOutlined />}
-                                                                onClick={() => ReComment_Insert_Handler(list._id)}>
-                                                                답글 등록
-                                                            </Button>
-                                                        </div>
-                                                    </div>
-                                                    : null
-                                                : null
-                                        }
-                                    </div>
-                                    <div>
-                                        {list.comment_recomment.map((recomment, index) => {
-
-                                            let recomment_user_check = false;
-
-                                            if (recomment.recomment_author === get_userName) {
-                                                recomment_user_check = true;
-                                            }
-                                            else {
-                                                recomment_user_check = false;
-                                            }
-
-                                            return (
-                                                <div key={index}>
-                                                    <div className='recomment_wrap'>
-                                                        <div className='recomment_top'>
-                                                            <div className="recomment_author">
-                                                                <RightOutlined />
-                                                                {recomment.recomment_author}
-                                                            </div>
-                                                            <div>
-                                                                {recomment.recomment_date}
-                                                                <span>
-                                                                    {recomment_user_check
-                                                                        ? <span id='delete_button'>
-                                                                            <DeleteOutlined onClick={
-                                                                                () => showReCommentModal(list._id, recomment._id)} />
-                                                                        </span>
-                                                                        : <span id='delete_button'>
-                                                                            <AlertOutlined onClick={
-                                                                                () => report_Comment_Modal_Handler(recomment)} />
-                                                                        </span>}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        <div className='recomment_info'>
-                                                            {recomment.recomment_content}
-                                                        </div>
-                                                        <div className='recomment_function'>
-
-                                                            <Button
-                                                                id={recomment._id + "button"}
-                                                                onClick={() => ReComment_recommend_Handler(list._id, recomment._id)}
-                                                                style={recomment.recomment_recommend_user.findIndex((e) =>
-                                                                    e.recomment_recommend_user === get_userName) !== -1
-                                                                    ? {
-                                                                        backgroundColor: '#439926',
-                                                                        padding: '0 15px',
-                                                                        color: 'white',
-                                                                        BorderColor: '#439926'
-                                                                    }
-                                                                    : {
-                                                                        backgroundColor: 'white',
-                                                                        padding: '0 15px',
-                                                                        color: 'black',
-                                                                        BorderColor: '#b3b3b3'
-                                                                    }}>
-                                                                <LikeOutlined />
-                                                                <span id={recomment._id}>
-                                                                    {recomment.recomment_recommend}
-                                                                </span>
-                                                            </Button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-
-                                </div>
-                            )
-                        }
-                        )}
-                    </div> */}
-
                 </div>
             </div>
         </>
