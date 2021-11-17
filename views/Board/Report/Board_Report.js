@@ -41,7 +41,7 @@ const Board_Report = (props) => {
         });
     }
 
-    const a = () => {
+    const report_repaint = () => {
         axios.post(server_config.server_Address + "/report/status",
             {
                 board_id: props.board_id,
@@ -84,7 +84,6 @@ const Board_Report = (props) => {
             axios.post(server_config.server_Address + '/report/report',
                 {
                     report_form_data: get_report_form_data,
-                    report_user: get_userName,
                     board_id: get_board_data._id,
                     bad_user: bad_user_data
                 })
@@ -96,10 +95,10 @@ const Board_Report = (props) => {
                             props.set_report_status(true);
                             break;
                         case 'comment':
-                            a();
+                            report_repaint();
                             break;
                         case 'recomment':
-                            a();
+                            report_repaint();
                             break;
                         default:
                             break;

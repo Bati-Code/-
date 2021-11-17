@@ -74,7 +74,7 @@ const BoardView = (res) => {
                 set_fin_List_name(response.data.list.post_fin_list.name);
                 const recommend_user_list = response.data.list.post_recommend_user;
 
-                const index = recommend_user_list.findIndex((list) => list.recommend_user === response.data.userName);
+                const index = recommend_user_list.findIndex((list) => list.recommend_user === response.data.userID);
                 //console.log("index", index);
 
                 if (index !== -1) {
@@ -85,10 +85,10 @@ const BoardView = (res) => {
                     set_recommend_check(false);
                 }
 
-                if (response.data.list.post_author !== response.data.userName) {
+                if (response.data.list.post_author_ID !== response.data.userID) {
                     axios.post(server_config.server_Address + '/report/search',
                         {
-                            report_user: response.data.userName,
+                            report_user: response.data.userID,
                             board_id: board_id
                         })
                         .then((response) => {
@@ -103,7 +103,7 @@ const BoardView = (res) => {
 
         axios.get(server_config.server_Address + "/user_check")
             .then((response) => {
-                if (response.data.userName === get_board_data.post_author
+                if (response.data.userID === get_board_data.post_author_ID
                     && response.data.user_result === 1) {
                     //console.log("board view success");
                     set_user_check(true);
