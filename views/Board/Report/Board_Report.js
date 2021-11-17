@@ -19,6 +19,7 @@ const Board_Report = (props) => {
 
     const get_board_data = props.data;
     const flag = props.flag;
+    const status = props.get_status;
 
     useEffect(() => {
         axios.get(server_config.server_Address + "/user_check")
@@ -40,8 +41,30 @@ const Board_Report = (props) => {
         });
     }
 
+    const a = () => {
+        axios.post(server_config.server_Address + "/report/status",
+            {
+                board_id: props.board_id,
+            })
+            .then((response) => {
+
+                console.log("DATAa : ", response.data);
+                console.log("DATAb : ", props.get_status);
+                console.log("DATAc : ", status);
+
+                if (props?.get_status?.length != 0) {
+                    props.get_status.map((list, index) => {
+                        list.report_status = response.data.data[index];
+                    })
+                    let arr = props.get_status.slice();
+                    props.set_status(arr);
+                }
+            })
+    }
+
     const report_Confirm_Handler = () => {
         console.log(get_report_form_data);
+        console.log("AAAAAAAAAAA ", get_board_data);
         if (get_report_form_data.selected_value != '' && get_report_form_data.content != '') {
             let bad_user_data = '';
 
@@ -50,10 +73,10 @@ const Board_Report = (props) => {
                     bad_user_data = get_board_data.post_author;
                     break;
                 case 'comment':
-                    bad_user_data = get_board_data.comment_content;
+                    bad_user_data = get_board_data.comment_author;
                     break;
                 case 'recomment':
-                    bad_user_data = get_board_data.recomment_content;
+                    bad_user_data = get_board_data.recomment_author;
                     break;
                 default:
                     break;
@@ -67,10 +90,22 @@ const Board_Report = (props) => {
                 })
                 .then((response) => {
                     console.log(response.data);
-                    if (flag == 'board')
-                        props.set_report_status(true);
 
+                    switch (flag) {
+                        case 'board':
+                            props.set_report_status(true);
+                            break;
+                        case 'comment':
+                            a();
+                            break;
+                        case 'recomment':
+                            a();
+                            break;
+                        default:
+                            break;
+                    }
                 })
+
             set_report_form_data({
                 selected_value: '',
                 content: ''

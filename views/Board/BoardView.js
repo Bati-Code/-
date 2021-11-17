@@ -68,31 +68,9 @@ const BoardView = (res) => {
                 //console.log(response.data.list.post_recommend_user);
 
                 console.log("A : ", response.data.list.post_comment);
-                let arr = response.data.list.post_comment.slice();
-
-                console.log(arr);
-
-                let array = [];
-
-                if (arr.length != 0) {
-                    for (let i = 0; i < arr.length; i++) {
-                        array.push(arr[i]._id);
-                    }
-
-                    axios.post(server_config.server_Address + "/report/searchArray",
-                        {
-                            data: array
-                        })
-                        .then((response) => {
-                            console.log(response.data);
-                            arr.map((list, index) => {
-                                list.report_data = response.data.data[index];
-                            })
-                        })
-                }
 
                 set_board_data(response.data.list);
-                set_Comment_List(arr);
+                set_Comment_List(response.data.list.post_comment);
                 set_fin_List_name(response.data.list.post_fin_list.name);
                 const recommend_user_list = response.data.list.post_recommend_user;
 

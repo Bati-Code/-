@@ -16,7 +16,7 @@ const BoardComment = (props) => {
     const [get_recomment_for_comment_id, set_recomment_for_comment_id] = useState('');
     const [get_recomment_id, set_recomment_id] = useState('');
 
-    const [get_report_status, set_report_status] = useState({});
+    const [get_report_status, set_report_status] = useState([]);
 
     const [get_recomment_content, set_recomment_content] = useState('');
 
@@ -34,6 +34,7 @@ const BoardComment = (props) => {
 
     const dispatch = useDispatch();
     const { board_list } = useSelector(state => state.boardStore);
+
 
     useEffect(() => {
 
@@ -70,14 +71,20 @@ const BoardComment = (props) => {
 
                 console.log("DATA : ", response.data);
                 //set_report_status(response.data);
-                props.set_data(props.get_data.map((list, index) => {
-                    list.report_status = response.data.data[index];
-                }))
+
+                if (props.get_data.length != 0) {
+                    props.get_data.map((list, index) => {
+                        list.report_status = response.data.data[index];
+                    })
+                    set_report_status(props.get_data);
+                }
             })
 
-    }, [])
+        console.log("EEFFF");
 
-    console.log( "A A A  : ", props.get_data);
+    }, [props.get_data])
+
+    console.log("A A A  : ", props.get_data);
 
 
     useEffect(() => {
@@ -296,7 +303,7 @@ const BoardComment = (props) => {
 
             </div>
             <div>
-                {props.get_data.map((list, index1) => {
+                {get_report_status.map((list, index1) => {
 
                     console.log("LIST : ", list);
 
@@ -322,7 +329,7 @@ const BoardComment = (props) => {
                                     <span id='delete_button'>
                                         {comment_user_check
                                             ? <span><DeleteOutlined onClick={() => showCommentModal(list._id)} /></span>
-                                            : list.report_data[index1]._id.comment_object.length == 0 ?
+                                            : list?.report_status?._id.comment_object.length == 0 ?
                                                 <span><AlertOutlined onClick={() => report_Comment_Modal_Handler(list)} /></span>
                                                 : <AlertFilled />}
                                     </span>
@@ -387,6 +394,7 @@ const BoardComment = (props) => {
                             <div>
                                 {list.comment_recomment.map((recomment, index2) => {
 
+                                    console.log("Re : ", recomment, list);
                                     let recomment_user_check = false;
 
                                     if (recomment.recomment_author === get_userName) {
@@ -413,7 +421,7 @@ const BoardComment = (props) => {
                                                                     <DeleteOutlined onClick={
                                                                         () => showReCommentModal(list._id, recomment._id)} />
                                                                 </span>
-                                                                : get_report_status?.data[index1]?.recomment_object[index2]?.data.length == 0 ?
+                                                                : list.report_status.recomment_object[index2].data.length == 0 ?
                                                                     <span id='delete_button'>
                                                                         <AlertOutlined onClick={
                                                                             () => report_Comment_Modal_Handler(recomment)} />
@@ -479,14 +487,16 @@ const BoardComment = (props) => {
                     get_visible={get_comment_report_modal_visible}
                     set_visible={set_comment_report_modal_visible}
                     data={get_comment_data}
-                    status={set_report_status}
+                    get_status={props.get_data}
+                    set_status={props.set_data}
                     board_id={props.board_id} />
                 <Board_Report
                     flag='recomment'
                     get_visible={get_recomment_report_modal_visible}
                     set_visible={set_recomment_report_modal_visible}
                     data={get_comment_data}
-                    status={set_report_status}
+                    get_status={props.get_data}
+                    set_status={props.set_data}
                     board_id={props.board_id} />
             </div>
 
