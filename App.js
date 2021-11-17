@@ -34,6 +34,7 @@ const Board = () => {
 			<Route exact path="/" component={LoginPage} />
 			<Switch>
 				<Route path="/login" render={() => <LoginPage />} />
+				{/* <Route path="/login/:id/:nickname" component={LoginPage} /> */}
 
 				<PrivateRoute path="/main" component={MainPage} />
 				<PrivateRoute path="/board/insert" component={BoardInsert} />

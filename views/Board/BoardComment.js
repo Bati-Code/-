@@ -84,8 +84,6 @@ const BoardComment = (props) => {
 
     }, [props.get_data])
 
-    console.log("A A A  : ", props.get_data);
-
 
     useEffect(() => {
         axios.post(server_config.server_Address + "/report/status",
@@ -132,6 +130,7 @@ const BoardComment = (props) => {
                         .then((response) => {
                             //console.log(response.data.list.post_comment);
                             props.set_data(response.data.list.post_comment);
+                            set_report_status(response.data.list.post_comment);
                             const board = board_list[board_list.findIndex((e) => e._id == props.board_id)];
                             console.log("BOard", board);
                             board?.post_comment.pop();
@@ -259,8 +258,9 @@ const BoardComment = (props) => {
 
                     axios.get(server_config.server_Address + "/board/view/update/" + props.board_id)
                         .then((response) => {
-                            //console.log(response.data.list.post_comment);
+                            console.log("UPDA ", response.data.list.post_comment);
                             props.set_data(response.data.list.post_comment);
+                            //set_report_status(response.data.list.post_comment);
                         })
                 }
             })
@@ -304,8 +304,6 @@ const BoardComment = (props) => {
             </div>
             <div>
                 {get_report_status.map((list, index1) => {
-
-                    console.log("LIST : ", list);
 
                     let comment_user_check = false;
 

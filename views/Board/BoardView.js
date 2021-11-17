@@ -189,7 +189,6 @@ const BoardView = (res) => {
     };
 
     const Comment_Change_Handler = (e) => {
-        console.log(e.target.value);
         set_comment_content(e.target.value);
     }
 

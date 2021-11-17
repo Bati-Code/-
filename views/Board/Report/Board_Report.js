@@ -171,7 +171,7 @@ const Board_Report = (props) => {
                 <textarea id="content" name="content"
                     value={get_report_form_data.content} onChange={textArea_Change_Handler} />
             </div>
-            <div>
+            <div className="report_tip">
                 신고된 내용은 확인후 처리하겠습니다. 소중한 신고 감사합니다.
             </div>
         </Modal>

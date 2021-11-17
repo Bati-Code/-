@@ -16,6 +16,7 @@
     border: 1px solid #DBDBDB;
     min-height: 400px;
     padding: 15px;
+    overflow-y: scroll;
 }
 
 .interestWrap .interest_List .interest_List_Item{

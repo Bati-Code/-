@@ -5,13 +5,31 @@ import { server_config } from "../../server_config";
 import "./css/LoginCSS.css";
 
 
-const LoginPage = () => {
+const LoginPage = ({ match }) => {
 
     const history = useHistory();
 
-    useEffect(() => {
+    // const user_id = match.params.id;
+    // const user_nickname = match.params.nickname;
+    // console.log(user_id, ' : ', user_nickname);
 
+    useEffect(() => {
         console.log(window.location.pathname);
+        //암호화된 PW를 받아서 DB와 비교 후 처리
+
+        // axios.post(server_config.server_Address + '/login',  //192.168.0.45
+        //     {
+        //         userID: user_id,
+        //         userName: user_nickname
+        //     },
+        // )
+        //     .then((response) => {
+        //         console.log("login_Post", response.data);
+        //         let user_Storage = window.sessionStorage;
+        //         user_Storage.setItem('user_Token', response.data);
+
+        //         history.push('/main');
+        //     })
 
     }, [])
 
@@ -35,21 +53,20 @@ const LoginPage = () => {
                 }
                 if (response.data.code === 200) {
                     //console.log("login");
-                    //console.log(response.data.result.data);
+                    console.log(response.data.result);
                     axios.post(server_config.server_Address + '/login',  //192.168.0.45
                         {
-                            userName: response.data.result.data.me.username
-                        },
+                            userName: response.data.result.data.me.username,
+                            userID : response.data.result.data.me._id
+                        }
                     )
                         .then((response) => {
-                            //console.log("login_Post", response.data);
+                            console.log("login_Post", response.data);
                             let user_Storage = window.sessionStorage;
                             user_Storage.setItem('user_Token', response.data);
 
                             history.push('/main');
                         })
-
-
                 }
             })
     }
@@ -68,7 +85,6 @@ const LoginPage = () => {
             <div className="loginHeader">
                 로그인
             </div>
-            {window.location.pathname}
             <div className="container">
                 <section className="content">
                     <nav>

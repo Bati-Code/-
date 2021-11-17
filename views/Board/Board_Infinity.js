@@ -80,7 +80,7 @@ const Board_Infinity = (props) => {
                     axios.get(server_config.server_Address + '/board/search/' + menu_select + '/' + search_value +
                         '/' + date[0] + '/' + date[1] + '/' + infinity_page)
                         .then(async (response) => {
-                            console.log(board_list);
+                            console.log("LIST : ", board_list);
                             console.log(search_value, " : ", search, " : ", infinity_page);
                             let boardList = response.data.docs;
 
@@ -356,7 +356,7 @@ const Board_Infinity = (props) => {
                                         <ul className="board_info">
                                             <li className="post_author"
                                                 onClick={() => {
-                                                    Modal_Visible_Handler(1, list.post_author);
+                                                    Modal_Visible_Handler(1, list.post_author_ID);
                                                 }}>{list.post_author}</li> <li> · </li>
                                             <li>{DateDisplay(list.post_date)}</li> <li> · </li>
                                             <li>조회수 {list.post_count}</li>
@@ -427,7 +427,7 @@ const Board_Infinity = (props) => {
                                     <ul className="board_info">
                                         <li className="post_author"
                                             onClick={() => {
-                                                Modal_Visible_Handler(1, list.post_author);
+                                                Modal_Visible_Handler(1, list.post_author_ID);
                                             }}>{list.post_author}</li> <li> · </li>
                                         <li>{DateDisplay(list.post_date)}</li> <li> · </li>
                                         <li>조회수 {list.post_count}</li>

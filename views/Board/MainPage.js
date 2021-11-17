@@ -169,7 +169,7 @@ const MainPage = () => {
                         'Search_Value': value
                     })
                     .then((response) => {
-                        console.log(response.data);
+                        console.log("Search_Result : ", response.data);
                     })
 
                 dispatch(Page_Reset());
