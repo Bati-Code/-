@@ -70,13 +70,13 @@ const Board_Report = (props) => {
 
             switch (flag) {
                 case 'board':
-                    bad_user_data = get_board_data.post_author;
+                    bad_user_data = get_board_data.post_author_ID;
                     break;
                 case 'comment':
-                    bad_user_data = get_board_data.comment_author;
+                    bad_user_data = get_board_data.comment_author_ID;
                     break;
                 case 'recomment':
-                    bad_user_data = get_board_data.recomment_author;
+                    bad_user_data = get_board_data.recomment_author_ID;
                     break;
                 default:
                     break;

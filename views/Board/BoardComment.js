@@ -31,6 +31,7 @@ const BoardComment = (props) => {
     const { TextArea } = Input;
 
     const get_userName = props.user_name;
+    const get_userID = props.user_id;
 
     const dispatch = useDispatch();
     const { board_list } = useSelector(state => state.boardStore);
@@ -307,7 +308,7 @@ const BoardComment = (props) => {
 
                     let comment_user_check = false;
 
-                    if (list.comment_author === get_userName) {
+                    if (list.comment_author_ID === get_userID) {
                         comment_user_check = true;
                     }
                     else {
@@ -348,7 +349,7 @@ const BoardComment = (props) => {
                                         id={list._id + "button"}
                                         onClick={() => comment_recommend_Handler(list._id)}
                                         style={list.comment_recommend_user.findIndex((e) =>
-                                            e.comment_recommend_user === get_userName) !== -1
+                                            e.comment_recommend_user === get_userID) !== -1
                                             ? {
                                                 backgroundColor: '#439926',
                                                 padding: '0 15px',
@@ -395,7 +396,7 @@ const BoardComment = (props) => {
                                     console.log("Re : ", recomment, list);
                                     let recomment_user_check = false;
 
-                                    if (recomment.recomment_author === get_userName) {
+                                    if (recomment.recomment_author_ID === get_userID) {
                                         recomment_user_check = true;
                                     }
                                     else {
@@ -436,7 +437,7 @@ const BoardComment = (props) => {
                                                         id={recomment._id + "button"}
                                                         onClick={() => ReComment_recommend_Handler(list._id, recomment._id)}
                                                         style={recomment.recomment_recommend_user.findIndex((e) =>
-                                                            e.recomment_recommend_user === get_userName) !== -1
+                                                            e.recomment_recommend_user === get_userID) !== -1
                                                             ? {
                                                                 backgroundColor: '#439926',
                                                                 padding: '0 15px',

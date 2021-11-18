@@ -32,6 +32,7 @@ const BoardView = (res) => {
     const [get_fin_List_name, set_fin_List_name] = useState('');
     const [get_recommend_check, set_recommend_check] = useState(false);
     const [get_userName, set_userName] = useState('');
+    const [get_userID, set_userID] = useState('');
     const [get_report_status, set_report_status] = useState(false);
 
     const [get_comment_content, set_comment_content] = useState('');
@@ -109,10 +110,14 @@ const BoardView = (res) => {
                     set_user_check(true);
                 }
                 set_userName(response.data.userName);
+                set_userID(response.data.userID);
             })
 
-        const board = board_list[board_list.findIndex((e) => e._id == board_id)];
-        board.post_count++;
+        if (board_list.length != 0) {
+            const board = board_list[board_list.findIndex((e) => e._id == board_id)];
+            board.post_count++;
+        }
+
         dispatch(board_Store(board_list));
 
         window.scrollTo(0, 0);
@@ -500,7 +505,8 @@ const BoardView = (res) => {
                         get_data={get_Comment_List}
                         set_data={set_Comment_List}
                         board_id={board_id}
-                        user_name={get_userName} />
+                        user_name={get_userName}
+                        user_id={get_userID} />
                 </div>
             </div>
         </>
