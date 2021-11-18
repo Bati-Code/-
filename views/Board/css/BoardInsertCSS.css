@@ -18,6 +18,10 @@
     font-size: 12px;
 }
 
+.board_insert_finance_list .Mui-checked{
+    color: #ec6a17 !important;
+}
+
 .board_insert_wrap{
     margin: 15px;
 }

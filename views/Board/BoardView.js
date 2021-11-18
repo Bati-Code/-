@@ -111,6 +111,10 @@ const BoardView = (res) => {
                 set_userName(response.data.userName);
             })
 
+        const board = board_list[board_list.findIndex((e) => e._id == board_id)];
+        board.post_count++;
+        dispatch(board_Store(board_list));
+
         window.scrollTo(0, 0);
     }, [])
 

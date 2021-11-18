@@ -23,6 +23,7 @@ const BoardUpdate = (res) => {
     const [get_BoardData, set_BoardData] = useState('');
     const [get_BoardTitle, set_BoardTitle] = useState('');
     const [get_BoardContent, set_BoardContent] = useState('');
+    const [get_intetest_finance_List, set_intetest_finance_List] = useState([]);
     const [get_finance_List_Value, set_finance_List_Value] = useState({});
     const [get_loading, set_loading] = useState(false);
     const [get_checked, set_checked] = useState(false);
@@ -42,10 +43,21 @@ const BoardUpdate = (res) => {
                 set_BoardTitle(request.data.list.post_title);
                 set_BoardContent(request.data.list.post_content);
                 set_finance_List_Value(request.data.list.post_fin_list);
+                console.log(request.data.list);
 
-
-                //console.log(request.data.list);
+                axios.get(server_config.server_Address + '/fin_interest/view')
+                    .then((response) => {
+                        set_intetest_finance_List(response.data);
+                        const interest_index = response.data.fin_interest_data.findIndex((e) => e.code == request.data.list.post_fin_list.code);
+                        if (interest_index >= 0) {
+                            set_checked(true);
+                        }
+                        else {
+                            set_checked(false);
+                        }
+                    })
             })
+
     }, [])
 
     const BoardTitle_Handler = (e) => {
@@ -91,7 +103,14 @@ const BoardUpdate = (res) => {
     const AutoComplete_Change_Handler = (event, newValue) => {
         //set_BoardContent(newValue);
         set_finance_List_Value(newValue);
-        //console.log(get_finance_List_Value, '|', newValue);
+
+        const interest_index = get_intetest_finance_List.fin_interest_data.findIndex((e) => e.code == newValue.code);
+        if (interest_index >= 0) {
+            set_checked(true);
+        }
+        else {
+            set_checked(false);
+        }
     }
 
     const onChange_Handler = (e) => {

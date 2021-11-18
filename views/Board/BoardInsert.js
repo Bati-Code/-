@@ -24,7 +24,7 @@ const BoardInsert = () => {
 
     const [get_BoardData, set_BoardData] = useState('');
     const [get_BoardTitle, set_BoardTitle] = useState('');
-    const [get_finance_List, set_finance_List] = useState([{}]);
+    const [get_intetest_finance_List, set_intetest_finance_List] = useState([]);
     const [get_finance_List_Value, set_finance_List_Value] = useState('');
     const [get_fin_vote, set_fin_vote] = useState([]);
     const [get_loading, set_loading] = useState(false);
@@ -40,6 +40,11 @@ const BoardInsert = () => {
 
 
     useEffect(() => {
+        axios.get(server_config.server_Address + '/fin_interest/view')
+            .then((response) => {
+                console.log(response.data);
+                set_intetest_finance_List(response.data);
+            })
     }, [])
 
     const BoardTitle_Handler = (e) => {
@@ -137,7 +142,13 @@ const BoardInsert = () => {
 
     const AutoComplete_Change_Handler = async (event, newValue) => {
         set_finance_List_Value(newValue);
-        console.log(newValue);
+        const interest_index = get_intetest_finance_List.fin_interest_data.findIndex((e) => e.code == newValue.code);
+        if (interest_index >= 0) {
+            set_checked(true);
+        }
+        else{
+            set_checked(false);
+        }
         Get_Vote_View(newValue);
     }
 

@@ -14,7 +14,7 @@ import { XAxis } from 'recharts/lib/cartesian/XAxis';
 import { ResponsiveContainer } from 'recharts/lib/component/ResponsiveContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Skeleton } from '@mui/material';
-import { Board_Infinity_Page, board_Store, Board_Store_Reset } from '../../redux/action/board_list_action';
+import { Board_Infinity_Page, board_Store, Board_Store_Reset, Board_Store_User } from '../../redux/action/board_list_action';
 import CountUp from 'react-countup';
 
 dayjs.extend(utc);
@@ -36,7 +36,7 @@ const Board_Infinity = (props) => {
     const dispatch = useDispatch();
 
     const { count, page, search, menu_select, search_value, radio, date } = useSelector(state => state.pageStore);
-    const { board_list, scroll, infinity_page } = useSelector(state => state.boardStore);
+    const { board_list, scroll, infinity_page, user_name } = useSelector(state => state.boardStore);
 
     let flag = 0;
 
@@ -254,8 +254,9 @@ const Board_Infinity = (props) => {
         return (date)
     }
 
-    const Modal_Visible_Handler = (flag, data) => {
-        set_Post_Author(data);
+    const Modal_Visible_Handler = (flag, data, author) => {
+        set_Post_Author(author);
+        dispatch(Board_Store_User(author));
         if (flag == 1) {
             set_Modal_Visible(true);
             axios.get(server_config.server_Address + '/board/search/author/' + data)
@@ -356,7 +357,7 @@ const Board_Infinity = (props) => {
                                         <ul className="board_info">
                                             <li className="post_author"
                                                 onClick={() => {
-                                                    Modal_Visible_Handler(1, list.post_author_ID);
+                                                    Modal_Visible_Handler(1, list.post_author_ID, list.post_author);
                                                 }}>{list.post_author}</li> <li> · </li>
                                             <li>{DateDisplay(list.post_date)}</li> <li> · </li>
                                             <li>조회수 {list.post_count}</li>
@@ -387,7 +388,7 @@ const Board_Infinity = (props) => {
                 </InfiniteScroll>
             </div>
             <div>
-                <Modal title={get_Post_Author + "님의 최근 게시글"} visible={get_Modal_Visible}
+                <Modal title={user_name + "님의 최근 게시글"} visible={get_Modal_Visible}
                     footer={null} onCancel={() => { Modal_Visible_Handler(0, '') }}>
                     {get_Modal_Board_List.map((list, index) => {
 

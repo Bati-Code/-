@@ -89,8 +89,9 @@ const Top_Fin_list = () => {
         return (date)
     }
 
-    const Modal_Visible_Handler = (flag, data) => {
-        set_Post_Author(data);
+    const Modal_Visible_Handler = (flag, data, author) => {
+        console.log(author);
+        set_Post_Author(author);
         if (flag == 1) {
             set_Modal_Visible(true);
             axios.get(server_config.server_Address + '/board/search/author/' + data)
@@ -122,7 +123,6 @@ const Top_Fin_list = () => {
     const Get_Board_Modal_Process = async (boardList) => {
 
         if (boardList.length == 0) {
-            set_more_list(false);
             console.log("Finish");
             return;
         }
@@ -145,7 +145,7 @@ const Top_Fin_list = () => {
                 });
             })
 
-            set_Modal_Board_List(boardList);
+        set_Modal_Board_List(boardList);
     }
 
 
@@ -206,7 +206,7 @@ const Top_Fin_list = () => {
                             // </div>
                             <div className="board_temp_wrap" key={index}>
                                 <div className="board_num">
-                                    {index+1}
+                                    {index + 1}
                                 </div>
                                 <div className="board_main">
                                     <div className="board_fin_name">
@@ -228,7 +228,7 @@ const Top_Fin_list = () => {
                                     <ul className="board_info">
                                         <li className="post_author"
                                             onClick={() => {
-                                                Modal_Visible_Handler(1, list.post_author);
+                                                Modal_Visible_Handler(1, list.post_author_ID, list.post_author);
                                             }}>{list.post_author}</li> <li> · </li>
                                         <li>{DateDisplay(list.post_date)}</li> <li> · </li>
                                         <li>조회수 {list.post_count}</li>
@@ -291,10 +291,8 @@ const Top_Fin_list = () => {
                                         }
                                     </div>
                                     <ul className="board_info">
-                                        <li className="post_author"
-                                            onClick={() => {
-                                                Modal_Visible_Handler(1, list.post_author);
-                                            }}>{list.post_author}</li> <li> · </li>
+                                        <li className="post_author">
+                                            {list.post_author}</li> <li> · </li>
                                         <li>{DateDisplay(list.post_date)}</li> <li> · </li>
                                         <li>조회수 {list.post_count}</li>
                                     </ul>
