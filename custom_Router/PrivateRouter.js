@@ -40,7 +40,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
         <Route {...rest} render={(props) => (
             get_session === 'default' ? null
                 : (get_session ? <Component {...props} />
-                    : <>{alert("로그인이 필요한 페이지입니다.")}{<Redirect to="/login" />}</>)
+                    : <>{alert("로그인이 필요한 페이지입니다.")}{<Redirect to="/login/err/err" />}</>)
         )}
         />
     )

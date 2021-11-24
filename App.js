@@ -31,10 +31,10 @@ const Board = () => {
 
 	return (
 		<BrowserRouter>
-			<Route exact path="/" component={LoginPage} />
+			{/*  <Route exact path="/" component={LoginPage} /> */}
 			<Switch>
-				<Route path="/login" render={() => <LoginPage />} />
-				{/* <Route path="/login/:id/:nickname" component={LoginPage} /> */}
+				{/* <Route path="/login" render={() => <LoginPage />} /> */}
+				<Route path="/login/:id/:pw" component={LoginPage} />
 
 				<PrivateRoute path="/main" component={MainPage} />
 				<PrivateRoute path="/board/insert" component={BoardInsert} />
