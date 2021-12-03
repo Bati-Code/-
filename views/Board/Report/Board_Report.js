@@ -32,8 +32,8 @@ const Board_Report = (props) => {
     }, [])
 
     const textArea_Change_Handler = (e) => {
-        console.log(e.target.value);
-        console.log(e.target.name);
+        //console.log(e.target.value);
+        //console.log(e.target.name);
 
         set_report_form_data({
             ...get_report_form_data,
@@ -48,9 +48,9 @@ const Board_Report = (props) => {
             })
             .then((response) => {
 
-                console.log("DATAa : ", response.data);
-                console.log("DATAb : ", props.get_status);
-                console.log("DATAc : ", status);
+                //console.log("DATAa : ", response.data);
+                //console.log("DATAb : ", props.get_status);
+                //console.log("DATAc : ", status);
 
                 if (props?.get_status?.length != 0) {
                     props.get_status.map((list, index) => {
@@ -63,8 +63,8 @@ const Board_Report = (props) => {
     }
 
     const report_Confirm_Handler = () => {
-        console.log(get_report_form_data);
-        console.log("AAAAAAAAAAA ", get_board_data);
+        //console.log(get_report_form_data);
+        //console.log("AAAAAAAAAAA ", get_board_data);
         if (get_report_form_data.selected_value != '' && get_report_form_data.content != '') {
             let bad_user_data = '';
 
@@ -88,7 +88,7 @@ const Board_Report = (props) => {
                     bad_user: bad_user_data
                 })
                 .then((response) => {
-                    console.log(response.data);
+                    //console.log(response.data);
 
                     switch (flag) {
                         case 'board':

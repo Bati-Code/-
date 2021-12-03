@@ -1,19 +1,22 @@
+import { Spin } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { server_config } from "../../server_config";
 import "./css/LoginCSS.css";
 
-
 const LoginPage = ({ match }) => {
 
     const history = useHistory();
     const [state, setstate] = useState('');
 
+    const [get_loading, set_loading] = useState(true);
+
     useEffect(() => {
         const split_path = window.location.href.split("/");
         const user_id = split_path[4];
         const user_pw = split_path[5];
+        //console.log(split_path);
         setstate([user_id, user_pw]);
         loginHandler(user_id, user_pw);
 
@@ -23,6 +26,7 @@ const LoginPage = ({ match }) => {
         // const id = document.getElementById("inputBox_ID").value;
         // const pw = document.getElementById("inputBox_PW").value;
 
+        set_loading(true);
         axios.post('http://103.57.61.87:8889/hitalk_msg_test/api/v1/msg/login',
             {
                 request: {
@@ -32,15 +36,15 @@ const LoginPage = ({ match }) => {
 
             })
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 if (response.data.code === 999) {
-                    console.log("login failed");
+                    //console.log("login failed");
                     //console.log(document.getElementById('inputBox_ID'));
                     return;
                 }
                 if (response.data.code === 200) {
-                    console.log("login");
-                    console.log(response.data.result);
+                    //console.log("login");
+                    //console.log(response.data.result);
                     axios.post(server_config.server_Address + '/login',  //192.168.0.45
                         {
                             userName: response.data.result.data.me.username,
@@ -48,10 +52,11 @@ const LoginPage = ({ match }) => {
                         }
                     )
                         .then((response) => {
-                            console.log("login_Post", response.data);
+                            //console.log("login_Post", response.data);
                             let user_Storage = window.sessionStorage;
                             user_Storage.setItem('user_Token', response.data);
 
+                            set_loading(false);
                             history.push('/main');
                         })
                 }
@@ -77,7 +82,7 @@ const LoginPage = ({ match }) => {
                 }
                 if (response.data.code === 200) {
                     //console.log("login");
-                    console.log(response.data.result);
+                    //console.log(response.data.result);
                     axios.post(server_config.server_Address + '/login',  //192.168.0.45
                         {
                             userName: response.data.result.data.me.username,
@@ -85,7 +90,7 @@ const LoginPage = ({ match }) => {
                         }
                     )
                         .then((response) => {
-                            console.log("login_Post", response.data);
+                            //console.log("login_Post", response.data);
                             let user_Storage = window.sessionStorage;
                             user_Storage.setItem('user_Token', response.data);
 
@@ -104,7 +109,9 @@ const LoginPage = ({ match }) => {
 
     return (
         <div className="login_wrap">
-            <div className="loginHeader">
+            <Spin spinning={get_loading} size='large'>
+            </Spin>
+            {/* <div className="loginHeader">
                 로그인
             </div>
             <div className="container">
@@ -133,7 +140,7 @@ const LoginPage = ({ match }) => {
                 </section>
             </div>
             <div className="footer">
-            </div>
+            </div> */}
         </div >
     )
 }

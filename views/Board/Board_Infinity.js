@@ -41,15 +41,15 @@ const Board_Infinity = (props) => {
     let flag = 0;
 
     useEffect(() => {
-        console.log("NORMAL EFFECT ===");
+        //console.log("NORMAL EFFECT ===");
         flag = 1;
 
         if (board_list.length !== 0) {
-            console.log("Get_Board_View Effect B");
+            //console.log("Get_Board_View Effect B");
             document.getElementById('board_list').scrollTo(0, scroll);
         }
         else {
-            console.log("BB");
+            //console.log("BB");
             set_more_list(true);
             Get_Board_View();
         }
@@ -58,7 +58,7 @@ const Board_Infinity = (props) => {
     useEffect(() => {
         if (flag == 1)
             return;
-        console.log("Search");
+        //console.log("Search");
         Get_Board_View();
 
     }, [search, search_value])
@@ -67,16 +67,16 @@ const Board_Infinity = (props) => {
     }, [radio])
 
     const Get_Board_View = () => {
-        console.log(radio, " : ", scroll, " : ", infinity_page);
+        //console.log(radio, " : ", scroll, " : ", infinity_page);
         if (radio === 'e') {
-            console.log("AAAA");
+            //console.log("AAAA");
             document.getElementById('board_list').scrollTo(0, scroll);
         }
         if (search) {
 
             switch (radio) {
                 case '최신순':
-                    console.log("AAAAAAAAAA");
+                    //console.log("AAAAAAAAAA");
                     axios.post(server_config.server_Address + '/board/search',
                         {
                             menuItem: menu_select,
@@ -86,8 +86,8 @@ const Board_Infinity = (props) => {
                             page: infinity_page
                         })
                         .then(async (response) => {
-                            console.log("LIST : ", board_list);
-                            console.log(search_value, " : ", search, " : ", infinity_page);
+                            //console.log("LIST : ", board_list);
+                            //console.log(search_value, " : ", search, " : ", infinity_page);
                             let boardList = response.data.docs;
 
                             await Get_Board_View_Process(boardList);
@@ -122,8 +122,8 @@ const Board_Infinity = (props) => {
                             page: infinity_page
                         })
                         .then(async (response) => {
-                            console.log(board_list);
-                            console.log(search_value, " : ", search, " : ", infinity_page);
+                            //console.log(board_list);
+                            //console.log(search_value, " : ", search, " : ", infinity_page);
                             let boardList = response.data.docs;
 
                             await Get_Board_View_Process(boardList);
@@ -139,8 +139,8 @@ const Board_Infinity = (props) => {
                             page: infinity_page
                         })
                         .then(async (response) => {
-                            console.log(board_list);
-                            console.log(search_value, " : ", search, " : ", infinity_page);
+                            //console.log(board_list);
+                            //console.log(search_value, " : ", search, " : ", infinity_page);
                             let boardList = response.data.docs;
 
                             await Get_Board_View_Process(boardList);
@@ -148,20 +148,20 @@ const Board_Infinity = (props) => {
                     break;
 
                 default:
-                    console.log("default");
+                    //console.log("default");
                     break;
             }
-            console.log(date);
+            //console.log(date);
 
         }
         else {
 
-            console.log("Radio : ", radio);
+            //console.log("Radio : ", radio);
             if (radio == "최신순") {
                 axios.get(server_config.server_Address + '/board/list/' + infinity_page)
                     .then(async (response) => {
                         let boardList = response.data.docs;
-                        console.log("LLLLLLLLLLLLLLLL : ", boardList);
+                        //console.log("LLLLLLLLLLLLLLLL : ", boardList);
 
                         await Get_Board_View_Process(boardList);
                     })
@@ -169,7 +169,7 @@ const Board_Infinity = (props) => {
             } else if (radio == "종목관심도순") {
                 axios.get(server_config.server_Address + '/board/desc/attention/' + infinity_page)
                     .then(async (response) => {
-                        console.log(response.data);
+                        //console.log(response.data);
                         let boardList = response.data.boards.docs;
                         let board_Array = [];
 
@@ -182,7 +182,7 @@ const Board_Infinity = (props) => {
             } else if (radio == "인기순") {
                 axios.get(server_config.server_Address + '/board/desc/like/' + infinity_page)
                     .then(async (response) => {
-                        console.log(response.data);
+                        //console.log(response.data);
                         let boardList = response.data.docs;
 
                         await Get_Board_View_Process(boardList);
@@ -190,7 +190,7 @@ const Board_Infinity = (props) => {
             } else if (radio == "조회순") {
                 axios.get(server_config.server_Address + '/board/desc/view/' + infinity_page)
                     .then(async (response) => {
-                        console.log(response.data);
+                        //console.log(response.data);
                         let boardList = response.data.docs;
 
                         await Get_Board_View_Process(boardList);
@@ -204,7 +204,7 @@ const Board_Infinity = (props) => {
 
         if (boardList.length == 0) {
             set_more_list(false);
-            console.log("Finish");
+            //console.log("Finish");
             return;
         }
 
@@ -218,7 +218,7 @@ const Board_Infinity = (props) => {
                 'fin_code_list': fin_code_List,
             })
             .then((response) => {
-                console.log("COUNT : ", response.data.countBoard);
+                //console.log("COUNT : ", response.data.countBoard);
                 boardList.map((list, index) => {
                     list.count = response.data.countBoard[index];
                     list.index = index + 1;
@@ -229,7 +229,7 @@ const Board_Infinity = (props) => {
             })
 
 
-        console.log("BoardList : Search", boardList);
+        //console.log("BoardList : Search", boardList);
 
         dispatch(board_Store(boardList));
         dispatch(Board_Infinity_Page(infinity_page + 1));
@@ -239,7 +239,7 @@ const Board_Infinity = (props) => {
 
         if (boardList.length == 0) {
             set_more_list(false);
-            console.log("Finish");
+            //console.log("Finish");
             return;
         }
 
@@ -253,7 +253,7 @@ const Board_Infinity = (props) => {
                 'fin_code_list': fin_code_List,
             })
             .then((response) => {
-                console.log("COUNT : ", response.data.countBoard);
+                //console.log("COUNT : ", response.data.countBoard);
                 boardList.map((list, index) => {
                     list.count = response.data.countBoard[index];
                     list.index = index + 1;
@@ -283,7 +283,7 @@ const Board_Infinity = (props) => {
             set_Modal_Visible(true);
             axios.get(server_config.server_Address + '/board/search/author/' + data)
                 .then((response) => {
-                    console.log(response.data);
+                    //console.log(response.data);
                     Get_Board_Modal_Process(response.data);
                 });
         }
@@ -298,7 +298,7 @@ const Board_Infinity = (props) => {
                     fin_name: data,
                 })
                 .then((response) => {
-                    console.log(response.data);
+                    //console.log(response.data);
                     set_chart_data(response.data);
                 })
         }
@@ -309,7 +309,7 @@ const Board_Infinity = (props) => {
 
     const next = () => {
 
-        console.log("next");
+        //console.log("next");
         Get_Board_View();
     }
 
@@ -414,7 +414,7 @@ const Board_Infinity = (props) => {
                     footer={null} onCancel={() => { Modal_Visible_Handler(0, '') }}>
                     {get_Modal_Board_List.map((list, index) => {
 
-                        console.log(list);
+                        //console.log(list);
 
                         let head = 0;
 

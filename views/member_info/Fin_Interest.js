@@ -87,11 +87,12 @@ const Fin_Interest = () => {
     const Get_Fin_Interest_Process = async (boardList) => {
 
         if (boardList.length == 0) {
-            console.log("Finish");
+            //console.log("Finish");
+            set_fin_interest_List(boardList);
             return;
         }
 
-        console.log("AA : ", boardList);
+        //console.log("AA : ", boardList);
 
         let fin_code_List = [];
         let vote_data_List = [];
@@ -106,18 +107,18 @@ const Fin_Interest = () => {
                     finance_name: boardList[i].name,
                 })
                 .then((response) => {
-                    console.log("DATA : ", response.data);
+                    //console.log("DATA : ", response.data);
                     vote_data_List.push(response.data);
                 })
         }
-        console.log(vote_data_List);
+        //console.log(vote_data_List);
 
         await axios.post(server_config.server_Address + '/board/countBoard',
             {
                 'fin_code_list': fin_code_List,
             })
             .then((response) => {
-                console.log("COUNT : ", response.data.countBoard);
+                //console.log("COUNT : ", response.data.countBoard);
 
                 boardList.map((list, index) => {
                     list.vote = vote_data_List[index];
@@ -127,14 +128,14 @@ const Fin_Interest = () => {
                 });
             })
 
-        console.log("LIST : ", boardList);
+        //console.log("LIST : ", boardList);
 
         set_fin_interest_List(boardList);
     }
 
     //투표
     const Up_Count_Handler = (fin_name) => {
-        console.log("NAME : ", fin_name);
+        //console.log("NAME : ", fin_name);
         axios.post(server_config.server_Address + '/finance/up',
             {
                 finance_name: fin_name,
@@ -157,13 +158,13 @@ const Fin_Interest = () => {
     }
     const Get_Finance_Data = async (fin_name) => {
 
-        console.log(fin_name);
+        //console.log(fin_name);
         await axios.post(server_config.server_Address + '/finance/info',
             {
                 finance_name: fin_name,
             })
             .then((response) => {
-                console.log("DATA : ", response.data);
+                //console.log("DATA : ", response.data);
                 return response.data;
                 //set_Finance_Info(response.data);
 
@@ -223,7 +224,7 @@ const Fin_Interest = () => {
                                 </div>
                                 <div className="interest_List">
                                     {get_fin_interest_List?.map((list, index) => {
-                                        console.log("Interest : ", list);
+                                        //console.log("Interest : ", list);
 
                                         let head = 0;
 
@@ -263,7 +264,7 @@ const Fin_Interest = () => {
                                                         <ReactTooltip
                                                             className="down_tooltip"
                                                             id="down_tooltip"
-                                                            getContent={dataTip => dataTip } />
+                                                            getContent={dataTip => dataTip} />
                                                         <div className="up_count" id='up_count'
                                                             onClick={() => Up_Count_Handler(list.name)}
                                                             data-for="up_tooltip"

@@ -351,4 +351,8 @@ main .board_function_wrap .item2 img{
 .darkGray{
     color: #505050;
 }
+
+::-webkit-scrollbar{
+    display:none;
+}
  

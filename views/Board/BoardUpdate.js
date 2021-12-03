@@ -43,7 +43,7 @@ const BoardUpdate = (res) => {
                 set_BoardTitle(request.data.list.post_title);
                 set_BoardContent(request.data.list.post_content);
                 set_finance_List_Value(request.data.list.post_fin_list);
-                console.log(request.data.list);
+                //console.log(request.data.list);
 
                 axios.get(server_config.server_Address + '/fin_interest/view')
                     .then((response) => {
@@ -66,7 +66,7 @@ const BoardUpdate = (res) => {
     }
 
     const Interest_Fin_Handler = (e) => {
-        console.log(e.target.checked);
+        //console.log(e.target.checked);
         set_checked(e.target.checked);
     }
 
@@ -90,7 +90,7 @@ const BoardUpdate = (res) => {
                 else if (request.data.update_board_result === 1) {
                     //console.log("업데이트 성공");
                     const board = board_list[board_list.findIndex((e) => e._id == board_id)];
-                    console.log(board);
+                    //console.log(board);
                     board.post_title = get_BoardTitle;
                     dispatch(board_Store(board_list));
                     history.push('/board/view/' + board_id);
@@ -118,7 +118,7 @@ const BoardUpdate = (res) => {
 
         for (let i = 0; i < e.target.files.length; i++) {
             bodyFormData.append("imgs", e.target.files[i]);
-            console.log(i);
+            //console.log(i);
         }
         bodyFormData.append("path", "community/board");
 
@@ -126,7 +126,7 @@ const BoardUpdate = (res) => {
         axios.post('http://103.57.61.87:8889/hitalk_msg_test/api/v1/image_upload',
             bodyFormData)
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 if (response.data.code == 200) {
                     set_loading(false);
                     for (let i = 0; i < response.data.images.length; i++) {
@@ -143,7 +143,7 @@ const BoardUpdate = (res) => {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
                 set_loading(false);
                 alert.show("이미지 파일 업로드 실패");
             })

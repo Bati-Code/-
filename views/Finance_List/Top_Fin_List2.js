@@ -36,7 +36,7 @@ const Top_Fin_list = () => {
     useEffect(() => {
         axios.get(server_config.server_Address + '/board/today')
             .then(async (response) => {
-                console.log("DATA : ", response.data);
+                //console.log("DATA : ", response.data);
 
                 const today_List = response.data.today_list;
                 await Get_Board_View_Process(today_List);
@@ -46,11 +46,11 @@ const Top_Fin_list = () => {
 
     const Get_Board_View_Process = async (boardList) => {
 
-        console.log("LIST : ", boardList);
+        //console.log("LIST : ", boardList);
         let array = [];
 
         if (boardList.length == 0) {
-            console.log("Finish");
+            //console.log("Finish");
             return;
         }
 
@@ -64,14 +64,14 @@ const Top_Fin_list = () => {
                 'fin_code_list': fin_code_List,
             })
             .then((response) => {
-                console.log("COUNT : ", response.data.countBoard);
+                //console.log("COUNT : ", response.data.countBoard);
                 boardList.map((list, index) => {
                     list.count = response.data.countBoard[index];
                     list.index = index + 1;
                     list.key = index + 1;
                 });
 
-                console.log("AAAAA : ", boardList);
+                //console.log("AAAAA : ", boardList);
 
             })
 
@@ -90,13 +90,13 @@ const Top_Fin_list = () => {
     }
 
     const Modal_Visible_Handler = (flag, data, author) => {
-        console.log(author);
+        //console.log(author);
         set_Post_Author(author);
         if (flag == 1) {
             set_Modal_Visible(true);
             axios.get(server_config.server_Address + '/board/search/author/' + data)
                 .then((response) => {
-                    console.log(response.data);
+                    //console.log(response.data);
                     Get_Board_Modal_Process(response.data);
                 });
         }
@@ -111,7 +111,7 @@ const Top_Fin_list = () => {
                     fin_name: data,
                 })
                 .then((response) => {
-                    console.log(response.data);
+                    //console.log(response.data);
                     set_chart_data(response.data);
                 })
         }
@@ -123,7 +123,7 @@ const Top_Fin_list = () => {
     const Get_Board_Modal_Process = async (boardList) => {
 
         if (boardList.length == 0) {
-            console.log("Finish");
+            //console.log("Finish");
             return;
         }
 
@@ -137,7 +137,7 @@ const Top_Fin_list = () => {
                 'fin_code_list': fin_code_List,
             })
             .then((response) => {
-                console.log("COUNT : ", response.data.countBoard);
+                //console.log("COUNT : ", response.data.countBoard);
                 boardList.map((list, index) => {
                     list.count = response.data.countBoard[index];
                     list.index = index + 1;

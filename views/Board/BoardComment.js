@@ -51,7 +51,7 @@ const BoardComment = (props) => {
         //             data: array
         //         })
         //         .then((response) => {
-        //             console.log(response.data);
+        //             //console.log(response.data);
         //             props.get_data.map((list, index) => {
         //                 list.report_data = response.data.data[index];
         //             })
@@ -70,7 +70,7 @@ const BoardComment = (props) => {
             })
             .then((response) => {
 
-                console.log("DATA : ", response.data);
+                //console.log("DATA : ", response.data);
                 //set_report_status(response.data);
 
                 if (props.get_data.length != 0) {
@@ -81,7 +81,7 @@ const BoardComment = (props) => {
                 }
             })
 
-        console.log("EEFFF");
+        //console.log("EEFFF");
 
     }, [props.get_data])
 
@@ -92,7 +92,7 @@ const BoardComment = (props) => {
                 board_id: props.board_id,
             })
             .then((response) => {
-                console.log("DATA : ", response.data);
+                //console.log("DATA : ", response.data);
                 //set_report_status(response.data);
                 props.get_data.map((list, index) => {
                     list.report_status = response.data.data[index];
@@ -114,16 +114,16 @@ const BoardComment = (props) => {
 
     const handle_DeleteComment_Ok = () => {
         setConfirmLoading(true);
-        console.log("ID : ", props.board_id);
+        //console.log("ID : ", props.board_id);
         axios.delete(server_config.server_Address + "/board/comment/" + get_comment_id)
             .then((response) => {
                 //console.log(response.data);
                 if (response.data.delete_comment_result === 0) {
-                    console.log("삭제 오류");
+                    //console.log("삭제 오류");
                     setConfirmLoading(false);
                 }
                 if (response.data.delete_comment_result === 1) {
-                    console.log("삭제 성공");
+                    //console.log("삭제 성공");
                     setConfirmLoading(false);
                     set_comment_Visible(false);
 
@@ -133,7 +133,7 @@ const BoardComment = (props) => {
                             props.set_data(response.data.list.post_comment);
                             set_report_status(response.data.list.post_comment);
                             const board = board_list[board_list.findIndex((e) => e._id == props.board_id)];
-                            console.log("BOard", board);
+                            //console.log("BOard", board);
                             board?.post_comment.pop();
                             dispatch(board_Store(board_list));
                         })
@@ -170,7 +170,7 @@ const BoardComment = (props) => {
     const report_Comment_Modal_Handler = (list) => {
         if (list.comment_content) {
             set_comment_report_modal_visible(true);
-            console.log(list);
+            //console.log(list);
         }
         else {
             set_recomment_report_modal_visible(true);
@@ -259,7 +259,7 @@ const BoardComment = (props) => {
 
                     axios.get(server_config.server_Address + "/board/view/update/" + props.board_id)
                         .then((response) => {
-                            console.log("UPDA ", response.data.list.post_comment);
+                            //console.log("UPDA ", response.data.list.post_comment);
                             props.set_data(response.data.list.post_comment);
                             //set_report_status(response.data.list.post_comment);
                         })
@@ -393,7 +393,7 @@ const BoardComment = (props) => {
                             <div>
                                 {list.comment_recomment.map((recomment, index2) => {
 
-                                    console.log("Re : ", recomment, list);
+                                    //console.log("Re : ", recomment, list);
                                     let recomment_user_check = false;
 
                                     if (recomment.recomment_author_ID === get_userID) {

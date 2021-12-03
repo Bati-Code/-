@@ -75,3 +75,15 @@
 .board_insert_finance_list .MuiFormControl-marginNormal{
     margin-top: 0px;
 }
+
+.Mui-focused .MuiOutlinedInput-notchedOutline{
+    border-color: #ec6a17 !important;
+}
+
+.MuiFormLabel-root.Mui-focused{
+    color: #ec6a17 !important;
+}
+.interestWrap .ant-btn:hover, .ant-btn:focus{
+    color: #ec6a17;
+    border-color: #ec6a17;
+}

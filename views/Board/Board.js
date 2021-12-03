@@ -44,7 +44,7 @@ const Board = () => {
                 'fin_code_list': fin_code_List,
             })
             .then((response) => {
-                console.log(response.data.countBoard);
+                //console.log(response.data.countBoard);
                 set_attention_count(response.data.countBoard);
                 set_BoardList(boardList);
             })
@@ -67,7 +67,7 @@ const Board = () => {
                             list.key = index + 1;
                         });
 
-                        console.log("BoardList : A");
+                        //console.log("BoardList : A");
                         set_BoardList(boardList);
                     })
             }
@@ -84,8 +84,8 @@ const Board = () => {
                             list.key = index + 1;
                         });
 
-                        console.log("BoardList : B");
-                        console.log("B : ", response.data.docs);
+                        //console.log("BoardList : B");
+                        //console.log("B : ", response.data.docs);
 
                     })
             }
@@ -104,7 +104,7 @@ const Board = () => {
                     list.key = index + 1;
                 });
 
-                console.log("BoardList : C");
+                //console.log("BoardList : C");
                 set_BoardList(boardList);
             })
     }
@@ -115,7 +115,7 @@ const Board = () => {
 
         axios.get(server_config.server_Address + '/report/searchALL')
             .then((response) => {
-                console.log("Report : ", response.data);
+                //console.log("Report : ", response.data);
             })
 
     }, [])
@@ -124,10 +124,10 @@ const Board = () => {
 
         if (radio !== 'b') {
             Get_Board_View();
-            console.log("MAIN");
+            //console.log("MAIN");
         }
         else {
-            console.log("MAIN");
+            //console.log("MAIN");
             Get_Best_Board_view();
         }
 
@@ -146,14 +146,14 @@ const Board = () => {
         //                 list.key = index + 1;
         //             });
 
-        //             console.log("BoardList : D");
+        //             //console.log("BoardList : D");
         //             set_BoardList(boardList);
         //         })
         // }
     }, [count])
 
     useEffect(() => {
-        console.log("MAIN SEARCH");
+        //console.log("MAIN SEARCH");
         Get_Board_View();
 
         // if (search_value) {
@@ -170,7 +170,7 @@ const Board = () => {
         //                 list.key = index + 1;
         //             });
 
-        //             console.log("BoardList : E");
+        //             //console.log("BoardList : E");
         //             set_BoardList(boardList);
 
         //         })
@@ -198,7 +198,7 @@ const Board = () => {
             set_Modal_Visible(true);
             axios.get(server_config.server_Address + '/board/search/author/' + data)
                 .then((response) => {
-                    console.log(response.data);
+                    //console.log(response.data);
                     set_Modal_Board_List(response.data);
                 });
         }
@@ -213,7 +213,7 @@ const Board = () => {
                     fin_name: data,
                 })
                 .then((response) => {
-                    console.log(response.data);
+                    //console.log(response.data);
                     set_chart_data(response.data);
                 })
         }
@@ -227,7 +227,7 @@ const Board = () => {
             <div>
                 {
                     get_BoardList.map((list, index) => {
-                        console.log(list);
+                        //console.log(list);
                         return (
                             <div className="board_temp_wrap" key={index}>
                                 <div className="board_num">
@@ -296,7 +296,7 @@ const Board = () => {
                 <Modal title="작성자 최근 게시글" visible={get_Modal_Visible}
                     footer={null} onCancel={() => { Modal_Visible_Handler(0, '') }}>
                     {get_Modal_Board_List.map((list, index) => {
-                        console.log(list);
+                        //console.log(list);
                         return (
                             <div className="board_temp_wrap" key={index}>
                                 <div className="board_title"

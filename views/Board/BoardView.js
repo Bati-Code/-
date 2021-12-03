@@ -68,7 +68,7 @@ const BoardView = (res) => {
                 //console.log("view data", response.data.userName);
                 //console.log(response.data.list.post_recommend_user);
 
-                console.log("A : ", response.data.list.post_comment);
+                //console.log("A : ", response.data.list.post_comment);
 
                 set_board_data(response.data.list);
                 set_Comment_List(response.data.list.post_comment);
@@ -93,7 +93,7 @@ const BoardView = (res) => {
                             board_id: board_id
                         })
                         .then((response) => {
-                            console.log(response.data);
+                            //console.log(response.data);
                             if (response.data.report_search === 1)
                                 set_report_status(true);
                             else
@@ -134,7 +134,7 @@ const BoardView = (res) => {
                 set_board_recommend(request.data.recommend_count);
 
                 const board = board_list[board_list.findIndex((e) => e._id == board_id)];
-                console.log(board);
+                //console.log(board);
 
                 if (request.data.recommend_update === 1) {
                     set_recommend_check(true);
@@ -224,7 +224,7 @@ const BoardView = (res) => {
                     .then((response) => {
                         set_Comment_List(response.data.list.post_comment);
                         const board = board_list[board_list.findIndex((e) => e._id == board_id)];
-                        console.log(board);
+                        //console.log(board);
                         board.post_comment.push(['temp']);
                         dispatch(board_Store(board_list));
                     })
@@ -313,9 +313,9 @@ const BoardView = (res) => {
     return (
         <>
             <div className="board_view_wrap">
-                <div className="board_view_Header" onClick={() => history.push('/main')}>
+                {/* <div className="board_view_Header" onClick={() => history.push('/main')}>
                     <img src={Logo} />
-                </div>
+                </div> */}
                 <div className="board_view_container">
                     <section className="board_content">
                         <nav>

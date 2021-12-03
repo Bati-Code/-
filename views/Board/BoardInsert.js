@@ -42,7 +42,7 @@ const BoardInsert = () => {
     useEffect(() => {
         axios.get(server_config.server_Address + '/fin_interest/view')
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 set_intetest_finance_List(response.data);
             })
     }, [])
@@ -57,7 +57,7 @@ const BoardInsert = () => {
 
         for (let i = 0; i < e.target.files.length; i++) {
             bodyFormData.append("imgs", e.target.files[i]);
-            console.log(i);
+            //console.log(i);
         }
         bodyFormData.append("path", "community/board");
 
@@ -65,7 +65,7 @@ const BoardInsert = () => {
         axios.post('http://103.57.61.87:8889/hitalk_msg_test/api/v1/image_upload',
             bodyFormData)
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 if (response.data.code == 200) {
                     set_loading(false);
                     for (let i = 0; i < response.data.images.length; i++) {
@@ -82,7 +82,7 @@ const BoardInsert = () => {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
                 set_loading(false);
                 alert.show("이미지 파일 업로드 실패");
             })
@@ -129,7 +129,7 @@ const BoardInsert = () => {
                     },
                 )
                     .then((response) => {
-                        console.log("관심종목 등록 성공", response.data);
+                        //console.log("관심종목 등록 성공", response.data);
                         dispatch(Page_Tab(2));
                     })
             }
@@ -158,7 +158,7 @@ const BoardInsert = () => {
                 finance_name: value.name,
             })
             .then((response) => {
-                console.log("DATA : ", response.data);
+                //console.log("DATA : ", response.data);
                 set_fin_vote(response.data);
             })
     }
@@ -187,7 +187,7 @@ const BoardInsert = () => {
     }
 
     const Interest_Fin_Handler = (e) => {
-        console.log(e.target.checked);
+        //console.log(e.target.checked);
         set_checked(e.target.checked);
     }
 

@@ -26,7 +26,7 @@ const Board_Search_List = () => {
             .then((response) => {
 
                 if (response.data.search_log_find == 0) {
-                    console.log("ERROR");
+                    //console.log("ERROR");
                     return;
                 }
 
@@ -36,7 +36,7 @@ const Board_Search_List = () => {
     }
 
     const Search_Log = (get_Menu_Text, value) => {
-        console.log("CLICK");
+        //console.log("CLICK");
         dispatch(Page_Search(get_Menu_Text, value));
         dispatch(Board_Store_Reset());
         dispatch(Board_Infinity_Page(1));
@@ -44,14 +44,14 @@ const Board_Search_List = () => {
     }
 
     const Delete_Log = (id) => {
-        console.log(id);
+        //console.log(id);
 
         axios.post(server_config.server_Address + '/search_log/delete',
             {
                 search_log_id: id,
             })
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 View_Search_Log();
             })
     }

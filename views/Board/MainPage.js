@@ -82,7 +82,7 @@ const MainPage = () => {
         switch (radio) {
             case '종목관심도순':
                 const date = Set_Date_Init();
-                console.log("D : ", date);
+                //console.log("D : ", date);
                 set_Range_Picker_Value(date);
 
                 break;
@@ -169,7 +169,7 @@ const MainPage = () => {
                         'Search_Value': value
                     })
                     .then((response) => {
-                        console.log("Search_Result : ", response.data);
+                        //console.log("Search_Result : ", response.data);
                     })
 
                 dispatch(Page_Reset());
@@ -195,7 +195,7 @@ const MainPage = () => {
     }
 
     const Radio_Handler = (e) => {
-        console.log("AAA : ", e.target);
+        //console.log("AAA : ", e.target);
         dispatch(Board_Store_Reset());
         dispatch(Page_Radio(e.target.value));
         Select_Drawer_Close_Handler();
@@ -203,7 +203,7 @@ const MainPage = () => {
 
 
     const Menu_Drawer_Open_Handler = (e) => {
-        console.log(e);
+        //console.log(e);
         set_Menu_Drawer_Visible(true);
     }
 
@@ -212,7 +212,7 @@ const MainPage = () => {
     }
 
     const Select_Drawer_Open_Handler = (e) => {
-        console.log(e);
+        //console.log(e);
         set_Select_Drawer_Visible(true);
     }
 
@@ -232,16 +232,16 @@ const MainPage = () => {
     const Change_Tab_Handler = (event, newValue) => {
         dispatch(Page_Tab(newValue));
         dispatch(Page_Search_UI(false));
-        console.log(newValue);
+        //console.log(newValue);
     }
 
     const Range_Picker_Change_Handler = (dates, dateStrings) => {
-        console.log(dates, " : ", dateStrings);
+        //console.log(dates, " : ", dateStrings);
         dispatch(Page_Search_Date(dateStrings));
     }
 
     const Search_Button_Click_Handler = () => {
-        console.log("Click");
+        //console.log("Click");
         dispatch(Page_Search_UI(true));
     }
 
@@ -263,12 +263,12 @@ const MainPage = () => {
             end_date.add(1, 'days');
             start_date = start_date.format('YYYY-MM-DD');
             end_date = end_date.format('YYYY-MM-DD');
-            console.log("S : ", start_date, " E : ", end_date);
+            //console.log("S : ", start_date, " E : ", end_date);
         } else {
             start_date.add(-1, 'days');
             start_date = start_date.format('YYYY-MM-DD');
             end_date = end_date.format('YYYY-MM-DD');
-            console.log("S : ", start_date, " E : ", end_date);
+            //console.log("S : ", start_date, " E : ", end_date);
         }
 
         return { 'start_date': start_date, 'end_date': end_date };
@@ -277,7 +277,7 @@ const MainPage = () => {
     return (
         <>
             <div className="board_wrap">
-                <div className="board_Header" onClick={main_Header_Handler}>
+                {/* <div className="board_Header" onClick={main_Header_Handler}>
                     <div>
                         <Drawer
                             title="메뉴"
@@ -317,7 +317,7 @@ const MainPage = () => {
                         <MenuIcon onClick={Menu_Drawer_Open_Handler} />
                     </div>
                     <img src={Logo} />
-                </div>
+                </div> */}
                 <div className="container">
                     <section className="board_content">
                         <nav>
